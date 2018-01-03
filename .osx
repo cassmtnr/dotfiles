@@ -2,11 +2,20 @@
 
 # ~/.osx — https://github.com/cassianomon/dotfiles
 
+# Close any open System Preferences panes, to prevent them from overriding
+# settings we’re about to change
+osascript -e 'tell application "System Preferences" to quit'
+
 # Ask for the administrator password upfront
 sudo -v
 
 # Keep-alive: update existing `sudo` time stamp until `.osx` has finished
 while true; do sudo -n true; sleep 60; kill -0 "$$" || exit; done 2>/dev/null &
+
+echo "Setup started... Hold on..."
+
+sudo chmod 700 ~/Library/Preferences
+sudo chown "${UID}" ~/Library/Preferences
 
 ###############################################################################
 # General UI/UX                                                               #
@@ -25,17 +34,17 @@ while true; do sudo -n true; sleep 60; kill -0 "$$" || exit; done 2>/dev/null &
 defaults write com.apple.universalaccess reduceTransparency -bool true
 
 # Menu bar: hide the Time Machine, Volume, and User icons
-# for domain in ~/Library/Preferences/ByHost/com.apple.systemuiserver.*; do
-# 	defaults write "${domain}" dontAutoLoad -array \
-# 		"/System/Library/CoreServices/Menu Extras/TimeMachine.menu" \
-# 		"/System/Library/CoreServices/Menu Extras/Volume.menu" \
-# 		"/System/Library/CoreServices/Menu Extras/User.menu"
-# done
-# defaults write com.apple.systemuiserver menuExtras -array \
-# 	"/System/Library/CoreServices/Menu Extras/Bluetooth.menu" \
-# 	"/System/Library/CoreServices/Menu Extras/AirPort.menu" \
-# 	"/System/Library/CoreServices/Menu Extras/Battery.menu" \
-# 	"/System/Library/CoreServices/Menu Extras/Clock.menu"
+for domain in ~/Library/Preferences/ByHost/com.apple.systemuiserver.*; do
+	defaults write "${domain}" dontAutoLoad -array \
+		"/System/Library/CoreServices/Menu Extras/TimeMachine.menu" \
+		"/System/Library/CoreServices/Menu Extras/Volume.menu" \
+		"/System/Library/CoreServices/Menu Extras/User.menu"
+done
+defaults write com.apple.systemuiserver menuExtras -array \
+	"/System/Library/CoreServices/Menu Extras/Bluetooth.menu" \
+	"/System/Library/CoreServices/Menu Extras/AirPort.menu" \
+	"/System/Library/CoreServices/Menu Extras/Battery.menu" \
+	"/System/Library/CoreServices/Menu Extras/Clock.menu"
 
 # Set highlight color to green
 #defaults write NSGlobalDomain AppleHighlightColor -string "0.764700 0.976500 0.568600"
@@ -97,7 +106,7 @@ defaults write com.apple.helpviewer DevMode -bool true
 
 # Reveal IP address, hostname, OS version, etc. when clicking the clock
 # in the login window
-# sudo defaults write /Library/Preferences/com.apple.loginwindow AdminHostInfo HostName
+sudo defaults write /Library/Preferences/com.apple.loginwindow AdminHostInfo HostName
 
 # Restart automatically if the computer freezes
 sudo systemsetup -setrestartfreeze on
@@ -503,7 +512,7 @@ sudo chmod 600 /System/Library/CoreServices/Search.bundle/Contents/MacOS/Search
 # Disable Spotlight indexing for any volume that gets mounted and has not yet
 # been indexed before.
 # Use `sudo mdutil -i off "/Volumes/foo"` to stop indexing any volume.
-#sudo defaults write /.Spotlight-V100/VolumeConfiguration Exclusions -array "/Volumes"
+sudo defaults write /.Spotlight-V100/VolumeConfiguration Exclusions -array "/Volumes"
 # Change indexing order and disable some search results
 # Yosemite-specific search results (remove them if your are using OS X 10.9 or older):
 #   MENU_DEFINITION
@@ -536,11 +545,11 @@ sudo chmod 600 /System/Library/CoreServices/Search.bundle/Contents/MacOS/Search
 #    '{"enabled" = 0;"name" = "MENU_WEBSEARCH";}' \
 #    '{"enabled" = 0;"name" = "MENU_SPOTLIGHT_SUGGESTIONS";}'
 # Load new settings before rebuilding the index
-# killall mds
+killall mds
 # Make sure indexing is enabled for the main volume
-# sudo mdutil -i on /
+sudo mdutil -i on /
 # Rebuild the index from scratch
-# sudo mdutil -E /
+sudo mdutil -E /
 
 ###############################################################################
 # Terminal & iTerm 2                                                          #
@@ -741,7 +750,7 @@ defaults write org.m0k.transmission WarningLegal -bool false
 ###############################################################################
 
 # Menu bar: Set date and time format e.g. Sun 11 Aug 16:55
-defaults write com.apple.menuextra.clock DateFormat -string "E MMM d HH:mm"
+# defaults write com.apple.menuextra.clock DateFormat -string "E MMM d HH:mm"
 
 # Disable Dock icons bounce animation
 defaults write com.apple.dock no-bouncing -bool true
