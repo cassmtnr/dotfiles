@@ -40,6 +40,10 @@ alias dl="cd ~/Downloads"
 alias dt="cd ~/Desktop"
 alias dev="cd ~/Dropbox/Dev"
 alias g="git"
+alias n="npm"
+alias ns="npm run start"
+alias y="yarn"
+alias ys="yarn start"
 
 alias zrc="code ~/.zshrc"
 
