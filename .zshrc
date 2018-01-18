@@ -43,6 +43,7 @@ alias g="git"
 alias n="npm"
 alias ns="npm run start"
 alias y="yarn"
+alias add="yarn add "
 alias ys="yarn start"
 
 alias zrc="code ~/.zshrc"
