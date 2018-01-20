@@ -1,4 +1,13 @@
 export ZSH=$HOME/.oh-my-zsh
+
+export PATH="/usr/local/bin:$PATH"
+export PATH="$PATH:$HOME/.config/yarn/global/node_modules/.bin"
+
+export JAVA_HOME=$(/usr/libexec/java_home)
+export ANDROID_HOME=~/Library/Android/sdk/
+export PATH=$PATH:$ANDROID_HOME/platform-tools/
+export PATH=$PATH:$ANDROID_HOME/tools/
+
 ZSH_THEME="robbyrussell"
 
 plugins=(
@@ -9,8 +18,6 @@ plugins=(
 )
 
 source $ZSH/oh-my-zsh.sh
-
-export PATH="$PATH:$HOME/.config/yarn/global/node_modules/.bin"
 
 export UPDATE_ZSH_DAYS=1
 
