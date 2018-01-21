@@ -1,22 +1,29 @@
 #!/usr/bin/env bash
 
-cd "$(dirname "${BASH_SOURCE}")";
+DOTFILES_ROOT=$(pwd)
 
-git pull origin master;
+echo "=================================="
+echo "Installing cassiano's .dotfiles  "
+echo "=================================="
 
-function doIt() {
-    rsync --exclude ".git/" --exclude ".DS_Store" --exclude "bootstrap.sh" \
-        --exclude "README.md" --exclude "LICENSE-MIT.txt" -avh --no-perms . ~;
-    source ~/.bash_profile;
-}
+sh "$DOTFILES_ROOT/install_homebrew.sh"
+sh "$DOTFILES_ROOT/app_installation.sh"
 
-if [ "$1" == "--force" -o "$1" == "-f" ]; then
-    doIt;
-else
-    read -p "This may overwrite existing files in your home directory. Are you sure? (y/n) " -n 1;
-    echo "";
-    if [[ $REPLY =~ ^[Yy]$ ]]; then
-        doIt;
-    fi;
-fi;
-unset doIt;
+#sh "$DOTFILES_ROOT/zsh/zsh.sh"
+#sh "$DOTFILES_ROOT/vim/vim.sh"
+#sh "$DOTFILES_ROOT/git/git.sh"
+#sh "$DOTFILES_ROOT/xcode/xcode.sh"
+#sh "$DOTFILES_ROOT/iterm2/iterm2.sh"
+
+# Install my private dotfiles as well
+# if [[ "$USER" == "cassiano" ]]; then
+#     git clone git@github.com:rodionovd/dotfiles-private.git
+#     (cd /.dotfiles-private && ./bootstrap)
+# fi
+
+# sh "$DOTFILES_ROOT/osx.sh"
+
+# echo "============================================="
+# echo "Don't forget to run ./after_xcode_install.sh "
+# echo "when you install Xcode                     :)"
+# echo "============================================="
