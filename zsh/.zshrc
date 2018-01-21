@@ -32,7 +32,8 @@ COMPLETION_WAITING_DOTS="true"
 # ALIASES #
 ###########
 
-alias zrc="code ~/.zshrc"
+alias zrc="code ~/Dropbox/Dev/dotfiles/zsh/.zshrc"
+alias dot="code ~/Dropbox/Dev/dotfiles"
 
 # Easier navigation: .., ..., ...., .....
 
