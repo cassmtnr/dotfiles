@@ -1,7 +1,5 @@
 # Check Homebrew
 # Install if we don't have it
-#
-# Courtesy od lapwinglabs.com
 
 if test ! $(which brew); then
   echo "Installing homebrew"
@@ -15,10 +13,8 @@ brew update
 
 # homebrew-cask
 
-echo "installing homebrew-cask..."
+echo "Installing homebrew-cask..."
 
-brew install caskroom/cask/brew-cask
-
-brew tap caskroom/versions
+brew tap caskroom/cask
 
 brew cleanup

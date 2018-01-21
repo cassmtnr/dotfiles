@@ -2,9 +2,11 @@
 # This is a list of stuff I usually install
 
 brew_cask_apps=(
-  android-studio 
   1password
+  android-studio 
   alfred
+  beardedspice
+  docker
   dropbox
   evernote
   firefox
@@ -13,26 +15,50 @@ brew_cask_apps=(
   google-backup-and-sync
   hyper
   iterm2
+  itsycal
   java
+  loading
+  postman
+  rocket
   slack
   sourcetree
   spotify
+  statusfy
+  steam
   sublime-text
   the-unarchiver
   transmission
+  vanilla
   visual-studio-code
   vlc
 )
 
 brew_apps=(
-  node,
-  yarn,
-  zsh,
+  node
+  yarn
+  mas
+  zsh
   zsh-completions
 )
 
-# Install apps to /Applications
-# Default is /Users/$user/Applications
+mas_apps=(
+  #Amphetamine 
+  937984704 
+  #Lightshot Screenshot 
+  526298438 
+  #Pages 
+  409201541 
+  #Keynote 
+  409183694 
+  #Trello 
+  1278508951 
+  #Magnet 
+  441258766 
+  #Xcode 
+  497799835 
+  #Numbers 
+  409203825 
+)
 
 echo "installing brew apps..."
 brew install ${brew_apps[@]}
@@ -42,8 +68,11 @@ brew cask install ${brew_cask_apps[@]}
 
 brew cleanup
 
-# link Alfred
-brew cask alfred link
+# echo "installing mac applications..."
+# https://github.com/mas-cli/mas
+# mas signin --dialog 'user' 'password'
+# mas install ${mas_apps[@]}
+
 
 echo "Installing oh-my-zsh"
 sh -c "$(curl -fsSL https://raw.githubusercontent.com/robbyrussell/oh-my-zsh/master/tools/install.sh)"
