@@ -1,6 +1,7 @@
 # Everyone has different preferences of apps.
 # This is a list of stuff I usually install
 
+brew_cask_apps=(
   android-studio 
   1password
   alfred
