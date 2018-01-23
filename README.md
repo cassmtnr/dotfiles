@@ -1,4 +1,4 @@
-# My dotfiles
+### My dotfiles
 
 In this repository I save all the common scripts and dotfiles I use everyday on my personal computer.
 Also there is scripts for installing my default apps.
