@@ -22,7 +22,7 @@ echo "============================="
 echo "Backing up an existing .zshrc config"
 # Backup an existing .zshrc if any
 if [[ -f "$HOME/.zshrc" ]]; then
-	mv -v "$HOME/.zshrc" "$HOME/.zshrc.bak"
+    mv -v "$HOME/.zshrc" "$HOME/.zshrc.bak"
 fi
 
 ln -s -F -i "$DOTFILES_ROOT/zsh/.zshrc" "$HOME/.zshrc"
@@ -32,7 +32,7 @@ echo ".zshrc file added to home"
 echo "Backing up an existing .hyper.js config"
 # Backup an existing .zshrc if any
 if [[ -f "$HOME/.hyper.js" ]]; then
-	mv -v "$HOME/.hyper.js" "$HOME/.hyper.js.bak"
+    mv -v "$HOME/.hyper.js" "$HOME/.hyper.js.bak"
 fi
 
 ln -s -F -i "$DOTFILES_ROOT/hyper/.hyper.js" "$HOME/.hyper.js"

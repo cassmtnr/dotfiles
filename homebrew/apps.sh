@@ -2,62 +2,63 @@
 # This is a list of stuff I usually install
 
 brew_cask_apps=(
-  1password
-  android-studio 
-  alfred
-  beardedspice
-  docker
-  dropbox
-  evernote
-  firefox
-  github
-  google-chrome
-  google-backup-and-sync
-  hyper
-  iterm2
-  itsycal
-  java
-  loading
-  postman
-  rocket
-  slack
-  sourcetree
-  spotify
-  statusfy
-  steam
-  sublime-text
-  the-unarchiver
-  transmission
-  vanilla
-  visual-studio-code
-  vlc
+    1password
+    alfred
+    android-studio
+    beardedspice
+    docker
+    dropbox
+    evernote
+    firefox
+    github
+    google-chrome
+    google-backup-and-sync
+    hyper
+    iterm2
+    itsycal
+    java
+    loading
+    megasync
+    postman
+    rocket
+    slack
+    sourcetree
+    spotify
+    statusfy
+    steam
+    sublime-text
+    the-unarchiver
+    transmission
+    vanilla
+    visual-studio-code
+    vlc
 )
 
 brew_apps=(
-  node
-  yarn
-  mas
-  zsh
-  zsh-completions
+    node
+    yarn
+    mas
+    zsh
+    zsh-completions
 )
 
 mas_apps=(
-  #Amphetamine 
-  937984704 
-  #Lightshot Screenshot 
-  526298438 
-  #Pages 
-  409201541 
-  #Keynote 
-  409183694 
-  #Trello 
-  1278508951 
-  #Magnet 
-  441258766 
-  #Xcode 
-  497799835 
-  #Numbers 
-  409203825 
+    #Amphetamine
+    937984704
+    #Lightshot Screenshot
+    526298438
+    #Pages
+    409201541
+    #Keynote
+    409183694
+    #Trello
+    1278508951
+    #Magnet
+    441258766
+    #Xcode
+    497799835
+    #Numbers
+    409203825
 )
 
 echo "installing brew apps..."
