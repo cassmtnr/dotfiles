@@ -20,7 +20,6 @@ brew_cask_apps=(
     loading
     megasync
     postman
-    rocket
     slack
     sourcetree
     spotify
@@ -59,6 +58,8 @@ mas_apps=(
     497799835
     #Numbers
     409203825
+    #Unsplash Wallpapers
+    1284863847
 )
 
 echo "installing brew apps..."

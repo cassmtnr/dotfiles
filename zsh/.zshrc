@@ -33,7 +33,7 @@ COMPLETION_WAITING_DOTS="true"
 ###########
 
 alias zrc="code ~/Dropbox/Dev/dotfiles/zsh/.zshrc"
-alias dot="code ~/Dropbox/Dev/dotfiles"
+alias dot="cd ~/Dropbox/Dev/dotfiles && code ."
 
 # Easier navigation: .., ..., ...., .....
 
@@ -55,8 +55,6 @@ alias ns="npm run start"
 alias y="yarn"
 alias add="yarn add "
 alias ys="yarn start"
-
-alias zrc="code ~/.zshrc"
 
 # Get OS X Software Updates, and update installed Ruby gems, Homebrew, npm, and their installed packages
 alias update='sudo softwareupdate -i -a; brew update; brew upgrade --all; brew cleanup; npm install npm -g; npm update -g'
