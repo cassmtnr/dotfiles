@@ -16,7 +16,7 @@ brew_cask_apps=(
     hyper
     iterm2
     itsycal
-    java
+    java8
     loading
     megasync
     postman
