@@ -16,7 +16,7 @@ module.exports = {
 
         // terminal cursor background color and opacity (hex, rgb, hsl, hsv, hwb or cmyk)
         // cursorColor: 'rgba(248,28,229,0.8)',
-        cursorColor: '#33ff00',
+        cursorColor: '#439D49',
 
         // `BEAM` for |, `UNDERLINE` for _, `BLOCK` for █
         cursorShape: 'BLOCK',
@@ -118,7 +118,8 @@ module.exports = {
     //   `project#1.0.1`
     plugins: [
         'hyperpower',
-        'hyper-quit'
+        'hyper-quit',
+        'hyper-dracula'
     ],
 
     // in development, you can create a directory under
