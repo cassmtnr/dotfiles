@@ -16,5 +16,6 @@ brew update
 echo "Installing homebrew-cask..."
 
 brew tap caskroom/cask
+brew tap homebrew/cask
 
 brew cleanup

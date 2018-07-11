@@ -6,12 +6,6 @@ echo "========================================="
 echo "Settings MacOS Settings as I want them..."
 echo "========================================="
 
-sh "$DOTFILES_ROOT/osx.sh"
-
-echo "MacOS defaults done!"
-echo "We are done here."
-
-
 # Close any open System Preferences panes, to prevent them from overriding
 # settings we’re about to change
 osascript -e 'tell application "System Preferences" to quit'
@@ -724,3 +718,7 @@ for app in "Activity Monitor" "Address Book" "Calendar" "Contacts" "cfprefsd" \
     killall "${app}" > /dev/null 2>&1
 done
 echo "Done. Note that some of these changes require a logout/restart to take effect."
+
+
+echo "MacOS defaults done!"
+echo "We are done here."

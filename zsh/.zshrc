@@ -4,7 +4,7 @@ export PATH="/usr/local/bin:$PATH"
 export PATH="$PATH:$HOME/.config/yarn/global/node_modules/.bin"
 
 export JAVA_HOME=$(/usr/libexec/java_home)
-export ANDROID_HOME=~/Library/Android/sdk/
+# export ANDROID_HOME=~/Library/Android/sdk/
 export PATH=$PATH:$ANDROID_HOME/platform-tools/
 export PATH=$PATH:$ANDROID_HOME/tools/
 
@@ -56,6 +56,9 @@ alias ns="npm run start"
 alias y="yarn"
 alias add="yarn add "
 alias ys="yarn start"
+alias ip="netstat -rn | grep default"
+
+alias sencha="~/bin/Sencha/Cmd/6.6.0.13/sencha"
 
 # Get OS X Software Updates, and update installed Ruby gems, Homebrew, npm, and their installed packages
 alias update='sudo softwareupdate -i -a; brew update; brew upgrade --all; brew cleanup; npm install npm -g; npm update -g'
@@ -80,4 +83,4 @@ alias chromekill="ps ux | grep '[C]hrome Helper --type=renderer' | grep -v exten
 
 
 # Lock the screen (when going AFK)
-alias afk="/System/Library/CoreServices/Menu\ Extras/User.menu/Contents/Resources/CGSession -suspend"
+alias afk="/System/Library/CoreServices/Menu\ Extras/User.menu/Contents/Resources/CGSession -suspend"export PATH="/Users/cassiano/bin/Sencha/Cmd:$PATH"

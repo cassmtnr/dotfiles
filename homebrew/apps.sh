@@ -2,13 +2,9 @@
 # This is a list of stuff I usually install
 
 brew_cask_apps=(
-    1password
-    alfred
-    android-studio
     beardedspice
     docker
     dropbox
-    evernote
     firefox
     github
     google-chrome
@@ -16,7 +12,7 @@ brew_cask_apps=(
     hyper
     iterm2
     itsycal
-    java8
+    java
     loading
     megasync
     postman
@@ -70,11 +66,12 @@ brew cask install ${brew_cask_apps[@]}
 
 brew cleanup
 
+# WIP
 # echo "installing mac applications..."
 # https://github.com/mas-cli/mas
 # mas signin --dialog 'user' 'password'
 # mas install ${mas_apps[@]}
-
+# /WIP
 
 echo "Installing oh-my-zsh"
 sh -c "$(curl -fsSL https://raw.githubusercontent.com/robbyrussell/oh-my-zsh/master/tools/install.sh)"
