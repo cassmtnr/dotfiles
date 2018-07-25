@@ -56,9 +56,12 @@ alias ns="npm run start"
 alias y="yarn"
 alias add="yarn add "
 alias ys="yarn start"
+alias rm-node="rm -rf node_modules"
 alias ip="netstat -rn | grep default"
 
 alias sencha="~/bin/Sencha/Cmd/6.6.0.13/sencha"
+alias run-ios="react-native run-ios"
+alias run-android="react-native run-android"
 
 # Get OS X Software Updates, and update installed Ruby gems, Homebrew, npm, and their installed packages
 alias update='sudo softwareupdate -i -a; brew update; brew upgrade --all; brew cleanup; npm install npm -g; npm update -g'
