@@ -50,7 +50,11 @@ alias d="cd ~/Documents/Dropbox"
 alias dl="cd ~/Downloads"
 alias dt="cd ~/Desktop"
 alias dev="cd ~/Dropbox/Dev"
+alias utfpr="cd ~/Google\ Drive/UTFPR/Engenharia\ de\ Software/4º\ Período/Oficina\ de\ Integração/Oficina\ de\ Integração"
 alias g="git"
+alias stash="git stash"
+alias pop="git stash pop"
+alias stt="git status"
 alias n="npm"
 alias ns="npm run start"
 alias y="yarn"
@@ -58,6 +62,11 @@ alias add="yarn add "
 alias ys="yarn start"
 alias rm-node="rm -rf node_modules"
 alias ip="netstat -rn | grep default"
+alias open-ssh="code ~/.ssh"
+
+
+alias ciss="cd ~/ciss"
+alias ciss-start="ciss && cd ciss-live-frontend-workspace/ciss-live-frontend && sencha app watch --uses"
 
 alias sencha="~/bin/Sencha/Cmd/6.6.0.13/sencha"
 alias run-ios="react-native run-ios"
@@ -87,3 +96,6 @@ alias chromekill="ps ux | grep '[C]hrome Helper --type=renderer' | grep -v exten
 
 # Lock the screen (when going AFK)
 alias afk="/System/Library/CoreServices/Menu\ Extras/User.menu/Contents/Resources/CGSession -suspend"export PATH="/Users/cassiano/bin/Sencha/Cmd:$PATH"
+
+ssh-add ~/.ssh/ciss/id_rsa
+cls

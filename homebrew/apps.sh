@@ -14,6 +14,7 @@ brew_cask_apps=(
     itsycal
     java
     loading
+    mattermost
     megasync
     postman
     slack
