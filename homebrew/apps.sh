@@ -31,9 +31,12 @@ brew_cask_apps=(
 )
 
 brew_apps=(
+    ant
+    gradle
+    mas
+    maven
     node
     yarn
-    mas
     zsh
     zsh-completions
 )

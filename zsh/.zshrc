@@ -4,18 +4,31 @@ export PATH="/usr/local/bin:$PATH"
 export PATH="$PATH:$HOME/.config/yarn/global/node_modules/.bin"
 
 export JAVA_HOME=$(/usr/libexec/java_home)
-# export ANDROID_HOME=~/Library/Android/sdk/
-export PATH=$PATH:$ANDROID_HOME/platform-tools/
-export PATH=$PATH:$ANDROID_HOME/tools/
+
+export ANT_HOME=/usr/local/opt/ant
+export MAVEN_HOME=/usr/local/opt/maven
+export GRADLE_HOME=/usr/local/opt/gradle
+export ANDROID_HOME=/usr/local/share/android-sdk
+export ANDROID_NDK_HOME=/usr/local/share/android-ndk
+export INTEL_HAXM_HOME=/usr/local/Caskroom/intel-haxm
+
+export PATH=$ANT_HOME/bin:$PATH
+export PATH=$MAVEN_HOME/bin:$PATH
+export PATH=$GRADLE_HOME/bin:$PATH
+export PATH=$ANDROID_HOME/tools:$PATH
+export PATH=$ANDROID_HOME/platform-tools:$PATH
+export PATH=$ANDROID_HOME/build-tools/23.0.1:$PATH
+
+export PATH="/Users/cassiano/bin/Sencha/Cmd:$PATH"
 
 ZSH_THEME="robbyrussell"
 # ZSH_THEME="powerlevel9k/powerlevel9k"
 
 plugins=(
-  git,
-  node,
-  npm,
-  osx
+    git,
+    node,
+    npm,
+    osx
 )
 
 source $ZSH/oh-my-zsh.sh
@@ -42,6 +55,8 @@ alias ..="cd .."
 alias ...="cd ../.."
 alias ....="cd ../../.."
 alias .....="cd ../../../.."
+alias ......="cd ../../../../.."
+alias .......="cd ../../../../../.."
 alias cls="clear"
 
 # Shortcuts
@@ -50,7 +65,7 @@ alias d="cd ~/Documents/Dropbox"
 alias dl="cd ~/Downloads"
 alias dt="cd ~/Desktop"
 alias dev="cd ~/Dropbox/Dev"
-alias utfpr="cd ~/Google\ Drive/UTFPR/Engenharia\ de\ Software/4º\ Período/Oficina\ de\ Integração/Oficina\ de\ Integração"
+alias utfpr="cd ~/Google\ Drive/UTFPR/Engenharia\ de\ Software/4º\ Período/"
 alias g="git"
 alias stash="git stash"
 alias pop="git stash pop"
@@ -62,15 +77,19 @@ alias add="yarn add "
 alias ys="yarn start"
 alias rm-node="rm -rf node_modules"
 alias ip="netstat -rn | grep default"
-alias open-ssh="code ~/.ssh"
+alias ssh="code ~/.ssh"
 
 
 alias ciss="cd ~/ciss"
-alias ciss-start="ciss && cd ciss-live-frontend-workspace/ciss-live-frontend && sencha app watch --uses"
+# alias ciss-start='ciss && cd ciss-live-frontend-workspace && docker run --rm -it --name extjs -v "$(pwd)":/src -p1841:1841 dockerhub.ciss.com.br/dev-extjs'
+alias ciss-start='ciss && cd ciss-live-frontend-workspace/ciss-live-frontend && sencha app watch --uses'
+alias ciss-stop="docker stop extjs"
+# Sencha ExtJS
+alias sencha="~/bin/Sencha/Cmd/6.5.3.6/sencha"
 
-alias sencha="~/bin/Sencha/Cmd/6.6.0.13/sencha"
 alias run-ios="react-native run-ios"
 alias run-android="react-native run-android"
+alias avd="~/Library/Android/sdk/emulator/emulator -avd Pixel2"
 
 # Get OS X Software Updates, and update installed Ruby gems, Homebrew, npm, and their installed packages
 alias update='sudo softwareupdate -i -a; brew update; brew upgrade --all; brew cleanup; npm install npm -g; npm update -g'
@@ -95,7 +114,10 @@ alias chromekill="ps ux | grep '[C]hrome Helper --type=renderer' | grep -v exten
 
 
 # Lock the screen (when going AFK)
-alias afk="/System/Library/CoreServices/Menu\ Extras/User.menu/Contents/Resources/CGSession -suspend"export PATH="/Users/cassiano/bin/Sencha/Cmd:$PATH"
+alias afk="/System/Library/CoreServices/Menu\ Extras/User.menu/Contents/Resources/CGSession -suspend"
+alias lock="/System/Library/CoreServices/Menu\ Extras/User.menu/Contents/Resources/CGSession -suspend"
+
 
 ssh-add ~/.ssh/ciss/id_rsa
+
 cls
