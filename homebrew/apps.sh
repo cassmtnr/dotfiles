@@ -42,6 +42,8 @@ brew_cask_fonts=(
 )
 
 mas_apps=(
+    #1Password
+    443987910
     #Amphetamine
     937984704
     #Lightshot Screenshot
