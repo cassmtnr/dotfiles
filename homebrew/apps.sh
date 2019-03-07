@@ -5,6 +5,7 @@ brew_cask_apps=(
     dropbox
     firefox
     github
+    gitkraken
     google-chrome
     google-backup-and-sync
     hyper
