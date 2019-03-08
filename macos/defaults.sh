@@ -35,7 +35,9 @@ sudo defaults write /Library/Preferences/SystemConfiguration/com.apple.smb.serve
 # sudo pmset -a standbydelay 86400
 
 # Disable transparency in the menu bar and elsewhere
-defaults write com.apple.universalaccess reduceTransparency -bool true
+# old way
+# defaults write com.apple.universalaccess reduceTransparency -bool true
+defaults write com.apple.universalaccess reduceTransparency 1
 
 # # Menu bar: hide the Time Machine, Volume, and User icons
 # for domain in ~/Library/Preferences/ByHost/com.apple.systemuiserver.*; do

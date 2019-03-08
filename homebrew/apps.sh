@@ -2,6 +2,8 @@
 # This is a list of stuff I usually install
 
 brew_cask_apps=(
+    android-studio
+    datagrip
     dropbox
     firefox
     github
@@ -13,8 +15,9 @@ brew_cask_apps=(
     java
     loading
     postman
+    reactotron
+    skype
     slack
-    sourcetree
     spotify
     steam
     sublime-text
