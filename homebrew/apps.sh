@@ -2,9 +2,12 @@
 # This is a list of stuff I usually install
 
 brew_cask_apps=(
+    android-studio
+    datagrip
     dropbox
     firefox
     github
+    gitkraken
     google-chrome
     google-backup-and-sync
     hyper
@@ -12,6 +15,8 @@ brew_cask_apps=(
     java
     loading
     postman
+    reactotron
+    skype
     slack
     spotify
     steam
@@ -33,7 +38,15 @@ brew_apps=(
     zsh-completions
 )
 
+brew_cask_fonts=(
+    font-fira-code
+    font-meslo-for-powerline
+    font-meslo-lg
+)
+
 mas_apps=(
+    #1Password
+    443987910
     #Amphetamine
     937984704
     #Lightshot Screenshot
@@ -54,19 +67,22 @@ mas_apps=(
     1284863847
 )
 
-echo "installing brew apps..."
+echo "Installing brew apps..."
 brew install ${brew_apps[@]}
 
-echo "installing some brew cask apps..."
+echo "Installing some brew cask apps..."
 brew cask install ${brew_cask_apps[@]}
+
+echo "Installing some brew cask fonts..."
+brew cask install ${brew_cask_fonts[@]}
 
 brew cleanup
 
 # WIP
-# echo "installing mac applications..."
 # https://github.com/mas-cli/mas
 # mas signin --dialog 'user' 'password'
-# mas install ${mas_apps[@]}
+echo "Installing mac applications..."
+mas install ${mas_apps[@]}
 # /WIP
 
 echo "Installing oh-my-zsh"
