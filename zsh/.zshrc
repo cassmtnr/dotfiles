@@ -8,26 +8,26 @@ export JAVA_HOME=$(/usr/libexec/java_home)
 export ANT_HOME=/usr/local/opt/ant
 export MAVEN_HOME=/usr/local/opt/maven
 export GRADLE_HOME=/usr/local/opt/gradle
-export ANDROID_HOME=/usr/local/share/android-sdk
+export ANDROID_HOME=/Users/cassiano/Library/Android/sdk
 export ANDROID_NDK_HOME=/usr/local/share/android-ndk
 export INTEL_HAXM_HOME=/usr/local/Caskroom/intel-haxm
+export ADB_HOME=$ANDROID_HOME/platform-tools/adb
 
 export PATH=$ANT_HOME/bin:$PATH
 export PATH=$MAVEN_HOME/bin:$PATH
 export PATH=$GRADLE_HOME/bin:$PATH
 export PATH=$ANDROID_HOME/tools:$PATH
 export PATH=$ANDROID_HOME/platform-tools:$PATH
-export PATH=$ANDROID_HOME/build-tools/23.0.1:$PATH
-
-export PATH="/Users/cassiano/bin/Sencha/Cmd:$PATH"
+export PATH=$ANDROID_HOME/build-tools/27.0.3:$PATH
+export PATH=$ADB_HOME:$PATH
 
 ZSH_THEME="robbyrussell"
 # ZSH_THEME="powerlevel9k/powerlevel9k"
 
 plugins=(
-    git,
-    node,
-    npm,
+    git
+    node
+    npm
     osx
 )
 
@@ -35,7 +35,7 @@ source $ZSH/oh-my-zsh.sh
 
 export UPDATE_ZSH_DAYS=1
 
-function mkd() {
+mkd () {
     mkdir -p "$@" && cd "$@"
 }
 
@@ -65,7 +65,6 @@ alias d="cd ~/Documents/Dropbox"
 alias dl="cd ~/Downloads"
 alias dt="cd ~/Desktop"
 alias dev="cd ~/Dropbox/Dev"
-alias utfpr="cd ~/Google\ Drive/UTFPR/Engenharia\ de\ Software/4º\ Período/"
 alias g="git"
 alias stash="git stash"
 alias pop="git stash pop"
@@ -75,17 +74,14 @@ alias ns="npm run start"
 alias y="yarn"
 alias add="yarn add "
 alias ys="yarn start"
-alias rm-node="rm -rf node_modules"
+alias rm-node="rm -rf node_modules && rm -rf package-lock.json && rm -rf yarn.lock"
+alias reinstall="rm-node && npm install"
 alias ip="netstat -rn | grep default"
 alias ssh="code ~/.ssh"
+alias ip="ipconfig getifaddr en0"
 
-
+alias cestou="cd ~/ciss/cestou"
 alias ciss="cd ~/ciss"
-# alias ciss-start='ciss && cd ciss-live-frontend-workspace && docker run --rm -it --name extjs -v "$(pwd)":/src -p1841:1841 dockerhub.ciss.com.br/dev-extjs'
-alias ciss-start='ciss && cd ciss-live-frontend-workspace/ciss-live-frontend && sencha app watch --uses'
-alias ciss-stop="docker stop extjs"
-# Sencha ExtJS
-alias sencha="~/bin/Sencha/Cmd/6.5.3.6/sencha"
 
 alias run-ios="react-native run-ios"
 alias run-android="react-native run-android"
@@ -117,7 +113,17 @@ alias chromekill="ps ux | grep '[C]hrome Helper --type=renderer' | grep -v exten
 alias afk="/System/Library/CoreServices/Menu\ Extras/User.menu/Contents/Resources/CGSession -suspend"
 alias lock="/System/Library/CoreServices/Menu\ Extras/User.menu/Contents/Resources/CGSession -suspend"
 
+### Added by Zplugin's installer
+source $HOME/.zplugin/bin/zplugin.zsh
+autoload -Uz _zplugin
+(( ${+_comps} )) && _comps[zplugin]=_zplugin
+### End of Zplugin's installer chunk
+
+zplugin light zsh-users/zsh-autosuggestions
+zplugin light zsh-users/zsh-completions
+zplugin light zdharma/fast-syntax-highlighting
 
 ssh-add ~/.ssh/ciss/id_rsa
+ssh-add ~/.ssh/github/id_rsa
 
-cls
+clear

@@ -2,30 +2,22 @@
 # This is a list of stuff I usually install
 
 brew_cask_apps=(
-    beardedspice
-    docker
     dropbox
     firefox
     github
     google-chrome
     google-backup-and-sync
     hyper
-    iterm2
     itsycal
     java
     loading
-    mattermost
-    megasync
     postman
     slack
-    sourcetree
     spotify
-    statusfy
     steam
     sublime-text
     the-unarchiver
     transmission
-    vanilla
     visual-studio-code
     vlc
 )
@@ -79,5 +71,6 @@ brew cleanup
 
 echo "Installing oh-my-zsh"
 sh -c "$(curl -fsSL https://raw.githubusercontent.com/robbyrussell/oh-my-zsh/master/tools/install.sh)"
+sh -c "$(curl -fsSL https://raw.githubusercontent.com/zdharma/zplugin/master/doc/install.sh)"
 
 echo "It's done!"
