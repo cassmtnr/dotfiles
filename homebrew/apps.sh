@@ -1,6 +1,6 @@
 # Everyone has different preferences of apps.
 # This is a list of stuff I usually install
-
+# k
 brew_cask_apps=(
     android-studio
     datagrip
