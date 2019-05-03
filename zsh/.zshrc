@@ -48,6 +48,7 @@ COMPLETION_WAITING_DOTS="true"
 
 alias zrc="code ~/Dropbox/Dev/dotfiles/zsh/.zshrc"
 alias dot="cd ~/Dropbox/Dev/dotfiles && code ."
+alias dotfiles="cd ~/Dropbox/Dev/dotfiles"
 
 # Easier navigation: .., ..., ...., .....
 
@@ -78,7 +79,7 @@ alias rm-node="rm -rf node_modules && rm -rf package-lock.json && rm -rf yarn.lo
 alias reinstall="rm-node && npm install"
 alias ip="netstat -rn | grep default"
 alias ssh="code ~/.ssh"
-alias ip="ipconfig getifaddr en0"
+alias ip="ifconfig | grep 'inet ' | grep -Fv 127.0.0.1 | awk '{print $2}'"
 
 alias cestou="cd ~/ciss/cestou"
 alias ciss="cd ~/ciss"
@@ -127,3 +128,7 @@ ssh-add ~/.ssh/ciss/id_rsa
 ssh-add ~/.ssh/github/id_rsa
 
 clear
+
+# tabtab source for electron-forge package
+# uninstall by removing these lines or running `tabtab uninstall electron-forge`
+[[ -f /Users/cassiano/Downloads/gb-studio-master/node_modules/tabtab/.completions/electron-forge.zsh ]] && . /Users/cassiano/Downloads/gb-studio-master/node_modules/tabtab/.completions/electron-forge.zsh

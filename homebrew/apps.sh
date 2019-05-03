@@ -10,7 +10,7 @@ brew_cask_apps=(
     gitkraken
     google-chrome
     google-backup-and-sync
-    hyper
+    homebrew/cask-versions/hyper-canary
     itsycal
     java
     loading
