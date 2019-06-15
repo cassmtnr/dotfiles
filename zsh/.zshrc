@@ -78,7 +78,7 @@ alias ys="yarn start"
 alias rm-node="rm -rf node_modules && rm -rf package-lock.json && rm -rf yarn.lock"
 alias reinstall="rm-node && npm install"
 alias ip="netstat -rn | grep default"
-alias ssh="code ~/.ssh"
+alias sshq="code ~/.ssh"
 alias ip="ifconfig | grep 'inet ' | grep -Fv 127.0.0.1 | awk '{print $2}'"
 
 alias cestou="cd ~/ciss/cestou"

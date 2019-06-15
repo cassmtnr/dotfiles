@@ -1,7 +1,20 @@
 # Everyone has different preferences of apps.
 # This is a list of stuff I usually install
-# k
-brew_cask_apps=(
+#
+
+brew_apps=(
+    ant
+    gradle
+    mas
+    maven
+    node
+    yarn
+    zsh
+    zsh-completions
+)
+
+cask_apps=(
+    1password
     android-studio
     datagrip
     dropbox
@@ -13,7 +26,6 @@ brew_cask_apps=(
     homebrew/cask-versions/hyper-canary
     itsycal
     java
-    loading
     postman
     reactotron
     skype
@@ -25,17 +37,6 @@ brew_cask_apps=(
     transmission
     visual-studio-code
     vlc
-)
-
-brew_apps=(
-    ant
-    gradle
-    mas
-    maven
-    node
-    yarn
-    zsh
-    zsh-completions
 )
 
 brew_cask_fonts=(
@@ -65,13 +66,18 @@ mas_apps=(
     409203825
     #Unsplash Wallpapers
     1284863847
+    #Bear
+    1091189122
+    #TheUnarchiver
+    425424353
+
 )
 
 echo "Installing brew apps..."
 brew install ${brew_apps[@]}
 
 echo "Installing some brew cask apps..."
-brew cask install ${brew_cask_apps[@]}
+brew cask install ${cask_apps[@]}
 
 echo "Installing some brew cask fonts..."
 brew cask install ${brew_cask_fonts[@]}
@@ -81,8 +87,8 @@ brew cleanup
 # WIP
 # https://github.com/mas-cli/mas
 # mas signin --dialog 'user' 'password'
-echo "Installing mac applications..."
-mas install ${mas_apps[@]}
+# echo "Installing mac applications..."
+# mas install ${mas_apps[@]}
 # /WIP
 
 echo "Installing oh-my-zsh"
