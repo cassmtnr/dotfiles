@@ -81,9 +81,6 @@ alias ip="netstat -rn | grep default"
 alias sshq="code ~/.ssh"
 alias ip="ifconfig | grep 'inet ' | grep -Fv 127.0.0.1 | awk '{print $2}'"
 
-alias cestou="cd ~/ciss/cestou"
-alias ciss="cd ~/ciss"
-
 alias run-ios="react-native run-ios"
 alias run-android="react-native run-android"
 alias avd="~/Library/Android/sdk/emulator/emulator -avd Pixel2"
@@ -124,7 +121,6 @@ zplugin light zsh-users/zsh-autosuggestions
 zplugin light zsh-users/zsh-completions
 zplugin light zdharma/fast-syntax-highlighting
 
-ssh-add ~/.ssh/ciss/id_rsa
 ssh-add ~/.ssh/github/id_rsa
 
 clear
