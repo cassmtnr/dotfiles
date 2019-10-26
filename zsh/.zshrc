@@ -46,9 +46,9 @@ COMPLETION_WAITING_DOTS="true"
 # ALIASES #
 ###########
 
-alias zrc="code ~/Dropbox/Dev/dotfiles/zsh/.zshrc"
-alias dot="cd ~/Dropbox/Dev/dotfiles && code ."
-alias dotfiles="cd ~/Dropbox/Dev/dotfiles"
+alias zrc="code ~/Dev/dotfiles/zsh/.zshrc"
+alias dot="cd ~/Dev/dotfiles && code ."
+alias dotfiles="cd ~/Dev/dotfiles"
 
 # Easier navigation: .., ..., ...., .....
 
@@ -65,7 +65,7 @@ alias cls="clear"
 alias d="cd ~/Documents/Dropbox"
 alias dl="cd ~/Downloads"
 alias dt="cd ~/Desktop"
-alias dev="cd ~/Dropbox/Dev"
+alias dev="cd ~/Dev"
 alias g="git"
 alias stash="git stash"
 alias pop="git stash pop"

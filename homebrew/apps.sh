@@ -15,9 +15,6 @@ brew_apps=(
 
 cask_apps=(
     1password
-    android-studio
-    datagrip
-    dropbox
     firefox
     github
     gitkraken
@@ -29,9 +26,7 @@ cask_apps=(
     postman
     reactotron
     skype
-    slack
     spotify
-    steam
     sublime-text
     the-unarchiver
     transmission
