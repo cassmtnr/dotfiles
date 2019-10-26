@@ -3,10 +3,7 @@
 #
 
 brew_apps=(
-    ant
-    gradle
     mas
-    maven
     node
     yarn
     zsh
