@@ -5,22 +5,6 @@ export PATH="$PATH:$HOME/.config/yarn/global/node_modules/.bin"
 
 export JAVA_HOME=$(/usr/libexec/java_home)
 
-export ANT_HOME=/usr/local/opt/ant
-export MAVEN_HOME=/usr/local/opt/maven
-export GRADLE_HOME=/usr/local/opt/gradle
-export ANDROID_HOME=/Users/cassiano/Library/Android/sdk
-export ANDROID_NDK_HOME=/usr/local/share/android-ndk
-export INTEL_HAXM_HOME=/usr/local/Caskroom/intel-haxm
-export ADB_HOME=$ANDROID_HOME/platform-tools/adb
-
-export PATH=$ANT_HOME/bin:$PATH
-export PATH=$MAVEN_HOME/bin:$PATH
-export PATH=$GRADLE_HOME/bin:$PATH
-export PATH=$ANDROID_HOME/tools:$PATH
-export PATH=$ANDROID_HOME/platform-tools:$PATH
-export PATH=$ANDROID_HOME/build-tools/27.0.3:$PATH
-export PATH=$ADB_HOME:$PATH
-
 ZSH_THEME="robbyrussell"
 # ZSH_THEME="powerlevel9k/powerlevel9k"
 
@@ -121,10 +105,16 @@ zplugin light zsh-users/zsh-autosuggestions
 zplugin light zsh-users/zsh-completions
 zplugin light zdharma/fast-syntax-highlighting
 
-ssh-add ~/.ssh/github/id_rsa
-
-clear
+ssh-add ~/.ssh/id_rsa
 
 # tabtab source for electron-forge package
 # uninstall by removing these lines or running `tabtab uninstall electron-forge`
 [[ -f /Users/cassiano/Downloads/gb-studio-master/node_modules/tabtab/.completions/electron-forge.zsh ]] && . /Users/cassiano/Downloads/gb-studio-master/node_modules/tabtab/.completions/electron-forge.zsh
+
+# Loads NVM
+export NVM_DIR="$HOME/.nvm"
+NVM_SRC="/usr/local/opt/nvm"
+[ -s "$NVM_SRC/nvm.sh" ] && . "$NVM_SRC/nvm.sh"  # This loads nvm
+[ -s "$NVM_SRC/etc/bash_completion.d/nvm" ] && . "$NVM_SRC/etc/bash_completion.d/nvm" # This loads nvm bash_completion
+
+clear

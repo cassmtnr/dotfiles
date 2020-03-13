@@ -4,7 +4,7 @@
 
 brew_apps=(
     mas
-    node
+    nvm
     yarn
     zsh
     zsh-completions
@@ -14,7 +14,6 @@ cask_apps=(
     1password
     firefox
     github
-    gitkraken
     google-chrome
     google-backup-and-sync
     homebrew/cask-versions/hyper-canary
@@ -38,8 +37,6 @@ brew_cask_fonts=(
 )
 
 mas_apps=(
-    #1Password
-    443987910
     #Amphetamine
     937984704
     #Lightshot Screenshot
