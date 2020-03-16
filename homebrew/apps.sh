@@ -36,6 +36,11 @@ brew_cask_fonts=(
     font-meslo-lg
 )
 
+npm_global_packages=(
+    now
+    surge
+)
+
 mas_apps=(
     #Amphetamine
     937984704
@@ -59,7 +64,6 @@ mas_apps=(
     1091189122
     #TheUnarchiver
     425424353
-
 )
 
 echo "Installing brew apps..."
@@ -72,6 +76,9 @@ echo "Installing some brew cask fonts..."
 brew cask install ${brew_cask_fonts[@]}
 
 brew cleanup
+
+echo "Installing Global NPM Packages..."
+npm install -g ${npm_global_packages[@]}
 
 # WIP
 # https://github.com/mas-cli/mas
