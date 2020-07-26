@@ -1,0 +1,8 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<workflow>
+  <name>Go Incognito/Private - Alfred Workflow</name>
+  <version>1.0.0</version>
+  <bundle>com.vwap.goincognitoprivate</bundle>
+  <updated>1588411047</updated>
+  <file>go.incognito.private.alfredworkflow</file>
+</workflow>
