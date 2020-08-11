@@ -5,9 +5,10 @@
 brew_apps=(
     mas
     nvm
-    yarn
     zsh
     zsh-completions
+    watchmen
+    yarn
 )
 
 cask_apps=(
