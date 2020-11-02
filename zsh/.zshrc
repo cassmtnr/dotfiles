@@ -65,6 +65,10 @@ alias ip="netstat -rn | grep default"
 alias sshq="code ~/.ssh"
 alias ip="ifconfig | grep 'inet ' | grep -Fv 127.0.0.1 | awk '{print $2}'"
 
+alias kfz="cd ~/Work/kfz-frontend"
+alias kfz-start="cd ~/Work/kfz-frontend && npm run start:local-t380"
+# alias kfz-start="cd ~/Work/kfz-frontend && npm run start:local-staging"
+
 alias run-ios="react-native run-ios"
 alias run-android="react-native run-android"
 alias avd="~/Library/Android/sdk/emulator/emulator -avd Pixel2"
@@ -95,21 +99,11 @@ alias chromekill="ps ux | grep '[C]hrome Helper --type=renderer' | grep -v exten
 alias afk="/System/Library/CoreServices/Menu\ Extras/User.menu/Contents/Resources/CGSession -suspend"
 alias lock="/System/Library/CoreServices/Menu\ Extras/User.menu/Contents/Resources/CGSession -suspend"
 
-### Added by Zplugin's installer
-source $HOME/.zplugin/bin/zplugin.zsh
-autoload -Uz _zplugin
-(( ${+_comps} )) && _comps[zplugin]=_zplugin
-### End of Zplugin's installer chunk
 
-zplugin light zsh-users/zsh-autosuggestions
-zplugin light zsh-users/zsh-completions
-zplugin light zdharma/fast-syntax-highlighting
-
+eval $(ssh-agent)
 ssh-add ~/.ssh/id_rsa
+# ssh-add ~/.ssh/github
 
-# tabtab source for electron-forge package
-# uninstall by removing these lines or running `tabtab uninstall electron-forge`
-[[ -f /Users/cassiano/Downloads/gb-studio-master/node_modules/tabtab/.completions/electron-forge.zsh ]] && . /Users/cassiano/Downloads/gb-studio-master/node_modules/tabtab/.completions/electron-forge.zsh
 
 # Loads NVM
 export NVM_DIR="$HOME/.nvm"
