@@ -15,6 +15,8 @@ plugins=(
     osx
 )
 
+ZSH_DISABLE_COMPFIX="true"
+
 source $ZSH/oh-my-zsh.sh
 
 export UPDATE_ZSH_DAYS=1
