@@ -17,7 +17,6 @@ cask_apps=(
     google-chrome
     google-backup-and-sync
     homebrew/cask-versions/hyper-canary
-    itsycal
     java
     postman
     reactotron
