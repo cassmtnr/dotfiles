@@ -22,15 +22,10 @@ brew_apps=(
     vlc
 )
 
-brew_cask_fonts=(
+brew_fonts=(
     font-fira-code
     font-meslo-for-powerline
     font-meslo-lg
-)
-
-npm_global_packages=(
-    now
-    surge
 )
 
 mas_apps=(
@@ -46,11 +41,16 @@ mas_apps=(
     1091189122
 )
 
+npm_global_packages=(
+    now
+    surge
+)
+
 echo "Installing brew apps..."
 brew install ${brew_apps[@]}
 
-echo "Installing some brew cask fonts..."
-brew cask install ${brew_cask_fonts[@]}
+echo "Installing some brew fonts..."
+brew  install ${brew_fonts[@]}
 
 brew cleanup
 
