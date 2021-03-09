@@ -9,11 +9,12 @@ echo "=============================="
 sh "$DOTFILES_ROOT/homebrew/install.sh"
 sh "$DOTFILES_ROOT/homebrew/apps.sh"
 
-# Install my private dotfiles as well
-# if [[ "$USER" == "cassiano" ]]; then
-#     git clone git@github.com:cassianomon/dotfiles-private.git
-#     (cd /.dotfiles-private && ./bootstrap)
-# fi
+echo "============================="
+echo "Installing Oh My Zsh!"
+echo "============================="
+
+sh -c "$(curl -fsSL https://raw.githubusercontent.com/robbyrussell/oh-my-zsh/master/tools/install.sh)"
+sh -c "$(curl -fsSL https://raw.githubusercontent.com/zdharma/zplugin/master/doc/install.sh)"
 
 echo "============================="
 echo "Starting settings of dotfiles"
@@ -37,9 +38,3 @@ fi
 
 ln -s -F -i "$DOTFILES_ROOT/hyper/.hyper.js" "$HOME/.hyper.js"
 echo ".hyper.js file added to home"
-
-
-
-
-
-

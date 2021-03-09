@@ -13,7 +13,6 @@ brew cleanup
 
 # homebrew-cask
 echo "Installing homebrew-cask..."
-brew tap caskroom/cask
 brew tap homebrew/cask
 
 # homebrew-cask-fonts
@@ -21,7 +20,3 @@ echo "Installing homebrew-cask-fonts..."
 brew tap homebrew/cask-fonts
 
 brew cleanup
-
-# NVM install latest Nodejs LTS
-nvm install 12.16.1
-nvm use 12.16.1
