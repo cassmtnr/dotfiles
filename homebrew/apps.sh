@@ -6,6 +6,7 @@ brew_apps=(
     nvm
     zsh
     yarn
+    alfred
     1password
     firefox
     github
@@ -13,7 +14,6 @@ brew_apps=(
     hyper
     java
     postman
-    skype
     spotify
     sublime-text
     the-unarchiver
@@ -35,8 +35,6 @@ mas_apps=(
     441258766
     #Xcode
     497799835
-    #Numbers
-    409203825
     #Bear
     1091189122
 )
