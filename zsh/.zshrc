@@ -17,7 +17,7 @@ plugins=(
 
 ZSH_DISABLE_COMPFIX="true"
 UPDATE_ZSH_DAYS=30
-# DISABLE_AUTO_UPDATE="true"
+DISABLE_AUTO_UPDATE="true"
 
 source $ZSH/oh-my-zsh.sh
 
