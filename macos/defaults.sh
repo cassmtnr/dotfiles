@@ -145,12 +145,12 @@ defaults write com.apple.SoftwareUpdate ScheduleFrequency -int 1
 # Disable hibernation (speeds up entering sleep mode)
 sudo pmset -a hibernatemode 0
 
-# Remove the sleep image file to save disk space
-sudo rm /private/var/vm/sleepimage
-# Create a zero-byte file instead…
-sudo touch /private/var/vm/sleepimage
-# …and make sure it can’t be rewritten
-sudo chflags uchg /private/var/vm/sleepimage
+# # Remove the sleep image file to save disk space
+# sudo rm /private/var/vm/sleepimage
+# # Create a zero-byte file instead…
+# sudo touch /private/var/vm/sleepimage
+# # …and make sure it can’t be rewritten
+# sudo chflags uchg /private/var/vm/sleepimage
 
 # Disable the sudden motion sensor as it’s not useful for SSDs
 sudo pmset -a sms 0
@@ -702,12 +702,6 @@ defaults write com.apple.dock no-bouncing -bool true
 # Bottom left screen corner → Desktop
 defaults write com.apple.dock wvous-bl-corner -int 4
 defaults write com.apple.dock wvous-bl-modifier -int 0
-# Top right screen corner → Mission Control
-#defaults write com.apple.dock wvous-tr-corner -int 2
-#defaults write com.apple.dock wvous-tr-modifier -int 0
-# Bottom right screen corner → Start screen saver
-defaults write com.apple.dock wvous-br-corner -int 4
-defaults write com.apple.dock wvous-br-modifier -int 0
 
 ###############################################################################
 # Kill affected applications                                                  #

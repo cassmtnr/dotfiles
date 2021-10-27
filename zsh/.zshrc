@@ -5,6 +5,9 @@ export PATH="$PATH:$HOME/.config/yarn/global/node_modules/.bin"
 
 export JAVA_HOME=$(/usr/libexec/java_home)
 
+# Loads Java JDK
+export PATH="/usr/local/opt/openjdk/bin:$PATH"
+
 ZSH_THEME="robbyrussell"
 # ZSH_THEME="powerlevel9k/powerlevel9k"
 
@@ -103,19 +106,9 @@ alias afk="/System/Library/CoreServices/Menu\ Extras/User.menu/Contents/Resource
 alias lock="/System/Library/CoreServices/Menu\ Extras/User.menu/Contents/Resources/CGSession -suspend"
 
 
-### Added by Zplugin's installer
-source $HOME/.zplugin/bin/zplugin.zsh
-autoload -Uz _zplugin
-(( ${+_comps} )) && _comps[zplugin]=_zplugin
-### End of Zplugin's installer chunk
-
-zplugin light zsh-users/zsh-autosuggestions
-zplugin light zsh-users/zsh-completions
-zplugin light zdharma/fast-syntax-highlighting
-
 eval $(ssh-agent)
-ssh-add ~/.ssh/id_rsa
-# ssh-add ~/.ssh/github
+# ssh-add ~/.ssh/id_rsa
+ssh-add ~/.ssh/github
 
 
 # Loads NVM

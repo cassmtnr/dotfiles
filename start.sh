@@ -14,7 +14,6 @@ echo "Installing Oh My Zsh!"
 echo "============================="
 
 sh -c "$(curl -fsSL https://raw.githubusercontent.com/robbyrussell/oh-my-zsh/master/tools/install.sh)"
-sh -c "$(curl -fsSL https://raw.githubusercontent.com/zdharma/zplugin/master/doc/install.sh)"
 
 echo "============================="
 echo "Starting settings of dotfiles"
