@@ -9,12 +9,13 @@ from workflow import Workflow, ICON_WEB, ICON_USER, ICON_WARNING, ICON_GROUP, we
 from mako.template import Template
 
 DEFAULT_TMDB_API_KEY = '0ebad901a16d3bf7f947b0a8d1808c44'
-TMDB_API_URL = 'http://api.themoviedb.org/3/'
-OMDB_API_URL = 'http://www.omdbapi.com/'
-IMDB_URL = 'http://imdb.com/'
-YOUTUBE_WATCH_URL = 'http://youtube.com/watch?v='
-METACRITIC_SEARCH_URL = 'http://metacritic.com/search/'
-ROTTEN_TOMATOES_SEARCH_URL = 'http://rottentomatoes.com/search/?search='
+TMDB_API_URL = 'https://api.themoviedb.org/3/'
+OMDB_API_URL = 'https://www.omdbapi.com/'
+IMDB_URL = 'https://imdb.com/'
+YOUTUBE_WATCH_URL = 'https://youtube.com/watch?v='
+METACRITIC_SEARCH_URL = 'https://metacritic.com/search/'
+ROTTEN_TOMATOES_SEARCH_URL = 'https://rottentomatoes.com/search/?search='
+LETTERBOXD_URL = 'https://letterboxd.com/imdb/'
 
 log = None
 
@@ -47,13 +48,14 @@ def main(wf):
             return get_tmdb_configuration(api_key)
 
         try:
-            configuration = wf.cached_data('tmdbconfig', wrapper, max_age=604800)
+            configuration = wf.cached_data(
+                'tmdbconfig', wrapper, max_age=604800)
             url = TMDB_API_URL + 'search/' + media_type
             params = dict(api_key=api_key, query=query, search_type='ngram')
             results = web.get(url, params).json()
         except Exception, e:
             wf.add_item('Uh oh... something went wrong',
-                subtitle='Please check your internet connection.')
+                        subtitle='Please check your internet connection.')
             wf.send_feedback()
             return 0
 
@@ -94,7 +96,7 @@ def get_tmdb_info(item_type, item_id, api_key):
     elif item_type == 't':
         url += 'tv/' + item_id
     params = dict(
-        api_key=api_key, language='en', append_to_response='videos,external_ids')
+        api_key=api_key, language='en', append_to_response='videos,external_ids,watch/providers')
 
     return web.get(url, params).json()
 
@@ -135,11 +137,12 @@ def show_item_info(item, media_type):
                 # icon = "poster.jpg",
                 arg="file://" + urllib.pathname2url(wf.cachefile('item.html')))
 
-    search = urllib.quote(item[title_key].encode('utf-8'), safe=':'.encode('utf-8'))
+    search = urllib.quote(item[title_key].encode(
+        'utf-8'), safe=':'.encode('utf-8'))
 
     all_search_sites = []
 
-    #IMDb
+    # IMDb
     search_url = IMDB_URL + 'title/' + omdb_info['imdbID']
     all_search_sites.append(search_url)
     if omdb_info['imdbRating'] != 'N/A':
@@ -156,8 +159,10 @@ def show_item_info(item, media_type):
                     valid=True,
                     arg=search_url)
 
-    #Rotten Tomatoes
+    # Rotten Tomatoes
     search_url = ROTTEN_TOMATOES_SEARCH_URL + search
+    if omdb_info['tomatoURL']:
+        search_url = omdb_info['tomatoURL']
     all_search_sites.append(search_url)
     if omdb_info['tomatoMeter'] != 'N/A':
         tomatoIcon = 'img/fresh.png'
@@ -167,7 +172,9 @@ def show_item_info(item, media_type):
             tomatoIcon = 'img/' + omdb_info['tomatoImage'] + '.png'
 
         wf.add_item(title=omdb_info['tomatoMeter'] + '%',
-                    subtitle='Rotten Tomatoes (' + omdb_info['tomatoReviews'] + ' reviews, ' + omdb_info['tomatoFresh'] + ' fresh, ' + omdb_info['tomatoRotten'] + ' rotten)',
+                    subtitle='Rotten Tomatoes (' + omdb_info['tomatoReviews'] + ' reviews, ' +
+                    omdb_info['tomatoFresh'] + ' fresh, ' +
+                    omdb_info['tomatoRotten'] + ' rotten)',
                     icon=tomatoIcon,
                     valid=True,
                     arg=search_url)
@@ -186,12 +193,14 @@ def show_item_info(item, media_type):
             tomatoUserIcon = 'img/rtdisliked.png'
 
         wf.add_item(title=omdb_info['tomatoUserMeter'] + '%',
-                    subtitle='Rotten Tomatoes Audience Score (' + omdb_info['tomatoUserReviews'] + ' reviews, ' + omdb_info['tomatoUserRating'] + ' avg rating)',
+                    subtitle='Rotten Tomatoes Audience Score (' + omdb_info['tomatoUserReviews'] +
+                    ' reviews, ' +
+                    omdb_info['tomatoUserRating'] + ' avg rating)',
                     icon=tomatoUserIcon,
                     valid=True,
                     arg=search_url)
 
-    #Metacritic
+    # Metacritic
     search_url = METACRITIC_SEARCH_URL + search + '/results'
     all_search_sites.append(search_url)
     if omdb_info['Metascore'] != 'N/A':
@@ -202,8 +211,42 @@ def show_item_info(item, media_type):
                     arg=search_url)
     else:
         wf.add_item(title='Metacritic',
-                    subtitle='Search Metacritic for \'' + item[title_key] + '\'',
+                    subtitle='Search Metacritic for \'' +
+                    item[title_key] + '\'',
                     icon='img/meta.png',
+                    valid=True,
+                    arg=search_url)
+
+    # Letterboxd
+    search_url = LETTERBOXD_URL + omdb_info['imdbID']
+    all_search_sites.append(search_url)
+    wf.add_item(title='Letterboxd',
+                subtitle='View \'' + item[title_key] + '\' on Letterboxd',
+                icon='img/letterboxd.png',
+                valid=True,
+                arg=search_url)
+
+    # JustWatch
+    locale = os.environ['locale']
+    if locale in item['watch/providers']['results'].keys():
+        watchproviders = item['watch/providers']['results'][locale]
+        search_url = watchproviders['link']
+        justwatchstring = ''
+        if 'flatrate' in watchproviders.keys():
+            justwatchstring += 'Stream: ' + \
+                watchproviders['flatrate'][0]['provider_name'] + ' | '
+        if 'buy' in watchproviders.keys():
+            justwatchstring += 'Buy: ' + \
+                watchproviders['buy'][0]['provider_name'] + ' | '
+        if 'rent' in watchproviders.keys():
+            justwatchstring += 'Rent: ' + \
+                watchproviders['rent'][0]['provider_name'] + ' | '
+        justwatchstring = justwatchstring[:-3]  # remove first and last pipe
+
+        all_search_sites.append(search_url)
+        wf.add_item(title='JustWatch',
+                    subtitle=justwatchstring,
+                    icon='img/justwatch.png',
                     valid=True,
                     arg=search_url)
 
@@ -224,7 +267,8 @@ def show_item_info(item, media_type):
             all_search_sites.append(YOUTUBE_WATCH_URL + trailer['key'])
 
     wf.add_item(title='Search',
-                subtitle='Search for \'' + item[title_key] + '\' on all rating sites.',
+                subtitle='Search for \'' +
+                item[title_key] + '\' on all rating sites.',
                 icon='img/ratingsites.png',
                 valid=True,
                 arg='||'.join(all_search_sites))
@@ -287,6 +331,7 @@ def get_subtitle(omdb_info):
 
 def extract_popularity(result):
     result.get('popularity', '0')
+
 
 if __name__ == "__main__":
     wf = Workflow()

@@ -53,8 +53,8 @@ brew  install ${brew_fonts[@]}
 brew cleanup
 
 # NVM install latest Nodejs LTS
-nvm install 12.16.1
-nvm use 12.16.1
+nvm install v14.15.1
+nvm use v14.15.1
 
 echo "Installing Global NPM Packages..."
 npm install -g ${npm_global_packages[@]}

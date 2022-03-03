@@ -3,10 +3,10 @@ export ZSH=$HOME/.oh-my-zsh
 export PATH="/usr/local/bin:$PATH"
 export PATH="$PATH:$HOME/.config/yarn/global/node_modules/.bin"
 
-export JAVA_HOME=$(/usr/libexec/java_home)
+# export JAVA_HOME=$(/usr/libexec/java_home)
 
 # Loads Java JDK
-export PATH="/usr/local/opt/openjdk/bin:$PATH"
+# export PATH="/usr/local/opt/openjdk/bin:$PATH"
 
 ZSH_THEME="robbyrussell"
 # ZSH_THEME="powerlevel9k/powerlevel9k"
@@ -15,7 +15,7 @@ plugins=(
     git
     node
     npm
-    osx
+    macos
 )
 
 ZSH_DISABLE_COMPFIX="true"
@@ -24,9 +24,16 @@ DISABLE_AUTO_UPDATE="true"
 
 source $ZSH/oh-my-zsh.sh
 
-
 mkd () {
     mkdir -p "$@" && cd "$@"
+}
+
+killport () {
+    lsof -t -i tcp:"$@" | xargs kill
+}
+
+playwright-install () {
+    HTTPS_PROXY=http://"$@" npx playwright install
 }
 
 ENABLE_CORRECTION="true"
@@ -55,29 +62,27 @@ alias cls="clear"
 alias d="cd ~/Documents"
 alias dl="cd ~/Downloads"
 alias dt="cd ~/Desktop"
+alias work="cd ~/Work"
 alias dev="cd ~/Dev"
+
+alias banking="cd ~/Work/banking"
+
 alias g="git"
 alias stash="git stash"
 alias pop="git stash pop"
 alias status="git status"
+alias develop="git checkout develop && git fetch --all && git pull"
+alias push-no-verify="git push --force-with-lease --no-verify"
+
 alias n="npm"
-alias ns="npm run start"
 alias y="yarn"
-alias add="yarn add "
-alias ys="yarn start"
+alias start="yarn dev"
 alias rm-node="rm -rf node_modules && rm -rf package-lock.json && rm -rf yarn.lock"
-alias reinstall="rm-node && npm install"
+alias reinstall="rm-node && yarn"
+
 alias ip="netstat -rn | grep default"
 alias sshq="code ~/.ssh"
 alias ip="ifconfig | grep 'inet ' | grep -Fv 127.0.0.1 | awk '{print $2}'"
-
-alias kfz="cd ~/Work/kfz-frontend"
-alias kfz-start="cd ~/Work/kfz-frontend && npm run start:local-t380"
-# alias kfz-start="cd ~/Work/kfz-frontend && npm run start:local-staging"
-
-alias run-ios="react-native run-ios"
-alias run-android="react-native run-android"
-alias avd="~/Library/Android/sdk/emulator/emulator -avd Pixel2"
 
 # Get OS X Software Updates, and update installed Ruby gems, Homebrew, npm, and their installed packages
 alias update='sudo softwareupdate -i -a; brew update; brew upgrade --all; brew cleanup; npm install npm -g; npm update -g'
@@ -107,14 +112,13 @@ alias lock="/System/Library/CoreServices/Menu\ Extras/User.menu/Contents/Resourc
 
 
 eval $(ssh-agent)
-# ssh-add ~/.ssh/id_rsa
-ssh-add ~/.ssh/github
+ssh-add ~/.ssh/dev/github
+ssh-add ~/.ssh/work/gitlab
 
 
 # Loads NVM
 export NVM_DIR="$HOME/.nvm"
-NVM_SRC="/usr/local/opt/nvm"
-[ -s "$NVM_SRC/nvm.sh" ] && . "$NVM_SRC/nvm.sh"  # This loads nvm
-[ -s "$NVM_SRC/etc/bash_completion.d/nvm" ] && . "$NVM_SRC/etc/bash_completion.d/nvm" # This loads nvm bash_completion
+[ -s "/opt/homebrew/opt/nvm/nvm.sh" ] && . "/opt/homebrew/opt/nvm/nvm.sh"  # This loads nvm
+[ -s "/opt/homebrew/opt/nvm/etc/bash_completion.d/nvm" ] && . "/opt/homebrew/opt/nvm/etc/bash_completion.d/nvm"  # This loads nvm bash_completion
 
 clear

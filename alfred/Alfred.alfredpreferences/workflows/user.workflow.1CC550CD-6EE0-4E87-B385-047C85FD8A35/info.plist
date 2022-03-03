@@ -105,6 +105,8 @@ for url in  urls:
 				<false/>
 				<key>alfredfiltersresultsmatchmode</key>
 				<integer>0</integer>
+				<key>argumenttreatemptyqueryasnil</key>
+				<false/>
 				<key>argumenttrimmode</key>
 				<integer>0</integer>
 				<key>argumenttype</key>
@@ -143,7 +145,7 @@ for url in  urls:
 			<key>uid</key>
 			<string>90677662-35FF-41CB-93F4-6758357932B1</string>
 			<key>version</key>
-			<integer>2</integer>
+			<integer>3</integer>
 		</dict>
 		<dict>
 			<key>config</key>
@@ -152,6 +154,8 @@ for url in  urls:
 				<false/>
 				<key>alfredfiltersresultsmatchmode</key>
 				<integer>0</integer>
+				<key>argumenttreatemptyqueryasnil</key>
+				<false/>
 				<key>argumenttrimmode</key>
 				<integer>0</integer>
 				<key>argumenttype</key>
@@ -188,13 +192,13 @@ function url_exists {
 }
 
 function notification {
-  readonly local notificator="$(find . -type d -name 'Notificator.app')"
+  local -r notificator="$(find . -type d -name 'Notificator.app')"
   if [[ -n "${notificator}" ]]; then
     "${notificator}/Contents/Resources/Scripts/notificator" --message "${1}" --title "${alfred_workflow_name}" --subtitle 'A new version is available'
     return
   fi
 
-  readonly local terminal_notifier="$(find . -type f -name 'terminal-notifier')"
+  local -r terminal_notifier="$(find . -type f -name 'terminal-notifier')"
   if [[ -n "${terminal_notifier}" ]]; then
     "${terminal_notifier}" -title "${alfred_workflow_name}" -subtitle 'A new version is available' -message "${1}"
     return
@@ -258,7 +262,7 @@ fi</string>
 			<key>uid</key>
 			<string>6962A89C-AE02-4EED-9E16-D2E74C1CD9C5</string>
 			<key>version</key>
-			<integer>2</integer>
+			<integer>3</integer>
 		</dict>
 		<dict>
 			<key>config</key>
@@ -267,6 +271,8 @@ fi</string>
 				<false/>
 				<key>alfredfiltersresultsmatchmode</key>
 				<integer>0</integer>
+				<key>argumenttreatemptyqueryasnil</key>
+				<false/>
 				<key>argumenttrimmode</key>
 				<integer>0</integer>
 				<key>argumenttype</key>
@@ -303,13 +309,13 @@ function url_exists {
 }
 
 function notification {
-  readonly local notificator="$(find . -type d -name 'Notificator.app')"
+  local -r notificator="$(find . -type d -name 'Notificator.app')"
   if [[ -n "${notificator}" ]]; then
     "${notificator}/Contents/Resources/Scripts/notificator" --message "${1}" --title "${alfred_workflow_name}" --subtitle 'A new version is available'
     return
   fi
 
-  readonly local terminal_notifier="$(find . -type f -name 'terminal-notifier')"
+  local -r terminal_notifier="$(find . -type f -name 'terminal-notifier')"
   if [[ -n "${terminal_notifier}" ]]; then
     "${terminal_notifier}" -title "${alfred_workflow_name}" -subtitle 'A new version is available' -message "${1}"
     return
@@ -373,7 +379,7 @@ fi</string>
 			<key>uid</key>
 			<string>7552CA74-5099-42FE-BAB4-EEDA799BC23E</string>
 			<key>version</key>
-			<integer>2</integer>
+			<integer>3</integer>
 		</dict>
 		<dict>
 			<key>config</key>
@@ -382,6 +388,8 @@ fi</string>
 				<false/>
 				<key>alfredfiltersresultsmatchmode</key>
 				<integer>0</integer>
+				<key>argumenttreatemptyqueryasnil</key>
+				<false/>
 				<key>argumenttrimmode</key>
 				<integer>0</integer>
 				<key>argumenttype</key>
@@ -420,14 +428,16 @@ fi</string>
 			<key>uid</key>
 			<string>B8455555-F05D-4969-83C9-5DE09914B79D</string>
 			<key>version</key>
-			<integer>2</integer>
+			<integer>3</integer>
 		</dict>
 		<dict>
 			<key>config</key>
 			<dict>
 				<key>applescript</key>
 				<string>on alfred_script(q)
-	tell application "Alfred 2"		search "movie " &amp; q	end tell
+	tell application "Alfred 2"
+		search "movie " &amp; q
+	end tell
 end alfred_script</string>
 				<key>cachescript</key>
 				<false/>
@@ -457,7 +467,9 @@ end alfred_script</string>
 			<dict>
 				<key>applescript</key>
 				<string>on alfred_script(q)
-	tell application "Alfred 2"		search "tv " &amp; q	end tell
+	tell application "Alfred 2"
+		search "tv " &amp; q
+	end tell
 end alfred_script</string>
 				<key>cachescript</key>
 				<false/>
@@ -566,12 +578,16 @@ A free API key for OMDb is provided, but you may set your own in the Workflow En
 	</dict>
 	<key>variables</key>
 	<dict>
+		<key>locale</key>
+		<string>US</string>
 		<key>omdb_api_key</key>
 		<string>1bf8d40a</string>
 	</dict>
+	<key>variablesdontexport</key>
+	<array/>
 	<key>version</key>
-	<string>2.6</string>
+	<string>2.10.1</string>
 	<key>webaddress</key>
-	<string>https://github.com/tmcknight</string>
+	<string>https://github.com/tmcknight/Movie-and-TV-Show-Search-Alfred-Workflow</string>
 </dict>
 </plist>
