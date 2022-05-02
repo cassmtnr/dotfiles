@@ -11,7 +11,7 @@ brew_apps=(
     firefox
     github
     google-chrome
-    hyper
+    iterm2
     java
     postman
     spotify

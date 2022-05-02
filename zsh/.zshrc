@@ -36,6 +36,8 @@ playwright-install () {
     HTTPS_PROXY=http://"$@" npx playwright install
 }
 
+# Pegar do zscaler
+
 ENABLE_CORRECTION="true"
 COMPLETION_WAITING_DOTS="true"
 
