@@ -64,7 +64,7 @@ alias dt="cd ~/Desktop"
 alias work="cd ~/Work"
 alias dev="cd ~/Dev"
 
-alias banking="cd ~/Work/banking"
+alias banking="cd ~/Work/web-banking"
 
 alias g="git"
 alias stash="git stash"
@@ -81,7 +81,7 @@ alias reinstall="rm-node && yarn"
 
 alias ip="netstat -rn | grep default"
 alias sshq="code ~/.ssh"
-alias ip="ifconfig | grep 'inet ' | grep -Fv 127.0.0.1 | awk '{print $2}'"
+alias ip="ipconfig getifaddr en0"
 
 # Get OS X Software Updates, and update installed Ruby gems, Homebrew, npm, and their installed packages
 alias update='sudo softwareupdate -i -a; brew update; brew upgrade --all; brew cleanup; npm install npm -g; npm update -g'
@@ -120,6 +120,6 @@ export NVM_DIR="$HOME/.nvm"
 [ -s "/opt/homebrew/opt/nvm/nvm.sh" ] && . "/opt/homebrew/opt/nvm/nvm.sh"  # This loads nvm
 [ -s "/opt/homebrew/opt/nvm/etc/bash_completion.d/nvm" ] && . "/opt/homebrew/opt/nvm/etc/bash_completion.d/nvm"  # This loads nvm bash_completion
 
-nvm use v16.13.1
+nvm use v14.19.3
 
 clear
