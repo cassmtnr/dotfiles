@@ -65,6 +65,7 @@ alias work="cd ~/Work"
 alias dev="cd ~/Dev"
 
 alias banking="cd ~/Work/web-banking"
+alias proxy="cd ~/Work/package-web-proxy"
 
 alias g="git"
 alias stash="git stash"
@@ -72,6 +73,9 @@ alias pop="git stash pop"
 alias status="git status"
 alias develop="git checkout develop && git fetch --all && git pull"
 alias push-no-verify="git push --force-with-lease --no-verify"
+alias squash-all="git reset $(git merge-base develop $(git branch --show-current))"
+alias yarn-link-ls="( ls -l node_modules ; ls -l node_modules/@* ) | grep ^l"
+
 
 alias n="npm"
 alias y="yarn"
