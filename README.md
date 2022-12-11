@@ -1,9 +1,11 @@
 # dotfiles.
+
 These are my personal tweaks and dotfiles.
 
 In this repository I save all the scripts, alias and dotfiles I use everyday on my personal computer.
 
 ## before everything
+
 First, I am using [Homebrew](https://brew.sh/), [Homebrew Cask](https://github.com/caskroom/homebrew-cask) and [MAS](https://github.com/mas-cli/mas) to install Mac applications and command-line tools.
 
 Secondly, this repository also includes system preferences, which you can carefully check in my [macOS defaults file](macos/defaults).
@@ -11,14 +13,17 @@ Secondly, this repository also includes system preferences, which you can carefu
 <!-- Lastly, not every file in this repository is being directly used. Some files, such as editor settings, are here for backup purposes. -->
 
 ## starting the installation
+
 **1.** Check for software updates.
+
 ```sh
 $ sudo softwareupdate -i -r
 ```
 
 **2.** Get this project somehow and go to its directory. Using [Git](http://www.git-scm.com/):
+
 ```sh
-$ git clone https://github.com/cassianomon/dotfiles.git ~/dotfiles
+$ git clone https://github.com/bazzmoke/dotfiles.git ~/dotfiles
 $ cd ~/dotfiles
 ```
 
@@ -27,6 +32,7 @@ $ cd ~/dotfiles
 ```sh
 $ sh ./start.sh
 ```
+
 <!--
 **4.** Install dotfiles (see [brewfile](brew/brewfile)).
 
@@ -56,8 +62,8 @@ We can learn a lot about productivity just exploring the way people work every d
 I can't agree more with [Holman](https://github.com/holman)'s thoughts on dotfiles: [dotfiles are meant to be forked](http://zachholman.com/2010/08/dotfiles-are-meant-to-be-forked). -->
 
 ###### LICENSE
-[![CC0](http://mirrors.creativecommons.org/presskit/buttons/88x31/svg/cc-zero.svg)](http://creativecommons.org/publicdomain/zero/1.0/)
 
+[![CC0](http://mirrors.creativecommons.org/presskit/buttons/88x31/svg/cc-zero.svg)](http://creativecommons.org/publicdomain/zero/1.0/)
 
 ## Inspired by their dotfiles
 

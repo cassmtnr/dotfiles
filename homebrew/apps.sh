@@ -1,6 +1,5 @@
 # Everyone has different preferences of apps.
 # This is a list of stuff I usually install
-#
 
 brew_apps=(
     nvm
@@ -17,7 +16,6 @@ brew_apps=(
     spotify
     sublime-text
     the-unarchiver
-    transmission
     visual-studio-code
     vlc
 )
@@ -35,13 +33,19 @@ mas_apps=(
     441258766
     #Xcode
     497799835
-    #Bear
-    1091189122
+    #Craft
+
+    #RunCat
+    1429033973
+
+    #Today
+    #Pure Paste
 )
 
 npm_global_packages=(
-    now
-    surge
+    npm
+    tls-test
+    typescript
 )
 
 echo "Installing brew apps..."
@@ -53,8 +57,8 @@ brew  install ${brew_fonts[@]}
 brew cleanup
 
 # NVM install NodeJS
-nvm install v14.19.3
-nvm use v14.19.3
+nvm install v18.7.0
+nvm use v18.7.0
 
 echo "Installing Global NPM Packages..."
 npm install -g ${npm_global_packages[@]}
