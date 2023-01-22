@@ -6,7 +6,7 @@ export PATH="$PATH:$HOME/.config/yarn/global/node_modules/.bin"
 export PATH="/opt/homebrew/opt/openjdk/bin:$PATH"
 
 export NODE_OPTIONS="--max-old-space-size=8192"
-export NODE_EXTRA_CA_CERTS="~/RootCA_01.pem"
+export NODE_EXTRA_CA_CERTS="$HOME/RootCA_01.pem"
 
 # Loads NVM
 export NVM_DIR="$HOME/.nvm"
@@ -23,9 +23,8 @@ ZSH_THEME="robbyrussell"
 ZSH_DISABLE_COMPFIX="true"
 UPDATE_ZSH_DAYS=30
 DISABLE_AUTO_UPDATE="true"
-ENABLE_CORRECTION="true"
+ENABLE_CORRECTION="false"
 COMPLETION_WAITING_DOTS="true"
-
 
 mkd () {
     mkdir -p "$@" && cd "$@"
@@ -70,6 +69,9 @@ alias proxy="cd ~/Work/package-web-proxy"
 
 alias cls="clear"
 alias g="git"
+alias upstream="git push -u origin HEAD"
+alias amend="git commit --amend --no-edit"
+alias force="git push --force --no-verify"
 alias stash="git stash"
 alias pop="git stash pop"
 alias status="git status"
