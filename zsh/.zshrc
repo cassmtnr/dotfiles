@@ -65,6 +65,8 @@ alias work="cd ~/Work"
 alias dev="cd ~/Dev"
 
 alias banking="cd ~/Work/web-banking"
+alias review="cd ~/Work/web-banking-review"
+alias to-vite="cd ~/Work/web-banking-vite"
 alias proxy="cd ~/Work/package-web-proxy"
 
 alias cls="clear"
