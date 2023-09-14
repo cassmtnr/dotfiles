@@ -11,6 +11,8 @@
 *.tar
 *.zip
 
+.history/
+
 # OS generated files #
 ######################
 .DS_Store
