@@ -92,9 +92,10 @@ ssh-add ~/.ssh/work/gitlab
 
 source $ZSH/oh-my-zsh.sh
 
+clear
+
+
 # pnpm
 export PNPM_HOME="/Users/cassianomontanari/Library/pnpm"
 export PATH="$PNPM_HOME:$PATH"
 # pnpm end
-
-clear
