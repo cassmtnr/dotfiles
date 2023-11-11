@@ -1,3 +1,13 @@
+export ZSH=$HOME/.oh-my-zsh
+
+plugins=(
+  git
+  zsh-completions
+  zsh-autosuggestions
+  zsh-syntax-highlighting
+)
+
+
 export PATH="/usr/local/bin:$PATH"
 export PATH="$PATH:$HOME/.config/yarn/global/node_modules/.bin"
 
@@ -13,8 +23,6 @@ export NVM_DIR="$HOME/.nvm"
 
 nvm use v18.7.0
 
-export ZSH=$HOME/.oh-my-zsh
-
 
 # ZSH
 ZSH_THEME="robbyrussell"
@@ -23,6 +31,10 @@ UPDATE_ZSH_DAYS=30
 DISABLE_AUTO_UPDATE="true"
 ENABLE_CORRECTION="false"
 COMPLETION_WAITING_DOTS="true"
+
+# load zsh-completions
+autoload -U compinit && compinit
+
 
 mkd () {
     mkdir -p "$@" && cd "$@"
@@ -47,6 +59,12 @@ weather () {
 alias zrc="code ~/dotfiles/zsh/.zshrc"
 alias dot="cd ~/dotfiles && code ."
 alias dotfiles="cd ~/dotfiles"
+alias myip="ipconfig getifaddr en0"
+alias zshsource="source ~/.zshrc"
+alias gitconfig="vim ~/.gitconfig"
+
+# type sublime . to open current folder in Sublime Text
+alias sublime="/Applications/Sublime\ Text.app/Contents/SharedSupport/bin/subl --new-window $@"
 
 # # Easier navigation: .., ..., ...., .....
 
@@ -62,25 +80,23 @@ alias dt="cd ~/Desktop"
 alias work="cd ~/Work"
 alias dev="cd ~/Dev"
 
-alias banking="cd ~/Work/web-banking"
-alias review="cd ~/Work/web-banking-review"
-alias tovite="cd ~/Work/web-banking-vite"
-alias proxy="cd ~/Work/package-web-proxy"
+# Exclusive for WORK machine:
+# alias banking="cd ~/Work/web-banking"
+# alias review="cd ~/Work/web-banking-review"
+# alias tovite="cd ~/Work/web-banking-vite"
+# alias proxy="cd ~/Work/package-web-proxy"
+# alias linkls="( ls -l node_modules ; ls -l node_modules/@* ) | grep ^l"
 
-alias cls="clear"
-alias g="git"
-alias upstream="git push -u origin HEAD"
 alias amend="git commit --amend --no-edit"
-alias force="git push --force --no-verify"
-alias stash="git stash"
-alias pop="git stash pop"
-alias status="git status"
+alias cls="clear"
 alias develop="git checkout develop && git fetch --all && git pull"
+alias force="git push --force --no-verify"
+alias pop="git stash pop"
 alias push-force="git push --force-with-lease --no-verify"
-# alias squash="g reset $(g merge-base develop $(g branch --show-current))"
-alias linkls="( ls -l node_modules ; ls -l node_modules/@* ) | grep ^l"
+alias stash="git stash"
+alias status="git status"
+alias upstream="git push -u origin HEAD"
 
-alias ip="netstat -rn | grep default"
 
 # # Kill all the tabs in Chrome to free up memory
 # # [C] explained: http://www.commandlinefu.com/commands/view/402/exclude-grep-from-your-grepped-output-of-ps-alias-included-in-description
@@ -93,12 +109,6 @@ ssh-add ~/.ssh/dev/github
 
 
 source $ZSH/oh-my-zsh.sh
-
-# pnpm
-export PNPM_HOME="/Users/cassianomontanari/Library/pnpm"
-export PATH="$PNPM_HOME:$PATH"
-# pnpm end
-
 
 eval "$(starship init zsh)"
 
