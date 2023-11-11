@@ -5,14 +5,9 @@ brew_apps=(
     nvm
     zsh
     yarn
-    alfred
-    1password
     firefox
-    github
     google-chrome
     iterm2
-    java
-    postman
     spotify
     sublime-text
     the-unarchiver
@@ -44,8 +39,6 @@ mas_apps=(
 
 npm_global_packages=(
     npm
-    tls-test
-    typescript
 )
 
 echo "Installing brew apps..."

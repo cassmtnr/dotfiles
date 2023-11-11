@@ -13,6 +13,9 @@ echo "============================="
 echo "Installing Oh My Zsh!"
 echo "============================="
 
+# Remove already existing Oh My Zsh! folder
+rm -r ~/.oh-my-zsh
+
 sh -c "$(curl -fsSL https://raw.githubusercontent.com/robbyrussell/oh-my-zsh/master/tools/install.sh)"
 
 echo "============================="

@@ -26,10 +26,10 @@ sudo chown "${UID}" ~/Library/Preferences
 ###############################################################################
 
 # Set computer name (as done via System Preferences → Sharing)
-sudo scutil --set ComputerName "MACHINE"
-sudo scutil --set HostName "MACHINE"
-sudo scutil --set LocalHostName "MACHINE"
-sudo defaults write /Library/Preferences/SystemConfiguration/com.apple.smb.server NetBIOSName -string "MACHINE"
+sudo scutil --set ComputerName "MACH"
+sudo scutil --set HostName "MACH"
+sudo scutil --set LocalHostName "MACH"
+sudo defaults write /Library/Preferences/SystemConfiguration/com.apple.smb.server NetBIOSName -string "MACH"
 
 # Set standby delay to 24 hours (default is 1 hour)
 # sudo pmset -a standbydelay 86400

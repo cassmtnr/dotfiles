@@ -1,9 +1,10 @@
 export PATH="/usr/local/bin:$PATH"
 export PATH="$PATH:$HOME/.config/yarn/global/node_modules/.bin"
-export PATH="/opt/homebrew/opt/openjdk/bin:$PATH"
 
 export NODE_OPTIONS="--max-old-space-size=8192"
-export NODE_EXTRA_CA_CERTS="$HOME/RootCA_01.pem"
+
+# Exclusive for WORK machine:
+# export NODE_EXTRA_CA_CERTS="$HOME/RootCA_01.pem"
 
 # Loads NVM
 export NVM_DIR="$HOME/.nvm"
@@ -87,7 +88,8 @@ alias chromekill="ps ux | grep '[C]hrome Helper --type=renderer' | grep -v exten
 
 eval $(ssh-agent)
 ssh-add ~/.ssh/dev/github
-ssh-add ~/.ssh/work/gitlab
+# Exclusive for WORK machine:
+# ssh-add ~/.ssh/work/gitlab
 
 
 source $ZSH/oh-my-zsh.sh
@@ -96,5 +98,8 @@ source $ZSH/oh-my-zsh.sh
 export PNPM_HOME="/Users/cassianomontanari/Library/pnpm"
 export PATH="$PNPM_HOME:$PATH"
 # pnpm end
+
+
+eval "$(starship init zsh)"
 
 clear
