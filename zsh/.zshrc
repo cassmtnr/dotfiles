@@ -107,9 +107,11 @@ ssh-add ~/.ssh/dev/github
 # Exclusive for WORK machine:
 # ssh-add ~/.ssh/work/gitlab
 
+[[ -s "/Users/cassiano/.gvm/scripts/gvm" ]] && source "/Users/cassiano/.gvm/scripts/gvm"
 
 source $ZSH/oh-my-zsh.sh
 
 eval "$(starship init zsh)"
 
 clear
+
