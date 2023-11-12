@@ -41,10 +41,10 @@ npm_global_packages=(
     npm
 )
 
-echo "Installing brew apps..."
+echo "Installing brew apps"
 brew install ${brew_apps[@]}
 
-echo "Installing some brew fonts..."
+echo "Installing some brew fonts"
 brew  install ${brew_fonts[@]}
 
 brew cleanup
@@ -53,7 +53,18 @@ brew cleanup
 nvm install v18.7.0
 nvm use v18.7.0
 
-echo "Installing Global NPM Packages..."
+echo "Installing Global NPM Packages"
 npm install -g ${npm_global_packages[@]}
+
+
+# Install Go Version Manager
+echo "Installing Go Version Manager"
+bash < <(curl -s -S -L https://raw.githubusercontent.com/moovweb/gvm/master/binscripts/gvm-installer)
+
+# Install Go v1.21.4
+echo "Installing Go v1.21.4"
+gvm install go1.21.4 -B
+gvm use go1.21.4
+gvm list
 
 echo "It's done!"

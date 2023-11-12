@@ -30,3 +30,13 @@ fi
 
 ln -s -F -i "$DOTFILES_ROOT/zsh/.zshrc" "$HOME/.zshrc"
 echo ".zshrc file added to home"
+
+
+echo "============================="
+echo "Starting settings MacOS configuration"
+echo "============================="
+
+# Creates a folder for screenshots
+mkdir -p "$HOME/Screenshots"
+
+sh macos/defaults.sh
