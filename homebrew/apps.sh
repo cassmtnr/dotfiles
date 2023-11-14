@@ -1,8 +1,6 @@
 ## Define Homebrew apps
 
 brew_apps=(
-    nvm
-    yarn
     firefox
     google-chrome
     iterm2
@@ -11,6 +9,8 @@ brew_apps=(
     the-unarchiver
     visual-studio-code
     vlc
+    nvm
+    yarn
     zsh
     zsh-completions
     zsh-syntax-highlighting
