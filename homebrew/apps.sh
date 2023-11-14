@@ -1,9 +1,7 @@
-# Everyone has different preferences of apps.
-# This is a list of stuff I usually install
+## Define Homebrew apps
 
 brew_apps=(
     nvm
-    zsh
     yarn
     firefox
     google-chrome
@@ -13,6 +11,10 @@ brew_apps=(
     the-unarchiver
     visual-studio-code
     vlc
+    zsh
+    zsh-completions
+    zsh-syntax-highlighting
+    zsh-autosuggestions
 )
 
 brew_fonts=(
@@ -23,18 +25,12 @@ brew_fonts=(
 
 mas_apps=(
     #Amphetamine
-    937984704
     #Magnet
-    441258766
     #Xcode
-    497799835
     #Craft
-
     #RunCat
-    1429033973
-
-    #Today
     #Pure Paste
+    #Command X
 )
 
 npm_global_packages=(
