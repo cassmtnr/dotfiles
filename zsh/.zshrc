@@ -15,7 +15,7 @@ export PATH="$PATH:$HOME/.config/yarn/global/node_modules/.bin"
 export NODE_OPTIONS="--max-old-space-size=8192"
 
 # Exclusive for WORK machine:
-# export NODE_EXTRA_CA_CERTS="$HOME/RootCA_01.pem"
+export NODE_EXTRA_CA_CERTS="$HOME/RootCA_01.pem"
 
 # Loads NVM
 export NVM_DIR="$HOME/.nvm"
@@ -84,11 +84,11 @@ alias work="cd ~/Work"
 alias dev="cd ~/Dev"
 
 # Exclusive for WORK machine:
-# alias banking="cd ~/Work/web-banking"
-# alias review="cd ~/Work/web-banking-review"
-# alias tovite="cd ~/Work/web-banking-vite"
-# alias proxy="cd ~/Work/package-web-proxy"
-# alias linkls="( ls -l node_modules ; ls -l node_modules/@* ) | grep ^l"
+alias banking="cd ~/Work/web-banking"
+alias review="cd ~/Work/web-banking-review"
+alias tovite="cd ~/Work/web-banking-vite"
+alias proxy="cd ~/Work/package-web-proxy"
+alias linkls="( ls -l node_modules ; ls -l node_modules/@* ) | grep ^l"
 
 alias amend="git commit --amend --no-edit"
 alias cls="clear"
@@ -108,7 +108,7 @@ alias chromekill="ps ux | grep '[C]hrome Helper --type=renderer' | grep -v exten
 eval $(ssh-agent)
 ssh-add ~/.ssh/dev/github
 # Exclusive for WORK machine:
-# ssh-add ~/.ssh/work/gitlab
+ssh-add ~/.ssh/work/gitlab
 
 [[ -s "/Users/cassiano/.gvm/scripts/gvm" ]] && source "/Users/cassiano/.gvm/scripts/gvm"
 
