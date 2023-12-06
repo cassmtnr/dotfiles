@@ -3,7 +3,6 @@
 brew_apps=(
     firefox
     google-chrome
-    iterm2
     spotify
     sublime-text
     the-unarchiver
