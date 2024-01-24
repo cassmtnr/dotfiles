@@ -37,6 +37,10 @@ COMPLETION_WAITING_DOTS="true"
 autoload -U compinit && compinit
 
 
+# ###########
+# FUNCTIONS #
+# ###########
+
 mkd () {
     mkdir -p "$@" && cd "$@"
 }
@@ -46,9 +50,9 @@ killport () {
 }
 
 # Exclusive for WORK machine:
-# playwright-install () {
-#     HTTPS_PROXY=http://"$@" npx playwright install
-# }
+playwright-install () {
+    HTTPS_PROXY=http://"$@" npx playwright install
+}
 
 weather () {
     curl wttr.in/"$@"
@@ -99,6 +103,7 @@ alias push-force="git push --force-with-lease --no-verify"
 alias stash="git stash"
 alias status="git status"
 alias upstream="git push -u origin HEAD"
+alias reset="git reset origin/develop --hard && yarn"
 
 
 # # Kill all the tabs in Chrome to free up memory
