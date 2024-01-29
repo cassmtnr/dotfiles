@@ -1,14 +1,14 @@
 ## Define Homebrew apps
 
 brew_apps=(
-    firefox
     google-chrome
+    kitty
+    nvm
     spotify
     sublime-text
     the-unarchiver
     visual-studio-code
     vlc
-    nvm
     yarn
     zsh
     zsh-completions
