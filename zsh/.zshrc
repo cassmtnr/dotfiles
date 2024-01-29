@@ -60,6 +60,7 @@ weather () {
 
 alias zrc="code ~/dotfiles/zsh/.zshrc"
 alias dot="cd ~/dotfiles && code ."
+alias meow="cd ~/.config/kitty && code ."
 alias dotfiles="cd ~/dotfiles"
 alias myip="ipconfig getifaddr en0"
 alias zshsource="source ~/.zshrc"
