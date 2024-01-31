@@ -354,10 +354,16 @@ defaults write com.apple.dock enable-spring-load-actions-on-all-items -bool true
 # Show indicator lights for open applications in the Dock
 defaults write com.apple.dock show-process-indicators -bool true
 
+# Enable magnification of the Dock icons on hover
+defaults write com.apple.dock magnification -bool true
+
+# Set the icons magnification level to 72
+defaults write com.apple.dock largesize -int 72
+
 # Wipe all (default) app icons from the Dock
 # This is only really useful when setting up a new Mac, or if you don’t use
 # the Dock to launch apps.
-#defaults write com.apple.dock persistent-apps -array
+# defaults write com.apple.dock persistent-apps -array
 
 # Don’t animate opening applications from the Dock
 defaults write com.apple.dock launchanim -bool false
@@ -689,10 +695,6 @@ defaults write com.apple.dock no-bouncing -bool true
 # mute all sounds, incl volume change feedback
 #defaults write "com.apple.sound.beep.feedback" -int 0
 #defaults write "com.apple.systemsound" "com.apple.sound.uiaudio.enabled" -int 0
-
-# Bottom left screen corner → Desktop
-defaults write com.apple.dock wvous-bl-corner -int 4
-defaults write com.apple.dock wvous-bl-modifier -int 0
 
 ###############################################################################
 # Kill affected applications                                                  #
