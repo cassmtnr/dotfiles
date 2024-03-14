@@ -33,6 +33,12 @@ $ cd ~/dotfiles
 $ sh ./start.sh
 ```
 
+### TODO
+
+- Integrate Kitty Config (https://github.com/cassmtnr/kitty-config) to the dotfiles
+- Automate the creation of the kitty config folder under ~/.config
+- Create symlinks of the files in the kitty config folder
+
 <!--
 **4.** Install dotfiles (see [brewfile](brew/brewfile)).
 
