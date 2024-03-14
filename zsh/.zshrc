@@ -90,7 +90,6 @@ alias dev="cd ~/Dev"
 # Exclusive for WORK machine:
 alias banking="cd ~/Work/web-banking"
 alias review="cd ~/Work/web-banking-review"
-alias tovite="cd ~/Work/web-banking-vite"
 alias proxy="cd ~/Work/package-web-proxy"
 alias linkls="( ls -l node_modules ; ls -l node_modules/@* ) | grep ^l"
 
