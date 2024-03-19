@@ -103,6 +103,7 @@ alias stash="git stash"
 alias status="git status"
 alias upstream="git push -u origin HEAD"
 alias reset="git reset origin/develop --hard && yarn"
+alias rebase="git rebase origin/develop && yarn"
 
 
 # # Kill all the tabs in Chrome to free up memory
