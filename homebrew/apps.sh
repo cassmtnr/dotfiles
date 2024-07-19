@@ -40,7 +40,7 @@ echo "Installing brew apps"
 brew install ${brew_apps[@]}
 
 echo "Installing some brew fonts"
-brew  install ${brew_fonts[@]}
+brew install ${brew_fonts[@]}
 
 brew cleanup
 

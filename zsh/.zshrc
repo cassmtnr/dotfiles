@@ -17,6 +17,13 @@ export NODE_OPTIONS="--max-old-space-size=8192"
 # Exclusive for WORK machine:
 export NODE_EXTRA_CA_CERTS="$HOME/RootCA_01.pem"
 
+export GIT_SSL_CAINFO='/Users/cassiano.montanari/.certs/all.pem'
+export AWS_CA_BUNDLE='/Users/cassiano.montanari/.certs/all.pem'
+export NODE_EXTRA_CA_CERTS='/Users/cassiano.montanari/.certs/all.pem'
+export SSL_CERT_FILE='/Users/cassiano.montanari/.certs/all.pem'
+
+
+
 # Loads NVM
 export NVM_DIR="$HOME/.nvm"
 [ -s "/opt/homebrew/opt/nvm/nvm.sh" ] && . "/opt/homebrew/opt/nvm/nvm.sh"
