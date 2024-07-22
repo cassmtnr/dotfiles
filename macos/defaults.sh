@@ -16,18 +16,18 @@ while true; do sudo -n true; sleep 60; kill -0 "$$" || exit; done 2>/dev/null &
 
 echo "Setup started... Hold on..."
 
-sudo chmod 700 ~/Library/Preferences
-sudo chown "${UID}" ~/Library/Preferences
+sudo chown root ~/Library/Preferences
+sudo chmod 777 ~/Library/Preferences
 
 ###############################################################################
 # General UI/UX                                                               #
 ###############################################################################
 
 # Set computer name (as done via System Preferences → Sharing)
-sudo scutil --set ComputerName "MACH"
-sudo scutil --set HostName "MACH"
-sudo scutil --set LocalHostName "MACH"
-sudo defaults write /Library/Preferences/SystemConfiguration/com.apple.smb.server NetBIOSName -string "MACH"
+sudo scutil --set ComputerName "WORK"
+sudo scutil --set HostName "WORK"
+sudo scutil --set LocalHostName "WORK"
+sudo defaults write /Library/Preferences/SystemConfiguration/com.apple.smb.server NetBIOSName -string "WORK"
 
 # Set standby delay to 24 hours (default is 1 hour)
 # sudo pmset -a standbydelay 86400
