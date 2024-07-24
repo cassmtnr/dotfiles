@@ -9,9 +9,9 @@ echo "=============================="
 sh "$DOTFILES_ROOT/homebrew/install.sh"
 sh "$DOTFILES_ROOT/homebrew/apps.sh"
 
-echo "============================="
+echo "====================="
 echo "Installing Oh My Zsh!"
-echo "============================="
+echo "====================="
 
 # Remove already existing Oh My Zsh! folder
 rm -r ~/.oh-my-zsh
@@ -32,19 +32,37 @@ ln -s -F -i "$DOTFILES_ROOT/zsh/.zshrc" "$HOME/.zshrc"
 
 echo ".zshrc file added to home"
 
-echo "============================="
-echo "Setting Kitty settings"
-echo "============================="
+echo "==========================="
+echo "Setting configuration files"
+echo "==========================="
 
-mkdir -p "$HOME/.config/kitty" && for file in "$DOTFILES_ROOT/kitty"/*; do [ -e "$file" ] && ln -s "$file" "$HOME/.config/kitty/"; done
+mkdir -p "$HOME/.config"
+# Find all files and directories in the source directory
+find "$DOTFILES_ROOT/.config" -mindepth 1 -print | while read -r file; do
+  # Determine the target path
+  target="$HOME/.config/${file#$DOTFILES_ROOT/.config/}"
 
-echo "Kitty is setup is done!"
+  # Create the parent directory for the target if it doesn't exist
+  mkdir -p "$(dirname "$target")"
 
-echo "============================="
-echo "Starting settings MacOS configuration"
-echo "============================="
+  # Create the symlink
+  ln -s "$file" "$target"
+done
+
+echo "Config files setup is done!"
+
+echo "============================"
+echo "Starting MacOS settings"
+echo "============================"
 
 # Creates a folder for Screenshots
 mkdir -p "$HOME/Screenshots"
 
 sh macos/defaults.sh
+
+echo "MacOS settings is done!"
+
+
+echo "=============================="
+echo "MACHINE configuration is done!"
+echo "=============================="
