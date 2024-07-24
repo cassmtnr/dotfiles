@@ -14,8 +14,6 @@ export PATH="$PATH:$HOME/.config/yarn/global/node_modules/.bin"
 
 export NODE_OPTIONS="--max-old-space-size=8192"
 
-# Exclusive for WORK machine:
-# export NODE_EXTRA_CA_CERTS="$HOME/RootCA_01.pem"
 
 # Loads NVM
 export NVM_DIR="$HOME/.nvm"
@@ -37,6 +35,10 @@ COMPLETION_WAITING_DOTS="true"
 autoload -U compinit && compinit
 
 
+# ###########
+# FUNCTIONS #
+# ###########
+
 mkd () {
     mkdir -p "$@" && cd "$@"
 }
@@ -44,11 +46,6 @@ mkd () {
 killport () {
     lsof -t -i tcp:"$@" | xargs kill
 }
-
-# Exclusive for WORK machine:
-# playwright-install () {
-#     HTTPS_PROXY=http://"$@" npx playwright install
-# }
 
 weather () {
     curl wttr.in/"$@"
@@ -83,13 +80,6 @@ alias dt="cd ~/Desktop"
 alias work="cd ~/Work"
 alias dev="cd ~/Dev"
 
-# Exclusive for WORK machine:
-# alias banking="cd ~/Work/web-banking"
-# alias review="cd ~/Work/web-banking-review"
-# alias tovite="cd ~/Work/web-banking-vite"
-# alias proxy="cd ~/Work/package-web-proxy"
-# alias linkls="( ls -l node_modules ; ls -l node_modules/@* ) | grep ^l"
-
 alias amend="git commit --amend --no-edit"
 alias cls="clear"
 alias develop="git checkout develop && git fetch --all && git pull"
@@ -99,18 +89,16 @@ alias push-force="git push --force-with-lease --no-verify"
 alias stash="git stash"
 alias status="git status"
 alias upstream="git push -u origin HEAD"
+alias reset="git reset origin/develop --hard && yarn"
+alias rebase="git rebase origin/develop && yarn"
 
 
 # # Kill all the tabs in Chrome to free up memory
 # # [C] explained: http://www.commandlinefu.com/commands/view/402/exclude-grep-from-your-grepped-output-of-ps-alias-included-in-description
 alias chromekill="ps ux | grep '[C]hrome Helper --type=renderer' | grep -v extension-process | tr -s ' ' | cut -d ' ' -f2 | xargs kill"
 
-eval "$(pyenv init --path)"
-
 eval $(ssh-agent)
 ssh-add ~/.ssh/dev/github
-# Exclusive for WORK machine:
-# ssh-add ~/.ssh/work/gitlab
 
 [[ -s "/Users/cassiano/.gvm/scripts/gvm" ]] && source "/Users/cassiano/.gvm/scripts/gvm"
 
