@@ -23,7 +23,7 @@ echo "Starting settings of dotfiles"
 echo "============================="
 
 echo "Backing up an existing .zshrc config"
-# Backup an existing .zshrc if any
+# Backup an existing .zshrc if exists
 if [[ -f "$HOME/.zshrc" ]]; then
     mv -v "$HOME/.zshrc" "$HOME/.zshrc.bak"
 fi
@@ -40,9 +40,11 @@ mkdir -p "$HOME/.config/kitty" && for file in "$DOTFILES_ROOT/kitty"/*; do [ -e 
 
 echo "Kitty is setup is done!"
 
-
-
-
 echo "============================="
 echo "Starting settings MacOS configuration"
 echo "============================="
+
+# Creates a folder for Screenshots
+mkdir -p "$HOME/Screenshots"
+
+sh macos/defaults.sh
