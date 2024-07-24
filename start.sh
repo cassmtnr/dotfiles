@@ -29,14 +29,20 @@ if [[ -f "$HOME/.zshrc" ]]; then
 fi
 
 ln -s -F -i "$DOTFILES_ROOT/zsh/.zshrc" "$HOME/.zshrc"
+
 echo ".zshrc file added to home"
+
+echo "============================="
+echo "Setting Kitty settings"
+echo "============================="
+
+mkdir -p "$HOME/.config/kitty" && for file in "$DOTFILES_ROOT/kitty"/*; do [ -e "$file" ] && ln -s "$file" "$HOME/.config/kitty/"; done
+
+echo "Kitty is setup is done!"
+
+
 
 
 echo "============================="
 echo "Starting settings MacOS configuration"
 echo "============================="
-
-# Creates a folder for screenshots
-mkdir -p "$HOME/Screenshots"
-
-sh macos/defaults.sh
