@@ -13,6 +13,7 @@ brew_apps=(
     zsh-completions
     zsh-syntax-highlighting
     zsh-autosuggestions
+    mercurial
 )
 
 brew_fonts=(
