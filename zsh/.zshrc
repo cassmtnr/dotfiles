@@ -1,3 +1,5 @@
+# Add deno completions to search path
+if [[ ":$FPATH:" != *":/Users/cassiano.montanari/.zsh/completions:"* ]]; then export FPATH="/Users/cassiano.montanari/.zsh/completions:$FPATH"; fi
 export ZSH=$HOME/.oh-my-zsh
 
 
@@ -66,6 +68,10 @@ weather () {
     curl wttr.in/"$@"
 }
 
+go-run () {
+    CompileDaemon -command="$@"
+}
+
 # ###########
 # # ALIASES #
 # ###########
@@ -101,7 +107,6 @@ alias dev="cd ~/Dev"
 alias banking="cd ~/Work/web-banking"
 alias review="cd ~/Work/web-banking-review"
 alias proxy="cd ~/Work/package-web-proxy"
-alias linkls="( ls -l node_modules ; ls -l node_modules/@* ) | grep ^l"
 
 alias amend="git commit --amend --no-edit"
 alias cls="clear"
@@ -121,7 +126,7 @@ ssh-add ~/.ssh/dev/github
 # Exclusive for WORK machine:
 ssh-add ~/.ssh/work/gitlab
 
-[[ -s "/Users/cassiano/.gvm/scripts/gvm" ]] && source "/Users/cassiano/.gvm/scripts/gvm"
+[[ -s "/Users/cassiano.montanari/.gvm/scripts/gvm" ]] && source "/Users/cassiano.montanari/.gvm/scripts/gvm"
 
 source $ZSH/oh-my-zsh.sh
 
