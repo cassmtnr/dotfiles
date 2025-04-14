@@ -75,5 +75,4 @@ I can't agree more with [Holman](https://github.com/holman)'s thoughts on dotfil
 
 [@mathiasbynens](https://github.com/mathiasbynens/dotfiles)
 [@rodionovd](https://github.com/rodionovd/dotfiles)
-[@diessica](https://github.com/diessica/dotfiles)
 [@holman](https://github.com/holman/dotfiles)
