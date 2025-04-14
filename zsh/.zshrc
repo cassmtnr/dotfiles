@@ -1,3 +1,5 @@
+# Add deno completions to search path
+if [[ ":$FPATH:" != *":/Users/cassiano/.zsh/completions:"* ]]; then export FPATH="/Users/cassiano/.zsh/completions:$FPATH"; fi
 export ZSH=$HOME/.oh-my-zsh
 
 plugins=(
@@ -49,6 +51,10 @@ killport () {
 
 weather () {
     curl wttr.in/"$@"
+}
+
+go-run () {
+    CompileDaemon -command="$@"
 }
 
 # ###########
@@ -105,3 +111,4 @@ ssh-add ~/.ssh/dev/github
 source $ZSH/oh-my-zsh.sh
 
 clear
+. "/Users/cassiano/.deno/env"
