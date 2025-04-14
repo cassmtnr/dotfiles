@@ -5,7 +5,6 @@ brew_apps=(
     kitty
     nvm
     spotify
-    sublime-text
     the-unarchiver
     visual-studio-code
     vlc
@@ -45,8 +44,8 @@ brew install ${brew_fonts[@]}
 brew cleanup
 
 # NVM install NodeJS
-nvm install v20.9.0
-nvm use v20.9.0
+nvm install v21.7.2
+nvm use v21.7.2
 
 echo "Installing Global NPM Packages"
 npm install -g ${npm_global_packages[@]}
