@@ -1,5 +1,6 @@
 export ZSH=$HOME/.oh-my-zsh
 
+
 plugins=(
   git
 )
@@ -22,6 +23,7 @@ export AWS_CA_BUNDLE='/Users/cassiano.montanari/.certs/all.pem'
 export NODE_EXTRA_CA_CERTS='/Users/cassiano.montanari/.certs/all.pem'
 export SSL_CERT_FILE='/Users/cassiano.montanari/.certs/all.pem'
 
+source ${HOME}/.tooling-devops-cli/zsh/main.zsh
 
 
 # Loads NVM
@@ -29,8 +31,7 @@ export NVM_DIR="$HOME/.nvm"
 [ -s "/opt/homebrew/opt/nvm/nvm.sh" ] && . "/opt/homebrew/opt/nvm/nvm.sh"
 [ -s "/opt/homebrew/opt/nvm/etc/bash_completion.d/nvm" ] && . "/opt/homebrew/opt/nvm/etc/bash_completion.d/nvm"
 
-nvm use v20.9.0
-
+nvm use v21.7.2
 
 # ZSH
 ZSH_THEME="robbyrussell"
@@ -77,8 +78,10 @@ alias myip="ipconfig getifaddr en0"
 alias zshsource="source ~/.zshrc"
 alias gitconfig="vim ~/.gitconfig"
 
-# type sublime . to open current folder in Sublime Text
-alias sublime="/Applications/Sublime\ Text.app/Contents/SharedSupport/bin/subl --new-window $@"
+# # Kill all the tabs in Chrome to free up memory
+# # [C] explained: http://www.commandlinefu.com/commands/view/402/exclude-grep-from-your-grepped-output-of-ps-alias-included-in-description
+alias chromekill="ps ux | grep '[C]hrome Helper --type=renderer' | grep -v extension-process | tr -s ' ' | cut -d ' ' -f2 | xargs kill"
+
 
 # # Easier navigation: .., ..., ...., .....
 
@@ -111,11 +114,7 @@ alias status="git status"
 alias upstream="git push -u origin HEAD"
 alias reset="git reset origin/develop --hard && yarn"
 alias rebase="git rebase origin/develop && yarn"
-
-
-# # Kill all the tabs in Chrome to free up memory
-# # [C] explained: http://www.commandlinefu.com/commands/view/402/exclude-grep-from-your-grepped-output-of-ps-alias-included-in-description
-alias chromekill="ps ux | grep '[C]hrome Helper --type=renderer' | grep -v extension-process | tr -s ' ' | cut -d ' ' -f2 | xargs kill"
+alias linked="ls -l node_modules | grep ^l"
 
 eval $(ssh-agent)
 ssh-add ~/.ssh/dev/github
@@ -127,3 +126,24 @@ ssh-add ~/.ssh/work/gitlab
 source $ZSH/oh-my-zsh.sh
 
 clear
+
+export GIT_SSL_CAINFO='/Users/cassiano.montanari/.certs/all.pem'
+export AWS_CA_BUNDLE='/Users/cassiano.montanari/.certs/all.pem'
+export NODE_EXTRA_CA_CERTS='/Users/cassiano.montanari/.certs/all.pem'
+export SSL_CERT_FILE='/Users/cassiano.montanari/.certs/all.pem'
+export GIT_SSL_CAINFO='/Users/cassiano.montanari/.certs/all.pem'
+export AWS_CA_BUNDLE='/Users/cassiano.montanari/.certs/all.pem'
+export NODE_EXTRA_CA_CERTS='/Users/cassiano.montanari/.certs/all.pem'
+export SSL_CERT_FILE='/Users/cassiano.montanari/.certs/all.pem'
+export GIT_SSL_CAINFO='/Users/cassiano.montanari/.certs/all.pem'
+export AWS_CA_BUNDLE='/Users/cassiano.montanari/.certs/all.pem'
+export NODE_EXTRA_CA_CERTS='/Users/cassiano.montanari/.certs/all.pem'
+export SSL_CERT_FILE='/Users/cassiano.montanari/.certs/all.pem'
+export GIT_SSL_CAINFO='/Users/cassiano.montanari/.certs/all.pem'
+export AWS_CA_BUNDLE='/Users/cassiano.montanari/.certs/all.pem'
+export NODE_EXTRA_CA_CERTS='/Users/cassiano.montanari/.certs/all.pem'
+export SSL_CERT_FILE='/Users/cassiano.montanari/.certs/all.pem'
+export GIT_SSL_CAINFO='/Users/cassiano.montanari/.certs/all.pem'
+export AWS_CA_BUNDLE='/Users/cassiano.montanari/.certs/all.pem'
+export NODE_EXTRA_CA_CERTS='/Users/cassiano.montanari/.certs/all.pem'
+export SSL_CERT_FILE='/Users/cassiano.montanari/.certs/all.pem'
