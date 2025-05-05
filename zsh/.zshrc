@@ -33,7 +33,7 @@ export NVM_DIR="$HOME/.nvm"
 [ -s "/opt/homebrew/opt/nvm/nvm.sh" ] && . "/opt/homebrew/opt/nvm/nvm.sh"
 [ -s "/opt/homebrew/opt/nvm/etc/bash_completion.d/nvm" ] && . "/opt/homebrew/opt/nvm/etc/bash_completion.d/nvm"
 
-nvm use v21.7.2
+nvm use v20.9.0
 
 # ZSH
 ZSH_THEME="robbyrussell"
@@ -109,15 +109,13 @@ alias review="cd ~/Work/web-banking-review"
 alias proxy="cd ~/Work/package-web-proxy"
 
 alias amend="git commit --amend --no-edit"
-alias cls="clear"
+alias clear='clear && printf "\033[3J"'
+alias cls='clear && printf "\033[3J"'
 alias develop="git checkout develop && git fetch --all && git pull"
 alias force="git push --force --no-verify"
-alias pop="git stash pop"
-alias push-force="git push --force-with-lease --no-verify"
 alias stash="git stash"
-alias status="git status"
+alias pop="git stash pop"
 alias upstream="git push -u origin HEAD"
-alias reset="git reset origin/develop --hard && yarn"
 alias rebase="git rebase origin/develop && yarn"
 alias linked="ls -l node_modules | grep ^l"
 
