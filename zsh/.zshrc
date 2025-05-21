@@ -17,13 +17,6 @@ export PATH="$PATH:$HOME/.config/yarn/global/node_modules/.bin"
 
 export NODE_OPTIONS="--max-old-space-size=8192"
 
-# Exclusive for WORK machine:
-export NODE_EXTRA_CA_CERTS="$HOME/RootCA_01.pem"
-
-export GIT_SSL_CAINFO='/Users/cassiano.montanari/.certs/all.pem'
-export AWS_CA_BUNDLE='/Users/cassiano.montanari/.certs/all.pem'
-export NODE_EXTRA_CA_CERTS='/Users/cassiano.montanari/.certs/all.pem'
-export SSL_CERT_FILE='/Users/cassiano.montanari/.certs/all.pem'
 
 source ${HOME}/.tooling-devops-cli/zsh/main.zsh
 
@@ -128,25 +121,16 @@ ssh-add ~/.ssh/work/gitlab
 
 source $ZSH/oh-my-zsh.sh
 
+# Exclusive for WORK machine:
+export NODE_EXTRA_CA_CERTS="$HOME/RootCA_01.pem"
+export GIT_SSL_CAINFO='/Users/cassiano.montanari/.certs/all.pem'
+export AWS_CA_BUNDLE='/Users/cassiano.montanari/.certs/all.pem'
+export NODE_EXTRA_CA_CERTS='/Users/cassiano.montanari/.certs/all.pem'
+export SSL_CERT_FILE='/Users/cassiano.montanari/.certs/all.pem'
+
 clear
 
-export GIT_SSL_CAINFO='/Users/cassiano.montanari/.certs/all.pem'
-export AWS_CA_BUNDLE='/Users/cassiano.montanari/.certs/all.pem'
-export NODE_EXTRA_CA_CERTS='/Users/cassiano.montanari/.certs/all.pem'
-export SSL_CERT_FILE='/Users/cassiano.montanari/.certs/all.pem'
-export GIT_SSL_CAINFO='/Users/cassiano.montanari/.certs/all.pem'
-export AWS_CA_BUNDLE='/Users/cassiano.montanari/.certs/all.pem'
-export NODE_EXTRA_CA_CERTS='/Users/cassiano.montanari/.certs/all.pem'
-export SSL_CERT_FILE='/Users/cassiano.montanari/.certs/all.pem'
-export GIT_SSL_CAINFO='/Users/cassiano.montanari/.certs/all.pem'
-export AWS_CA_BUNDLE='/Users/cassiano.montanari/.certs/all.pem'
-export NODE_EXTRA_CA_CERTS='/Users/cassiano.montanari/.certs/all.pem'
-export SSL_CERT_FILE='/Users/cassiano.montanari/.certs/all.pem'
-export GIT_SSL_CAINFO='/Users/cassiano.montanari/.certs/all.pem'
-export AWS_CA_BUNDLE='/Users/cassiano.montanari/.certs/all.pem'
-export NODE_EXTRA_CA_CERTS='/Users/cassiano.montanari/.certs/all.pem'
-export SSL_CERT_FILE='/Users/cassiano.montanari/.certs/all.pem'
-export GIT_SSL_CAINFO='/Users/cassiano.montanari/.certs/all.pem'
-export AWS_CA_BUNDLE='/Users/cassiano.montanari/.certs/all.pem'
-export NODE_EXTRA_CA_CERTS='/Users/cassiano.montanari/.certs/all.pem'
-export SSL_CERT_FILE='/Users/cassiano.montanari/.certs/all.pem'
+
+
+
+
