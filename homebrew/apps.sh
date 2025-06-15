@@ -1,6 +1,8 @@
 ## Define Homebrew apps
 
 brew_apps=(
+    alfred
+    1password
     google-chrome
     kitty
     nvm
@@ -14,6 +16,7 @@ brew_apps=(
     zsh-syntax-highlighting
     zsh-autosuggestions
     mercurial
+    dbeaver-community
 )
 
 brew_fonts=(

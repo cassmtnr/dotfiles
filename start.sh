@@ -6,9 +6,6 @@ echo "=============================="
 echo "Starting MACHINE configuration"
 echo "=============================="
 
-sh "$DOTFILES_ROOT/homebrew/install.sh"
-sh "$DOTFILES_ROOT/homebrew/apps.sh"
-
 echo "====================="
 echo "Installing Oh My Zsh!"
 echo "====================="
@@ -48,6 +45,9 @@ find "$DOTFILES_ROOT/.config" -mindepth 1 -print | while read -r file; do
   # Create the symlink
   ln -s "$file" "$target"
 done
+
+sh "$DOTFILES_ROOT/homebrew/install.sh"
+sh "$DOTFILES_ROOT/homebrew/apps.sh"
 
 # Cleanup leftovers in the original folder
 rm -rf "$DOTFILES_ROOT/.config/kitty/kitty"
