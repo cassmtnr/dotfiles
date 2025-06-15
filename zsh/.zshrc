@@ -1,5 +1,5 @@
 # Add deno completions to search path
-if [[ ":$FPATH:" != *":/Users/cassiano.montanari/.zsh/completions:"* ]]; then export FPATH="/Users/cassiano.montanari/.zsh/completions:$FPATH"; fi
+if [[ ":$FPATH:" != *":/Users/cassiano/.zsh/completions:"* ]]; then export FPATH="/Users/cassiano/.zsh/completions:$FPATH"; fi
 export ZSH=$HOME/.oh-my-zsh
 
 
