@@ -56,13 +56,13 @@ npm install -g ${npm_global_packages[@]}
 
 
 # Install Go Version Manager
-# echo "Installing Go Version Manager"
-# bash < <(curl -s -S -L https://raw.githubusercontent.com/moovweb/gvm/master/binscripts/gvm-installer)
+echo "Installing Go Version Manager"
+bash < <(curl -s -S -L https://raw.githubusercontent.com/moovweb/gvm/master/binscripts/gvm-installer)
 
 # Install Go v1.21.4
-# echo "Installing Go v1.21.4"
-# gvm install go1.21.4 -B
-# gvm use go1.21.4
-# gvm list
+echo "Installing Go v1.21.4"
+gvm install go1.21.4 -B
+gvm use go1.21.4
+gvm list
 
 echo "It's done!"

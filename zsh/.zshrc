@@ -117,10 +117,12 @@ ssh-add ~/.ssh/dev/github
 # Exclusive for WORK machine:
 ssh-add ~/.ssh/work/gitlab
 
-[[ -s "/Users/cassiano.montanari/.gvm/scripts/gvm" ]] && source "/Users/cassiano.montanari/.gvm/scripts/gvm"
+
+[[ -s "/Users/cassiano/.gvm/scripts/gvm" ]] && source "/Users/cassiano/.gvm/scripts/gvm"
 
 source $ZSH/oh-my-zsh.sh
 
 . "/Users/cassiano/.deno/env"
 
 clear
+
