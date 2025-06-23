@@ -1,8 +1,8 @@
 ## Define Homebrew apps
 
 brew_apps=(
-    alfred
     1password
+    alfred
     google-chrome
     kitty
     nvm
