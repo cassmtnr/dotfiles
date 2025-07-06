@@ -6,7 +6,7 @@ brew_apps=(
     google-chrome
     kitty
     nvm
-    python3
+    python@3.13.5
     spotify
     the-unarchiver
     visual-studio-code
