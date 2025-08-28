@@ -26,7 +26,7 @@ export NVM_DIR="$HOME/.nvm"
 [ -s "/opt/homebrew/opt/nvm/nvm.sh" ] && . "/opt/homebrew/opt/nvm/nvm.sh"
 [ -s "/opt/homebrew/opt/nvm/etc/bash_completion.d/nvm" ] && . "/opt/homebrew/opt/nvm/etc/bash_completion.d/nvm"
 
-nvm use v20.9.0
+nvm use v20.19.0
 
 # ZSH
 ZSH_THEME="robbyrussell"
@@ -76,6 +76,8 @@ alias dotfiles="cd ~/dotfiles"
 alias myip="ipconfig getifaddr en0"
 alias zshsource="source ~/.zshrc"
 alias gitconfig="vim ~/.gitconfig"
+alias clean-cache="sudo dscacheutil -flushcache; sudo killall -HUP mDNSResponder"
+alias claude-flow="npx claude-flow@latest --version"
 
 # # Kill all the tabs in Chrome to free up memory
 # # [C] explained: http://www.commandlinefu.com/commands/view/402/exclude-grep-from-your-grepped-output-of-ps-alias-included-in-description
@@ -98,6 +100,7 @@ alias dev="cd ~/Dev"
 
 # Exclusive for WORK machine:
 alias banking="cd ~/Work/web-banking"
+alias payment="cd ~/Work/web-module-payment"
 alias review="cd ~/Work/web-banking-review"
 alias proxy="cd ~/Work/package-web-proxy"
 

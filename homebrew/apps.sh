@@ -45,8 +45,8 @@ brew install ${brew_fonts[@]}
 brew cleanup
 
 # NVM install NodeJS
-nvm install v21.7.2
-nvm use v21.7.2
+nvm install v20.19.0
+nvm use v20.19.0
 
 echo "Installing Global NPM Packages"
 npm install -g ${npm_global_packages[@]}
