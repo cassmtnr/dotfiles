@@ -253,7 +253,7 @@ defaults write com.apple.finder FXInfoPanesExpanded -dict \
 defaults write com.apple.dock mouse-over-hilite-stack -bool true
 
 # Set the icon size of Dock items to 60 pixels
-defaults write com.apple.dock tilesize -int 60
+defaults write com.apple.dock tilesize -int 80
 
 # Change minimize/maximize window effect
 defaults write com.apple.dock mineffect -string "genie"
