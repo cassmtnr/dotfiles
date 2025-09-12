@@ -46,21 +46,8 @@ add_ssh_keys() {
     fi
 }
 
-# Use keychain if available (more secure than plain ssh-agent)
-if command -v keychain &> /dev/null; then
-    # Keychain manages ssh-agent and gpg-agent
-    eval $(keychain --eval --agents ssh --inherit any --quiet)
-    
-    # Add specific keys
-    keychain --quiet \
-        ~/.ssh/dev/github \
-        ~/.ssh/work/gitlab \
-        ~/.ssh/id_ed25519 \
-        2>/dev/null
-else
-    # Fall back to standard ssh-agent
-    start_ssh_agent
-fi
+# Use standard ssh-agent (reliable across all systems)
+start_ssh_agent
 
 # Alias to list loaded SSH keys
 alias ssh-list="ssh-add -l"

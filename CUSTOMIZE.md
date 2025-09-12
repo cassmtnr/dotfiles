@@ -6,13 +6,13 @@ This repository contains generic dotfiles that need to be customized for your pe
 
 ### 1. SSH Configuration
 
-Copy the SSH config template and customize for your keys:
+The SSH config is automatically symlinked to `~/.ssh/config`. Edit it directly:
 
 ```bash
-cp ssh/config.example ~/.ssh/config
+vim ~/dotfiles/ssh/config
 ```
 
-Edit `~/.ssh/config` and update:
+Update the configuration with:
 - SSH key paths (replace generic paths with your actual key locations)
 - Host configurations for your Git providers
 - Any specific connection settings

@@ -20,9 +20,8 @@ Host *
     ControlPath ~/.ssh/sockets/%r@%h-%p
     ControlPersist 600
     
-    # Use keychain or ssh-agent
+    # Use ssh-agent for key management
     AddKeysToAgent yes
-    UseKeychain yes
     
     # Default identity file
     IdentitiesOnly yes
