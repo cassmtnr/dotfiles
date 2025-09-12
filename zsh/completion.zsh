@@ -1,0 +1,45 @@
+# Completion system configuration
+
+# Add custom completion paths
+fpath=(
+    $HOME/.zsh/completions(N)
+    $HOMEBREW_PREFIX/share/zsh/site-functions(N)
+    $HOMEBREW_PREFIX/share/zsh-completions(N)
+    $fpath
+)
+
+# Initialize completion system (only once)
+autoload -Uz compinit
+
+# Speed up compinit by checking cache once a day
+zcompdump="${ZDOTDIR:-$HOME}/.zcompdump"
+if [[ $zcompdump -nt /usr/share/zsh ]] && [[ ! $zcompdump.zwc -ot $zcompdump ]]; then
+    compinit -C
+else
+    compinit
+    [[ -f "$zcompdump" && ! -f "$zcompdump.zwc" ]] && zcompile "$zcompdump"
+fi
+
+# Completion options
+setopt COMPLETE_IN_WORD    # Complete from both ends of a word
+setopt ALWAYS_TO_END       # Move cursor to the end of a completed word
+setopt PATH_DIRS           # Perform path search even on command names with slashes
+setopt AUTO_MENU           # Show completion menu on a successive tab press
+setopt AUTO_LIST           # Automatically list choices on ambiguous completion
+setopt AUTO_PARAM_SLASH    # If completed parameter is a directory, add a trailing slash
+setopt EXTENDED_GLOB       # Use extended globbing syntax
+setopt NO_CASE_GLOB        # Case insensitive globbing
+
+# Completion styling
+zstyle ':completion:*' menu select
+zstyle ':completion:*' matcher-list 'm:{a-zA-Z}={A-Za-z}' 'r:|=*' 'l:|=* r:|=*'
+zstyle ':completion:*' list-colors ''
+zstyle ':completion:*:*:kill:*:processes' list-colors '=(#b) #([0-9]#) ([0-9a-z-]#)*=01;34=0=01'
+
+# Docker completion (if available)
+if [[ -d "$HOME/.docker/completions" ]]; then
+    fpath=($HOME/.docker/completions $fpath)
+fi
+
+# Load bash completions (for tools that only provide bash completions)
+autoload -U +X bashcompinit && bashcompinit
