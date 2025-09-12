@@ -57,8 +57,21 @@ weather () {
     curl wttr.in/"$@"
 }
 
-go-run () {
-    CompileDaemon -command="$@"
+claude-flow () {
+    cd ~/Dev
+    if [[ "$1" == "init" ]] && [[ -n "$2" ]]; then
+        npx claude-flow init --force --project-name="$2"
+    elif [[ "$1" == "resume" ]]; then
+        npx claude-flow swarm "Resume the previous sessions of implementations and give me a summary of what is done and what needs to be done" --continue-session
+    else
+        echo "Usage:"
+        echo "  claude-flow init <project-name>     - Initialize a new project"
+        echo "  claude-flow resume                   - Resume previous session with summary"
+        echo ""
+        echo "Examples:"
+        echo "  claude-flow init my-app"
+        echo "  claude-flow resume"
+    fi
 }
 
 # ###########
@@ -74,7 +87,7 @@ alias zshsource="source ~/.zshrc"
 alias gitconfig="vim ~/.gitconfig"
 alias wth="git rev-parse HEAD"
 alias clean-cache="sudo dscacheutil -flushcache; sudo killall -HUP mDNSResponder"
-alias claude-flow='cd ~/Work && ./claude-flow sparc "Load the previous memory for web-banking with npx claude-flow memory query web-banking"'
+
 
 # # Kill all the tabs in Chrome to free up memory
 # # [C] explained: http://www.commandlinefu.com/commands/view/402/exclude-grep-from-your-grepped-output-of-ps-alias-included-in-description
@@ -94,12 +107,6 @@ alias dl="cd ~/Downloads"
 alias dt="cd ~/Desktop"
 alias work="cd ~/Work"
 alias dev="cd ~/Dev"
-
-# Exclusive for WORK machine:
-alias banking="cd ~/Work/web-banking"
-alias payment="cd ~/Work/web-module-payment"
-alias review="cd ~/Work/web-banking-review"
-alias proxy="cd ~/Work/package-web-proxy"
 
 alias amend="git commit --amend --no-edit"
 alias clear='clear && printf "\033[3J"'
