@@ -1,5 +1,5 @@
 # Add deno completions to search path
-if [[ ":$FPATH:" != *":/Users/cassiano/.zsh/completions:"* ]]; then export FPATH="/Users/cassiano/.zsh/completions:$FPATH"; fi
+if [[ ":$FPATH:" != *":$HOME/.zsh/completions:"* ]]; then export FPATH="$HOME/.zsh/completions:$FPATH"; fi
 export ZSH=$HOME/.oh-my-zsh
 
 
@@ -57,20 +57,30 @@ weather () {
     curl wttr.in/"$@"
 }
 
-claude-flow () {
+flow () {
     cd ~/Dev
     if [[ "$1" == "init" ]] && [[ -n "$2" ]]; then
         npx claude-flow init --force --project-name="$2"
     elif [[ "$1" == "resume" ]]; then
-        npx claude-flow swarm "Resume the previous sessions of implementations and give me a summary of what is done and what needs to be done" --continue-session
+        if [[ "$2" == "dotfiles" ]]; then
+            npx claude-flow hive-mind resume session-1757710180784-9lvy5ayjp --claude
+        else
+            npx claude-flow swarm "Resume the previous sessions of implementations and give me a summary of what was done and what needs to be done" --continue-session
+        fi
+    elif [[ "$1" == "wizard" ]]; then
+        npx claude-flow hive-mind wizard
     else
         echo "Usage:"
         echo "  claude-flow init <project-name>     - Initialize a new project"
         echo "  claude-flow resume                   - Resume previous session with summary"
+        echo "  claude-flow resume dotfiles          - Resume specific dotfiles session"
+        echo "  claude-flow wizard                   - Run hive-mind wizard"
         echo ""
         echo "Examples:"
         echo "  claude-flow init my-app"
         echo "  claude-flow resume"
+        echo "  claude-flow resume dotfiles"
+        echo "  claude-flow wizard"
     fi
 }
 
@@ -87,6 +97,7 @@ alias zshsource="source ~/.zshrc"
 alias gitconfig="vim ~/.gitconfig"
 alias wth="git rev-parse HEAD"
 alias clean-cache="sudo dscacheutil -flushcache; sudo killall -HUP mDNSResponder"
+
 
 
 # # Kill all the tabs in Chrome to free up memory
@@ -119,22 +130,18 @@ alias upstream="git push -u origin HEAD"
 alias rebase="git rebase origin/develop && yarn"
 alias linked="ls -l node_modules | grep ^l"
 
-eval $(ssh-agent)
-ssh-add ~/.ssh/dev/github
-# Exclusive for WORK machine:
-ssh-add ~/.ssh/work/gitlab
+# SSH agent management is handled by ssh-agent.zsh module
 
-
-[[ -s "/Users/cassiano/.gvm/scripts/gvm" ]] && source "/Users/cassiano/.gvm/scripts/gvm"
+[[ -s "$HOME/.gvm/scripts/gvm" ]] && source "$HOME/.gvm/scripts/gvm"
 
 source $ZSH/oh-my-zsh.sh
 
-. "/Users/cassiano/.deno/env"
+[[ -f "$HOME/.deno/env" ]] && source "$HOME/.deno/env"
 
 clear
 
-# The following lines have been added by Docker Desktop to enable Docker CLI completions.
-fpath=(/Users/cassiano/.docker/completions $fpath)
+# Docker CLI completions
+[[ -d "$HOME/.docker/completions" ]] && fpath=($HOME/.docker/completions $fpath)
 autoload -Uz compinit
 compinit
 # End of Docker CLI completions

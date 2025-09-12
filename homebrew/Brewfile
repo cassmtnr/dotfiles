@@ -1,0 +1,90 @@
+# Homebrew Bundle file
+# Install with: brew bundle --file=~/dotfiles/homebrew/Brewfile
+
+# Note: Most taps are no longer needed as they've been integrated into core Homebrew
+
+# Core utilities
+brew "coreutils"
+brew "findutils"
+brew "gnu-sed"
+brew "grep"
+brew "wget"
+brew "curl"
+
+# Modern CLI tools
+brew "bat"          # Better cat
+brew "eza"          # Better ls
+brew "fd"           # Better find
+brew "ripgrep"      # Better grep
+brew "fzf"          # Fuzzy finder
+brew "zoxide"       # Better cd
+brew "htop"         # Process viewer
+brew "ncdu"         # Disk usage analyzer
+brew "tldr"         # Simplified man pages
+brew "jq"           # JSON processor
+brew "yq"           # YAML processor
+
+# Development tools
+brew "git"
+brew "gh"           # GitHub CLI
+brew "vim"
+brew "neovim"
+brew "tmux"
+brew "tree"
+brew "watch"
+brew "diff-so-fancy"
+brew "git-delta"    # Better git diff
+
+# Shell enhancements
+brew "zsh"
+brew "zsh-completions"
+brew "zsh-autosuggestions"
+brew "zsh-syntax-highlighting"
+brew "starship"    # Cross-shell prompt
+brew "direnv"       # Environment switcher
+
+# Programming languages and tools
+brew "nvm"
+brew "python@3.12"
+brew "poetry"
+brew "pipx"
+brew "go"
+brew "rust"
+brew "yarn"
+brew "pnpm"
+
+# Container and orchestration
+brew "docker"
+brew "docker-compose"
+brew "kubectl"
+brew "helm"
+brew "k9s"          # Kubernetes CLI UI
+
+# Database tools
+brew "postgresql"
+brew "redis"
+brew "sqlite"
+
+# Security tools
+brew "gnupg"
+brew "keychain"
+brew "openssh"
+brew "openssl"
+
+# System monitoring
+brew "neofetch"
+brew "speedtest-cli"
+
+# Fonts (now in core Homebrew)
+cask "font-fira-code"
+cask "font-jetbrains-mono"
+cask "font-cascadia-code"
+cask "font-hack-nerd-font"
+
+# Applications (optional)
+# cask "visual-studio-code"
+# cask "iterm2"
+# cask "kitty"
+# cask "docker"
+# cask "postman"
+# cask "insomnia"
