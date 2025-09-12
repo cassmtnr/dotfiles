@@ -70,7 +70,7 @@ The script automatically:
 After installation, you can customize your setup:
 
 1. **Machine-specific settings**: Create `~/.zshrc.local` for local customizations
-2. **SSH configuration**: Copy and edit `~/dotfiles/ssh/config.example` to `~/.ssh/config`
+2. **SSH configuration**: Edit `~/dotfiles/ssh/config` to customize SSH settings for your hosts
 3. **Git configuration**: Update your name and email in the global git config
 
 ## 📦 What Gets Installed
@@ -100,7 +100,7 @@ After installation, you can customize your setup:
 
 ### Security & SSH
 - **SSH configuration** with secure defaults and connection multiplexing  
-- **SSH agent management** with keychain integration
+- **SSH agent management** with automatic key loading
 - **GPG setup** for code signing
 
 ### macOS System Optimizations
@@ -124,6 +124,7 @@ After installation, you can customize your setup:
 - **Automatic backup**: Creates timestamped backups before installation
 - **Uninstall script**: Clean removal with option to restore from backup
 - **Version control**: All configurations tracked in Git
+- **Cross-platform**: Works reliably across different systems and SSH versions
 
 ## 📁 Project Structure
 
@@ -141,7 +142,7 @@ dotfiles/
 ├── config/                # Application configs
 │   └── starship.toml      # Prompt configuration
 ├── ssh/                   # SSH configuration
-│   └── config.example     # Secure SSH template
+│   └── config             # Secure SSH configuration
 ├── homebrew/              # Package management
 │   ├── Brewfile          # Modern package list
 │   ├── apps.sh           # Legacy app list

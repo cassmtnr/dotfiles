@@ -17,9 +17,14 @@
 ##################
 .zshrc.local
 *.local
-.ssh/
 .env
 .env.local
+
+# SSH configs with personal info #
+##################################
+# Uncomment these lines after customizing ssh/config with personal info:
+# ssh/config
+# .ssh/
 
 # Sensitive data #
 ##################

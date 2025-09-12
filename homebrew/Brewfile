@@ -67,7 +67,6 @@ brew "sqlite"
 
 # Security tools
 brew "gnupg"
-brew "keychain"
 brew "openssh"
 brew "openssl"
 

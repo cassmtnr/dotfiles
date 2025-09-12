@@ -81,11 +81,12 @@ brew bundle --file=~/dotfiles/homebrew/Brewfile
 
 ### 1. SSH Configuration
 
-Copy and customize the SSH config template:
+The SSH config is automatically symlinked during installation. Customize it for your needs:
 
 ```bash
-cp ~/dotfiles/ssh/config.example ~/.ssh/config
-chmod 600 ~/.ssh/config
+# Edit the SSH configuration
+vim ~/dotfiles/ssh/config
+# Changes are automatically reflected in ~/.ssh/config via symlink
 ```
 
 Generate SSH keys if needed:
