@@ -76,8 +76,9 @@ alias dotfiles="cd ~/dotfiles"
 alias myip="ipconfig getifaddr en0"
 alias zshsource="source ~/.zshrc"
 alias gitconfig="vim ~/.gitconfig"
+alias wth="git rev-parse HEAD"
 alias clean-cache="sudo dscacheutil -flushcache; sudo killall -HUP mDNSResponder"
-alias claude-flow="npx claude-flow@latest --version"
+alias claude-flow='cd ~/Work && ./claude-flow sparc "Load the previous memory for web-banking with npx claude-flow memory query web-banking"'
 
 # # Kill all the tabs in Chrome to free up memory
 # # [C] explained: http://www.commandlinefu.com/commands/view/402/exclude-grep-from-your-grepped-output-of-ps-alias-included-in-description
@@ -137,3 +138,4 @@ clear
 
 
 
+export NO_COLOR=1
