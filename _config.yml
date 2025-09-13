@@ -1,0 +1,50 @@
+# GitHub Pages Jekyll configuration
+title: Dotfiles
+description: Modern, secure, and performant dotfiles configuration for MacOS
+theme: jekyll-theme-cayman
+show_downloads: true
+google_analytics:
+
+# Build settings
+markdown: kramdown
+kramdown:
+  input: GFM
+  hard_wrap: false
+  auto_ids: true
+  footnote_nr: 1
+  entity_output: as_char
+  toc_levels: 1..6
+  smart_quotes: lsquo,rsquo,ldquo,rdquo
+  enable_coderay: false
+
+# Site settings
+baseurl: "" # the subpath of your site, e.g. /blog
+url: "" # the base hostname & protocol for your site
+
+# GitHub repository info
+github:
+  repository_url: https://github.com/cassmtnr/dotfiles
+  repository_name: dotfiles
+  owner_url: https://github.com/cassmtnr
+  owner_name: cassmtnr
+
+# Exclude files from processing
+exclude:
+  - Gemfile
+  - Gemfile.lock
+  - node_modules
+  - vendor/bundle/
+  - vendor/cache/
+  - vendor/gems/
+  - vendor/ruby/
+  - zsh/
+  - homebrew/
+  - config/
+  - node/
+  - macos/
+  - ssh/
+  - alfred/
+  - .config/
+  - install.sh
+  - start.sh
+  - CLAUDE.md
