@@ -304,15 +304,19 @@ defaults write NSGlobalDomain WebKitDeveloperExtras -bool true
 
 # Remove the Spotlight icon from the Menu
 defaults write com.apple.Spotlight MenuItemHidden -bool true
-sudo mdutil -a -i offalf
 
-# Load new settings before rebuilding the index
-killall mds
+# Disable Spotlight indexing temporarily (fixed typo: off not offalf)
+sudo mdutil -a -i off 2>/dev/null || true
 
-# Make sure indexing is enabled for the main volume
-sudo mdutil -i on /
-# Rebuild the index from scratch
-sudo mdutil -E /
+# Wait a moment before re-enabling
+sleep 2
+
+# Re-enable Spotlight indexing for the main volume
+sudo mdutil -i on / 2>/dev/null || true
+
+# Note: Rebuild is optional and can be time-consuming
+# Uncomment if you need a full rebuild:
+# sudo mdutil -E / 2>/dev/null || true
 
 ###############################################################################
 # Time Machine                                                                #
