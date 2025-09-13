@@ -47,7 +47,14 @@ find "$DOTFILES_ROOT/.config" -mindepth 1 -print | while read -r file; do
 done
 
 sh "$DOTFILES_ROOT/homebrew/install.sh"
-sh "$DOTFILES_ROOT/homebrew/apps.sh"
+
+echo "Installing Homebrew packages from Brewfile"
+brew bundle --file="$DOTFILES_ROOT/homebrew/Brewfile"
+
+echo "Setting up Node.js environment"
+if [ -f "$DOTFILES_ROOT/node/install.sh" ]; then
+    sh "$DOTFILES_ROOT/node/install.sh"
+fi
 
 # Cleanup leftovers in the original folder
 rm -rf "$DOTFILES_ROOT/.config/kitty/kitty"

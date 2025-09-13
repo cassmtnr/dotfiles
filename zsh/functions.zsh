@@ -81,7 +81,6 @@ findreplace() {
 
 # Claude Flow helper function
 flow() {
-    cd ~/Dev
     if [[ "$1" == "init" ]] && [[ -n "$2" ]]; then
         npx claude-flow init --force --project-name="$2"
     elif [[ "$1" == "resume" ]]; then

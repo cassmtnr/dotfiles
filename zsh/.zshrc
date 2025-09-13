@@ -1,147 +1,87 @@
-# Add deno completions to search path
-if [[ ":$FPATH:" != *":$HOME/.zsh/completions:"* ]]; then export FPATH="$HOME/.zsh/completions:$FPATH"; fi
-export ZSH=$HOME/.oh-my-zsh
+# ===============================================
+# .zshrc - Interactive shell configuration
+# ===============================================
 
+# Performance profiling (uncomment to debug slow startup)
+# zmodload zsh/zprof
 
-plugins=(
-  git
-)
-
-source $(brew --prefix)/share/zsh-completions
-source $(brew --prefix)/share/zsh-autosuggestions/zsh-autosuggestions.zsh
-source $(brew --prefix)/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
-
-
-export PATH="/usr/local/bin:$PATH"
-export PATH="$PATH:$HOME/.config/yarn/global/node_modules/.bin"
-
-export NODE_OPTIONS="--max-old-space-size=8192"
-
-# Loads NVM
-export NVM_DIR="$HOME/.nvm"
-[ -s "/opt/homebrew/opt/nvm/nvm.sh" ] && . "/opt/homebrew/opt/nvm/nvm.sh"
-[ -s "/opt/homebrew/opt/nvm/etc/bash_completion.d/nvm" ] && . "/opt/homebrew/opt/nvm/etc/bash_completion.d/nvm"
-
-nvm use v20.19.2
-
-# ZSH
+# Oh My Zsh configuration (must come before sourcing oh-my-zsh)
 ZSH_THEME="robbyrussell"
 ZSH_DISABLE_COMPFIX="true"
 UPDATE_ZSH_DAYS=30
 DISABLE_AUTO_UPDATE="true"
 ENABLE_CORRECTION="false"
 COMPLETION_WAITING_DOTS="true"
+DISABLE_UNTRACKED_FILES_DIRTY="true"  # Speed up git status in large repos
 
-# load zsh-completions
-autoload -U compinit && compinit
+# Oh My Zsh plugins (minimal for better performance)
+plugins=(
+    git
+    docker-compose
+    kubectl
+)
 
+# Source Oh My Zsh
+[[ -f "$ZSH/oh-my-zsh.sh" ]] && source "$ZSH/oh-my-zsh.sh"
 
-# ###########
-# FUNCTIONS #
-# ###########
+# Source modular configuration files
+DOTFILES_ZSH="${DOTFILES_ROOT:-$HOME/dotfiles}/zsh"
 
-mkd () {
-    mkdir -p "$@" && cd "$@"
-}
+# Load configuration modules
+[[ -f "$DOTFILES_ZSH/completion.zsh" ]] && source "$DOTFILES_ZSH/completion.zsh"
+[[ -f "$DOTFILES_ZSH/aliases.zsh" ]] && source "$DOTFILES_ZSH/aliases.zsh"
+[[ -f "$DOTFILES_ZSH/functions.zsh" ]] && source "$DOTFILES_ZSH/functions.zsh"
 
-killport () {
-    lsof -t -i tcp:"$@" | xargs kill
-}
+# Load Homebrew shell integrations
+if [[ -n "$HOMEBREW_PREFIX" ]]; then
+    # Zsh completions
+    [[ -f "$HOMEBREW_PREFIX/share/zsh-completions" ]] && fpath=($HOMEBREW_PREFIX/share/zsh-completions $fpath)
+    
+    # Zsh autosuggestions
+    [[ -f "$HOMEBREW_PREFIX/share/zsh-autosuggestions/zsh-autosuggestions.zsh" ]] && \
+        source "$HOMEBREW_PREFIX/share/zsh-autosuggestions/zsh-autosuggestions.zsh"
+    
+    # Zsh syntax highlighting (load last)
+    [[ -f "$HOMEBREW_PREFIX/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh" ]] && \
+        source "$HOMEBREW_PREFIX/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh"
+fi
 
-# Exclusive for WORK machine:
-playwright-install () {
-    HTTPS_PROXY=http://"$@" npx playwright install
-}
+# Starship prompt (if installed, replaces Oh My Zsh theme)
+if command -v starship &> /dev/null; then
+    eval "$(starship init zsh)"
+fi
 
-weather () {
-    curl wttr.in/"$@"
-}
+# Load GVM (Go Version Manager)
+[[ -s "$GVM_DIR/scripts/gvm" ]] && source "$GVM_DIR/scripts/gvm"
 
-flow () {
-    cd ~/Dev
-    if [[ "$1" == "init" ]] && [[ -n "$2" ]]; then
-        npx claude-flow init --force --project-name="$2"
-    elif [[ "$1" == "resume" ]]; then
-        if [[ "$2" == "dotfiles" ]]; then
-            npx claude-flow hive-mind resume session-1757710180784-9lvy5ayjp --claude
-        else
-            npx claude-flow swarm "Resume the previous sessions of implementations and give me a summary of what was done and what needs to be done" --continue-session
-        fi
-    elif [[ "$1" == "wizard" ]]; then
-        npx claude-flow hive-mind wizard
-    else
-        echo "Usage:"
-        echo "  claude-flow init <project-name>     - Initialize a new project"
-        echo "  claude-flow resume                   - Resume previous session with summary"
-        echo "  claude-flow resume dotfiles          - Resume specific dotfiles session"
-        echo "  claude-flow wizard                   - Run hive-mind wizard"
-        echo ""
-        echo "Examples:"
-        echo "  claude-flow init my-app"
-        echo "  claude-flow resume"
-        echo "  claude-flow resume dotfiles"
-        echo "  claude-flow wizard"
-    fi
-}
-
-# ###########
-# # ALIASES #
-# ###########
-
-alias zrc="code ~/dotfiles/zsh/.zshrc"
-alias dot="cd ~/dotfiles && code ."
-alias meow="cd ~/.config/kitty && code ."
-alias dotfiles="cd ~/dotfiles"
-alias myip="ipconfig getifaddr en0"
-alias zshsource="source ~/.zshrc"
-alias gitconfig="vim ~/.gitconfig"
-alias wth="git rev-parse HEAD"
-alias clean-cache="sudo dscacheutil -flushcache; sudo killall -HUP mDNSResponder"
-
-
-
-# # Kill all the tabs in Chrome to free up memory
-# # [C] explained: http://www.commandlinefu.com/commands/view/402/exclude-grep-from-your-grepped-output-of-ps-alias-included-in-description
-alias chromekill="ps ux | grep '[C]hrome Helper --type=renderer' | grep -v extension-process | tr -s ' ' | cut -d ' ' -f2 | xargs kill"
-
-
-# # Easier navigation: .., ..., ...., .....
-
-alias ..="cd .."
-alias ...="cd ../.."
-alias ....="cd ../../.."
-
-# # Shortcuts
-
-alias d="cd ~/Documents"
-alias dl="cd ~/Downloads"
-alias dt="cd ~/Desktop"
-alias work="cd ~/Work"
-alias dev="cd ~/Dev"
-
-alias amend="git commit --amend --no-edit"
-alias clear='clear && printf "\033[3J"'
-alias cls='clear && printf "\033[3J"'
-alias develop="git checkout develop && git fetch --all && git pull"
-alias force="git push --force --no-verify"
-alias stash="git stash"
-alias pop="git stash pop"
-alias upstream="git push -u origin HEAD"
-alias rebase="git rebase origin/develop && yarn"
-alias linked="ls -l node_modules | grep ^l"
-
-# SSH agent management is handled by ssh-agent.zsh module
-
-[[ -s "$HOME/.gvm/scripts/gvm" ]] && source "$HOME/.gvm/scripts/gvm"
-
-source $ZSH/oh-my-zsh.sh
-
+# Load Deno
 [[ -f "$HOME/.deno/env" ]] && source "$HOME/.deno/env"
 
-clear
+# Load local/private configuration (not tracked in git)
+[[ -f "$HOME/.zshrc.local" ]] && source "$HOME/.zshrc.local"
 
-# Docker CLI completions
-[[ -d "$HOME/.docker/completions" ]] && fpath=($HOME/.docker/completions $fpath)
-autoload -Uz compinit
-compinit
-# End of Docker CLI completions
+# History configuration
+HISTFILE="$HOME/.zsh_history"
+HISTSIZE=50000
+SAVEHIST=50000
+setopt EXTENDED_HISTORY          # Write the history file in the ':start:elapsed;command' format
+setopt INC_APPEND_HISTORY        # Write to the history file immediately, not when the shell exits
+setopt SHARE_HISTORY             # Share history between all sessions
+setopt HIST_EXPIRE_DUPS_FIRST    # Expire a duplicate event first when trimming history
+setopt HIST_IGNORE_DUPS          # Do not record an event that was just recorded again
+setopt HIST_IGNORE_ALL_DUPS      # Delete an old recorded event if a new event is a duplicate
+setopt HIST_FIND_NO_DUPS         # Do not display a previously found event
+setopt HIST_IGNORE_SPACE         # Do not record an event starting with a space
+setopt HIST_SAVE_NO_DUPS         # Do not write a duplicate event to the history file
+setopt HIST_VERIFY               # Do not execute immediately upon history expansion
+
+# Key bindings
+bindkey -e  # Use emacs key bindings
+bindkey '^[[A' history-search-backward
+bindkey '^[[B' history-search-forward
+
+# Performance profiling (uncomment to see results)
+# zprof
+
+# Clear the terminal
+clear

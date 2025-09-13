@@ -4,15 +4,17 @@ echo "========================================="
 echo "Starting MacOS Settings"
 echo "========================================="
 
-# Close any open System Preferences panes, to prevent them from overriding
-# settings we’re about to change
-osascript -e 'tell application "System Preferences" to quit'
+# Close any open System Preferences/Settings panes, to prevent them from overriding
+# settings we're about to change
+osascript -e 'tell application "System Preferences" to quit' 2>/dev/null || true
+osascript -e 'tell application "System Settings" to quit' 2>/dev/null || true
 
-# Ask for the administrator password upfront
-sudo -v
-
-# Keep-alive: update existing `sudo` time stamp until `.osx` has finished
-while true; do sudo -n true; sleep 60; kill -0 "$$" || exit; done 2>/dev/null &
+# Note: sudo privileges should already be available from main install script
+# Verify sudo access is still available
+sudo -n true 2>/dev/null || {
+    echo "Administrative privileges required for MacOS configuration..."
+    sudo -v
+}
 
 echo "Setup started... Hold on..."
 
@@ -232,8 +234,9 @@ defaults write com.apple.finder OpenWindowForNewRemovableDisk -bool true
 # Disable the warning before emptying the Trash
 defaults write com.apple.finder WarnOnEmptyTrash -bool false
 
-# Empty Trash securely by default
-defaults write com.apple.finder EmptyTrashSecurely -bool true
+# Note: Secure Empty Trash was removed in MacOS Sierra and later
+# Files are automatically encrypted on modern file systems
+# defaults write com.apple.finder EmptyTrashSecurely -bool true
 
 # Show the ~/Library folder
 chflags nohidden ~/Library
@@ -277,11 +280,10 @@ defaults write com.apple.dock expose-animation-duration -float 0.1
 # (i.e. use the old Exposé behavior instead)
 defaults write com.apple.dock expose-group-by-app -bool false
 
-# Disable Dashboard
-defaults write com.apple.dashboard mcx-disabled -bool true
-
-# Don’t show Dashboard as a Space
-defaults write com.apple.dock dashboard-in-overlay -bool true
+# Note: Dashboard was removed in MacOS Catalina and later
+# These settings are no longer applicable
+# defaults write com.apple.dashboard mcx-disabled -bool true
+# defaults write com.apple.dock dashboard-in-overlay -bool true
 
 # Don’t automatically rearrange Spaces based on most recent use
 defaults write com.apple.dock mru-spaces -bool false

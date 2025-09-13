@@ -12,40 +12,25 @@ brew "wget"
 brew "curl"
 
 # Modern CLI tools
-brew "bat"          # Better cat
-brew "eza"          # Better ls
-brew "fd"           # Better find
-brew "ripgrep"      # Better grep
-brew "fzf"          # Fuzzy finder
-brew "zoxide"       # Better cd
 brew "htop"         # Process viewer
-brew "ncdu"         # Disk usage analyzer
 brew "tldr"         # Simplified man pages
 brew "jq"           # JSON processor
 brew "yq"           # YAML processor
 
 # Development tools
 brew "git"
-brew "gh"           # GitHub CLI
-brew "vim"
-brew "neovim"
-brew "tmux"
-brew "tree"
 brew "watch"
-brew "diff-so-fancy"
-brew "git-delta"    # Better git diff
 
 # Shell enhancements
 brew "zsh"
 brew "zsh-completions"
 brew "zsh-autosuggestions"
 brew "zsh-syntax-highlighting"
-brew "starship"    # Cross-shell prompt
-brew "direnv"       # Environment switcher
+brew "starship"    # Cross-shell prompt for beautiful terminal
 
 # Programming languages and tools
 brew "nvm"
-brew "python@3.12"
+brew "python@3.13"
 brew "poetry"
 brew "pipx"
 brew "go"
@@ -58,11 +43,9 @@ brew "docker"
 brew "docker-compose"
 brew "kubectl"
 brew "helm"
-brew "k9s"          # Kubernetes CLI UI
 
 # Database tools
-brew "postgresql"
-brew "redis"
+brew "postgresql@16"
 brew "sqlite"
 
 # Security tools
@@ -71,19 +54,29 @@ brew "openssh"
 brew "openssl"
 
 # System monitoring
-brew "neofetch"
-brew "speedtest-cli"
+# Removed neofetch and speedtest-cli
 
-# Fonts (now in core Homebrew)
+# Fonts
 cask "font-fira-code"
 cask "font-jetbrains-mono"
 cask "font-cascadia-code"
 cask "font-hack-nerd-font"
+cask "font-meslo-for-powerline"
+cask "font-meslo-lg"
 
-# Applications (optional)
-# cask "visual-studio-code"
+# Applications
+cask "1password"
+cask "alfred"
+cask "google-chrome"
+cask "kitty"
+cask "spotify"
+cask "the-unarchiver"
+cask "visual-studio-code"
+cask "vlc"
+cask "dbeaver-community"
+
+# Optional Applications (uncomment if needed)
 # cask "iterm2"
-# cask "kitty"
-# cask "docker"
+# cask "docker"  # Note: docker formula already included above
 # cask "postman"
 # cask "insomnia"

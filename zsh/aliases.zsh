@@ -48,21 +48,9 @@ alias cls='clear && printf "\033[3J"'
 # Package management
 alias linked="ls -l node_modules | grep ^l"
 
-# Enhanced ls with colors
-if command -v eza &> /dev/null; then
-    alias ls="eza --icons"
-    alias ll="eza -l --icons"
-    alias la="eza -la --icons"
-    alias lt="eza --tree --icons"
-elif command -v exa &> /dev/null; then
-    alias ls="exa --icons"
-    alias ll="exa -l --icons"
-    alias la="exa -la --icons"
-    alias lt="exa --tree --icons"
-else
-    alias ll="ls -lh"
-    alias la="ls -lah"
-fi
+# Enhanced ls with colors (using standard ls)
+alias ll="ls -lh"
+alias la="ls -lah"
 
 # Safety nets
 alias rm="rm -i"
