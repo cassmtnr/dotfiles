@@ -1,0 +1,439 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🏠 Dotfiles - cassmtnr</title>
+    <meta name="description" content="Modern, secure, and performant dotfiles configuration for MacOS">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background: white;
+            min-height: 100vh;
+            box-shadow: 0 0 50px rgba(0,0,0,0.1);
+        }
+
+        header {
+            background: linear-gradient(135deg, #2c3e50, #34495e);
+            color: white;
+            padding: 2rem;
+            text-align: center;
+        }
+
+        header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+            font-weight: 300;
+        }
+
+        header p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+
+        .quick-start {
+            background: #f8f9fa;
+            border-left: 4px solid #28a745;
+            padding: 1.5rem;
+            margin: 2rem;
+            border-radius: 5px;
+        }
+
+        .quick-start h3 {
+            color: #28a745;
+            margin-bottom: 1rem;
+        }
+
+        main {
+            padding: 0 2rem 2rem;
+        }
+
+        h2 {
+            color: #2c3e50;
+            border-bottom: 2px solid #3498db;
+            padding-bottom: 0.5rem;
+            margin: 2rem 0 1rem;
+        }
+
+        h3 {
+            color: #34495e;
+            margin: 1.5rem 0 0.5rem;
+        }
+
+        .features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1rem;
+            margin: 1.5rem 0;
+        }
+
+        .feature {
+            background: #f8f9fa;
+            padding: 1rem;
+            border-radius: 8px;
+            border-left: 4px solid #3498db;
+        }
+
+        .feature strong {
+            color: #2c3e50;
+        }
+
+        .apps-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin: 1.5rem 0;
+        }
+
+        .app-category {
+            background: #f8f9fa;
+            padding: 1.5rem;
+            border-radius: 10px;
+            border-top: 4px solid #e74c3c;
+        }
+
+        .app-category h4 {
+            color: #e74c3c;
+            margin-bottom: 1rem;
+            font-size: 1.1rem;
+        }
+
+        .app-list {
+            list-style: none;
+        }
+
+        .app-list li {
+            padding: 0.3rem 0;
+            border-bottom: 1px solid #ecf0f1;
+        }
+
+        .app-list li:last-child {
+            border-bottom: none;
+        }
+
+        .app-list code {
+            background: #34495e;
+            color: white;
+            padding: 0.2rem 0.4rem;
+            border-radius: 3px;
+            font-size: 0.9rem;
+            margin-right: 0.5rem;
+        }
+
+        code {
+            background: #f1f2f6;
+            padding: 0.2rem 0.4rem;
+            border-radius: 3px;
+            font-family: 'Monaco', 'Menlo', monospace;
+            font-size: 0.9rem;
+        }
+
+        pre {
+            background: #2c3e50;
+            color: #ecf0f1;
+            padding: 1rem;
+            border-radius: 5px;
+            overflow-x: auto;
+            margin: 1rem 0;
+            font-family: 'Monaco', 'Menlo', monospace;
+        }
+
+        pre code {
+            background: none;
+            color: inherit;
+            padding: 0;
+        }
+
+        .install-steps {
+            background: linear-gradient(135deg, #74b9ff, #0984e3);
+            color: white;
+            padding: 2rem;
+            border-radius: 10px;
+            margin: 2rem 0;
+        }
+
+        .install-steps h3 {
+            color: white;
+        }
+
+        .btn {
+            display: inline-block;
+            background: #28a745;
+            color: white;
+            padding: 0.8rem 1.5rem;
+            text-decoration: none;
+            border-radius: 5px;
+            margin: 0.5rem 0.5rem 0.5rem 0;
+            transition: background 0.3s;
+        }
+
+        .btn:hover {
+            background: #218838;
+        }
+
+        .btn-secondary {
+            background: #6c757d;
+        }
+
+        .btn-secondary:hover {
+            background: #545b62;
+        }
+
+        .warning {
+            background: #fff3cd;
+            border: 1px solid #ffeaa7;
+            color: #856404;
+            padding: 1rem;
+            border-radius: 5px;
+            margin: 1rem 0;
+        }
+
+        .structure {
+            background: #2c3e50;
+            color: #ecf0f1;
+            padding: 1rem;
+            border-radius: 5px;
+            font-family: 'Monaco', 'Menlo', monospace;
+            font-size: 0.85rem;
+            line-height: 1.4;
+            overflow-x: auto;
+        }
+
+        footer {
+            background: #2c3e50;
+            color: white;
+            text-align: center;
+            padding: 2rem;
+            margin-top: 3rem;
+        }
+
+        footer a {
+            color: #74b9ff;
+            text-decoration: none;
+        }
+
+        footer a:hover {
+            text-decoration: underline;
+        }
+
+        @media (max-width: 768px) {
+            header h1 { font-size: 2rem; }
+            .container { margin: 0; box-shadow: none; }
+            main { padding: 0 1rem 1rem; }
+            .quick-start, .install-steps { margin: 1rem; }
+            .features { grid-template-columns: 1fr; }
+            .apps-grid { grid-template-columns: 1fr; }
+        }
+
+        .highlight { background: linear-gradient(120deg, #a8edea 0%, #fed6e3 100%); padding: 0.2rem; border-radius: 3px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🏠 Dotfiles</h1>
+            <p>Modern, secure, and performant dotfiles configuration for MacOS</p>
+        </header>
+
+        <div class="quick-start">
+            <h3>🚀 Quick Start</h3>
+            <pre><code># Clone and install
+git clone https://github.com/cassmtnr/dotfiles.git ~/dotfiles
+cd ~/dotfiles
+./install.sh</code></pre>
+            <a href="https://github.com/cassmtnr/dotfiles" class="btn">View on GitHub</a>
+            <a href="#installation" class="btn btn-secondary">Installation Guide</a>
+        </div>
+
+        <main>
+            <h2>✨ Features</h2>
+            <div class="features">
+                <div class="feature">
+                    <strong>🚀 Performance Optimized</strong><br>
+                    Lazy loading for NVM and other tools
+                </div>
+                <div class="feature">
+                    <strong>🔒 Security First</strong><br>
+                    Secure SSH configuration and key management
+                </div>
+                <div class="feature">
+                    <strong>📦 Modular Design</strong><br>
+                    Well-organized, maintainable configuration files
+                </div>
+                <div class="feature">
+                    <strong>🛠️ Modern Tools</strong><br>
+                    Starship prompt for beautiful terminal experience
+                </div>
+                <div class="feature">
+                    <strong>🔄 Automated Setup</strong><br>
+                    Robust installation with backup and error handling
+                </div>
+                <div class="feature">
+                    <strong>🍎 MacOS Optimized</strong><br>
+                    Designed specifically for MacOS systems
+                </div>
+            </div>
+
+            <h2>📁 Project Structure</h2>
+            <div class="structure">dotfiles/
+├── homebrew/
+│   ├── Brewfile      # All Homebrew packages and casks
+│   └── install.sh    # Homebrew installer
+├── config/
+│   └── starship.toml # Starship prompt configuration
+├── node/
+│   └── install.sh    # Node.js setup with NPM packages
+├── zsh/
+│   ├── .zshrc        # Main Zsh configuration
+│   ├── .zshenv       # Environment variables
+│   ├── aliases.zsh   # Shell aliases
+│   ├── functions.zsh # Shell functions
+│   ├── completion.zsh # Shell completions
+│   └── ssh-agent.zsh # SSH key management
+├── macos/
+│   └── defaults.sh   # MacOS system preferences
+├── ssh/
+│   └── config        # SSH configuration template
+├── alfred/           # Alfred workflows
+├── .config/          # Application configs
+│   ├── kitty/        # Terminal configuration
+│   └── gh/           # GitHub CLI config
+├── install.sh        # Main installation script
+└── start.sh          # Alternative installation script</div>
+
+            <h2>📦 What's Included</h2>
+            <div class="apps-grid">
+                <div class="app-category">
+                    <h4>🛠️ Core Utilities</h4>
+                    <ul class="app-list">
+                        <li><code>coreutils</code> GNU Core Utilities</li>
+                        <li><code>findutils</code> GNU findutils</li>
+                        <li><code>grep</code> GNU grep</li>
+                        <li><code>wget</code> Web file downloader</li>
+                        <li><code>curl</code> Data transfer tool</li>
+                        <li><code>htop</code> Process viewer</li>
+                        <li><code>jq</code> JSON processor</li>
+                        <li><code>git</code> Version control</li>
+                    </ul>
+                </div>
+
+                <div class="app-category">
+                    <h4>🐚 Shell Tools</h4>
+                    <ul class="app-list">
+                        <li><code>zsh</code> Z Shell</li>
+                        <li><code>zsh-completions</code> Additional completions</li>
+                        <li><code>zsh-autosuggestions</code> Fish-like suggestions</li>
+                        <li><code>starship</code> Cross-shell prompt</li>
+                    </ul>
+                </div>
+
+                <div class="app-category">
+                    <h4>💻 Programming</h4>
+                    <ul class="app-list">
+                        <li><code>nvm</code> Node.js Version Manager</li>
+                        <li><code>python@3.13</code> Python 3.13</li>
+                        <li><code>poetry</code> Python dependency manager</li>
+                        <li><code>go</code> Go programming language</li>
+                        <li><code>rust</code> Rust programming language</li>
+                        <li><code>yarn</code> Package manager</li>
+                    </ul>
+                </div>
+
+                <div class="app-category">
+                    <h4>🚀 Applications</h4>
+                    <ul class="app-list">
+                        <li><code>1password</code> Password manager</li>
+                        <li><code>alfred</code> Productivity app</li>
+                        <li><code>google-chrome</code> Web browser</li>
+                        <li><code>kitty</code> Terminal emulator</li>
+                        <li><code>visual-studio-code</code> Code editor</li>
+                        <li><code>spotify</code> Music streaming</li>
+                    </ul>
+                </div>
+            </div>
+
+            <h2 id="installation">📦 Installation</h2>
+
+            <div class="install-steps">
+                <h3>Prerequisites</h3>
+                <p>Before installing, ensure you have:</p>
+                <ul style="margin: 1rem 0; padding-left: 1.5rem;">
+                    <li>MacOS 10.15 or later</li>
+                    <li>Command Line Tools: <code style="background: rgba(255,255,255,0.2);">xcode-select --install</code></li>
+                    <li>Git installed and configured</li>
+                    <li>Administrative access to your machine</li>
+                </ul>
+            </div>
+
+            <h3>Automatic Installation</h3>
+            <pre><code># One command does everything
+./install.sh</code></pre>
+
+            <p>The installation script will automatically:</p>
+            <ul>
+                <li>Create a timestamped backup of existing configuration</li>
+                <li>Install Homebrew and all packages from the Brewfile</li>
+                <li>Install Oh My Zsh</li>
+                <li>Create symbolic links for all configuration files</li>
+                <li>Configure MacOS system defaults</li>
+            </ul>
+
+            <h2>🎨 Customization</h2>
+            <div class="warning">
+                <strong>⚠️ Required Setup:</strong> After installation, you'll need to configure SSH keys and Git settings for your environment.
+            </div>
+
+            <h3>SSH Configuration</h3>
+            <pre><code># Generate SSH key
+ssh-keygen -t ed25519 -C "your_email@example.com"
+
+# Edit SSH config
+vim ~/dotfiles/ssh/config</code></pre>
+
+            <h3>Git Configuration</h3>
+            <pre><code># Set your Git details
+git config --global user.name "Your Name"
+git config --global user.email "your.email@example.com"</code></pre>
+
+            <h2>🔧 Post-Installation</h2>
+            <h3>Node.js Setup</h3>
+            <pre><code># Load NVM and install Node.js
+node --version  # First use loads NVM
+nvm install 22
+nvm use 22</code></pre>
+
+            <h2>🚑 Troubleshooting</h2>
+            <h3>Common Issues</h3>
+            <ul>
+                <li><strong>Slow startup:</strong> Profile with <code>zsh -lic exit</code></li>
+                <li><strong>SSH issues:</strong> Check keys with <code>ssh-add -l</code></li>
+                <li><strong>Permissions:</strong> Run <code>chmod 600 ~/.ssh/config</code></li>
+            </ul>
+
+            <h2>🔄 Updates</h2>
+            <pre><code>cd ~/dotfiles
+git pull origin main
+./install.sh</code></pre>
+        </main>
+
+        <footer>
+            <p>
+                <span class="highlight">MIT Licensed</span> •
+                <a href="https://github.com/cassmtnr/dotfiles">GitHub</a> •
+                Inspired by <a href="https://github.com/mathiasbynens/dotfiles">@mathiasbynens</a>
+            </p>
+        </footer>
+    </div>
+</body>
+</html>
