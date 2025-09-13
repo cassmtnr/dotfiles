@@ -47,8 +47,7 @@ dotfiles/
 │   ├── kitty/        # Terminal configuration
 │   └── gh/           # GitHub CLI config
 ├── install.sh        # Main installation script
-├── start.sh          # Alternative installation script
-└── uninstall.sh      # Clean uninstallation script
+└── start.sh          # Alternative installation script
 ```
 
 ## 📋 What's Included
@@ -161,17 +160,15 @@ The following packages and applications will be installed automatically:
 
 ### 📦 Node.js Global Packages
 
-The following NPM packages are available for global installation (edit `node/install.sh` to enable):
+The following NPM packages are installed globally by default:
 
-| Package      | Description                           | Status      |
-| ------------ | ------------------------------------- | ----------- |
-| `npm`        | Node Package Manager (auto-installed) | ✅ Enabled  |
-| `yarn`       | Fast, reliable package manager        | ✅ Enabled  |
-| `typescript` | TypeScript language compiler          | ⚪ Optional |
-| `eslint`     | JavaScript linting utility            | ⚪ Optional |
-| `prettier`   | Code formatter                        | ⚪ Optional |
-| `nodemon`    | Development server with auto-restart  | ⚪ Optional |
-| `pm2`        | Production process manager            | ⚪ Optional |
+| Package      | Description                           | Status     |
+| ------------ | ------------------------------------- | ---------- |
+| `npm`        | Node Package Manager (auto-installed) | ✅ Enabled |
+| `yarn`       | Fast, reliable package manager        | ✅ Enabled |
+| `typescript` | TypeScript language compiler          | ✅ Enabled |
+| `eslint`     | JavaScript linting utility            | ✅ Enabled |
+| `nodemon`    | Development server with auto-restart  | ✅ Enabled |
 
 ### 🎛️ MacOS System Configurations
 
@@ -297,10 +294,9 @@ Edit `zsh/ssh-agent.zsh` and update the `ssh_keys` array with your actual SSH ke
 
 ```bash
 local ssh_keys=(
-    "$HOME/.ssh/your_github_key"
-    "$HOME/.ssh/your_work_key"
-    "$HOME/.ssh/id_ed25519"
-    # Add your specific key paths here
+    "$HOME/.ssh/github/id_ed25519"  # GitHub key
+    "$HOME/.ssh/work/gitlab"         # GitLab work key (if exists)
+    "$HOME/.ssh/id_rsa"              # Legacy RSA key (if exists)
 )
 ```
 
@@ -324,7 +320,7 @@ Add any local customizations like:
 Review and customize the package lists:
 
 - `homebrew/Brewfile` - All Homebrew packages and applications
-- `node/install.sh` - Node.js setup with NPM packages array
+- `node/install.sh` - Node.js setup with essential development packages
 
 ### Additional Customizations
 
@@ -370,7 +366,7 @@ Install global npm packages:
 # Use the Node.js setup script
 ~/dotfiles/node/install.sh
 
-# Or edit the npm_packages array in node/install.sh to add more packages
+# Or edit the npm_packages array in node/install.sh to add/remove packages
 ```
 
 ### Python Tools
@@ -426,21 +422,6 @@ chmod 600 ~/.ssh/id_*
 chmod 644 ~/.ssh/*.pub
 ```
 
-## 🗑️ Uninstallation
-
-To remove the dotfiles:
-
-```bash
-# Restore from backup (if created during installation)
-cp -R ~/.dotfiles.backup.*/* ~/
-
-# Or manually remove symlinks
-rm ~/.zshrc ~/.zshenv
-rm ~/.config/starship.toml
-
-# Remove the dotfiles directory
-rm -rf ~/dotfiles
-```
 
 ## 🔄 Updates
 
