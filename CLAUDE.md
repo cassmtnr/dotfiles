@@ -87,7 +87,6 @@ flow wizard             # Run hive-mind wizard
 
 # Dotfiles management
 ./install.sh           # Install/update dotfiles
-./uninstall.sh         # Remove dotfiles
 git status             # Check configuration changes
 ```
 
@@ -100,9 +99,13 @@ git status             # Check configuration changes
 
 ### SSH Setup Requirements
 
-1. Generate SSH keys: `ssh-keygen -t ed25519 -C "your_email@example.com"`
-2. Update `ssh/config` with real key paths
-3. Update `zsh/ssh-agent.zsh` with actual key paths (lines 295-304)
+1. Generate SSH keys in organized folders:
+   ```bash
+   mkdir -p ~/.ssh/github
+   ssh-keygen -t ed25519 -C "your_email@example.com" -f ~/.ssh/github/id_ed25519
+   ```
+2. Update `ssh/config` with real key paths (e.g., `~/.ssh/github/id_ed25519`)
+3. Update `zsh/ssh-agent.zsh` with actual key paths (line 32-34)
 4. Add keys to GitHub/GitLab
 
 ### Performance Notes
@@ -131,7 +134,7 @@ git status             # Check configuration changes
 ### 🎯 Next Steps Required
 
 1. **Commit current changes** with proper commit message
-2. **SSH configuration** - update with real key paths
+2. **SSH configuration** - Keys organized in folders (e.g., ~/.ssh/github/)
 3. **Git configuration** - set global user details
 4. **Machine-specific settings** - create ~/.zshrc.local
 5. **Testing & validation** - run installation tests

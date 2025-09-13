@@ -38,16 +38,11 @@ npm --version
 
 # Define global NPM packages to install
 npm_packages=(
-    # Package managers
     npm
     yarn
-    
-    # Add more global packages as needed:
-    # typescript
-    # eslint
-    # prettier
-    # nodemon
-    # pm2
+    typescript
+    eslint
+    nodemon
 )
 
 # Install global NPM packages
@@ -56,7 +51,7 @@ if [ ${#npm_packages[@]} -gt 0 ]; then
     npm install -g "${npm_packages[@]}"
     echo "Global NPM packages installed:"
     npm list -g --depth=0
-    
+
     # Show Yarn version if installed
     if command -v yarn &> /dev/null; then
         echo "Yarn version:"
