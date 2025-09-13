@@ -30,7 +30,7 @@ Host *
 Host github.com
     HostName github.com
     User git
-    IdentityFile ~/.ssh/dev/github
+    IdentityFile ~/.ssh/id_ed25519
     
 # GitLab (Work) - Customize hostname
 Host gitlab.work.com
