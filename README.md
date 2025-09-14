@@ -422,7 +422,6 @@ chmod 600 ~/.ssh/id_*
 chmod 644 ~/.ssh/*.pub
 ```
 
-
 ## 🔄 Updates
 
 To update your dotfiles:
