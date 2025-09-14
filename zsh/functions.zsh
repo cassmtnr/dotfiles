@@ -39,46 +39,6 @@ extract() {
     fi
 }
 
-# Create a data URL from a file
-dataurl() {
-    local mimeType=$(file -b --mime-type "$1")
-    if [[ $mimeType == text/* ]]; then
-        mimeType="${mimeType};charset=utf-8"
-    fi
-    echo "data:${mimeType};base64,$(openssl base64 -in "$1" | tr -d '\n')"
-}
-
-# Start a simple HTTP server
-server() {
-    local port="${1:-8000}"
-    open "http://localhost:${port}/"
-    python3 -m http.server "$port"
-}
-
-# Git clone and cd into directory
-gclone() {
-    git clone "$1" && cd "$(basename "$1" .git)"
-}
-
-# Quick backup of a file
-backup() {
-    if [[ -f "$1" ]]; then
-        cp "$1" "${1}.backup.$(date +%Y%m%d_%H%M%S)"
-        echo "Backed up $1"
-    else
-        echo "File $1 does not exist"
-    fi
-}
-
-# Find and replace in current directory
-findreplace() {
-    if [[ $# -lt 2 ]]; then
-        echo "Usage: findreplace <find> <replace>"
-        return 1
-    fi
-    find . -type f -exec sed -i '' "s/$1/$2/g" {} +
-}
-
 # Claude Flow helper function
 flow() {
     if [[ "$1" == "init" ]] && [[ -n "$2" ]]; then
