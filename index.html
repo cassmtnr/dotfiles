@@ -201,8 +201,111 @@ git config --global user.email "your.email@example.com"</code></pre>
             <li>Regularly sync with the upstream repository for updates</li>
         </ol>
 
-        <h2>Contributing</h2>
-        <p>Feel free to fork and customize these dotfiles for your own use!</p>
+        <h2>Available Aliases & Functions</h2>
+        <p>This dotfiles configuration includes a comprehensive set of aliases and functions to improve your terminal productivity.</p>
+
+        <p><strong>Source files:</strong></p>
+        <ul>
+            <li>Aliases: <a href="zsh/aliases.zsh"><code>zsh/aliases.zsh</code></a></li>
+            <li>Functions: <a href="zsh/functions.zsh"><code>zsh/functions.zsh</code></a></li>
+        </ul>
+
+        <h3>Aliases Reference</h3>
+
+        <h4>Navigation</h4>
+        <ul>
+            <li><code>..</code> - Go up one directory</li>
+            <li><code>...</code> - Go up two directories</li>
+            <li><code>....</code> - Go up three directories</li>
+            <li><code>.....</code> - Go up four directories</li>
+        </ul>
+
+        <h4>Directory Shortcuts</h4>
+        <ul>
+            <li><code>d</code> - Go to Documents</li>
+            <li><code>dl</code> - Go to Downloads</li>
+            <li><code>dt</code> - Go to Desktop</li>
+            <li><code>work</code> - Go to Work folder</li>
+            <li><code>dev</code> - Go to Dev folder</li>
+            <li><code>dot</code> - Go to dotfiles and open in VS Code</li>
+            <li><code>dotfiles</code> - Go to dotfiles</li>
+            <li><code>meow</code> - Go to Kitty config and open in VS Code</li>
+        </ul>
+
+        <h4>Git Shortcuts</h4>
+        <ul>
+            <li><code>gl</code> - Pretty git log with graph: <code>git log --oneline --graph --decorate</code></li>
+            <li><code>amend</code> - Amend last commit without editing message</li>
+            <li><code>force</code> - Force push with safety flag</li>
+            <li><code>upstream</code> - Push and set upstream to current branch</li>
+            <li><code>rebase</code> - Rebase on develop branch and run yarn</li>
+            <li><code>develop</code> - Switch to develop, fetch and pull latest changes</li>
+            <li><code>wth</code> - Show current commit hash</li>
+        </ul>
+
+        <h4>Configuration Shortcuts</h4>
+        <ul>
+            <li><code>zrc</code> - Edit .zshrc in VS Code</li>
+            <li><code>zshsource</code> - Reload .zshrc configuration</li>
+        </ul>
+
+        <h4>System Utilities</h4>
+        <ul>
+            <li><code>publicip</code> - Get your public IP address</li>
+            <li><code>clean-cache</code> - Flush DNS cache on macOS</li>
+            <li><code>chromekill</code> - Kill Chrome renderer processes</li>
+            <li><code>show</code> - Show hidden files in Finder</li>
+            <li><code>hide</code> - Hide hidden files in Finder</li>
+            <li><code>week</code> - Get current week number</li>
+        </ul>
+
+        <h4>Development Tools</h4>
+        <ul>
+            <li><code>linked</code> - Show symlinked node modules</li>
+        </ul>
+
+        <h3>Functions Reference</h3>
+
+        <h4>Directory & Navigation</h4>
+        <p><strong><code>mkd &lt;directory&gt;</code></strong> - Create directory and change into it</p>
+        <pre><code>mkd new-project  # Creates 'new-project' and cd into it</code></pre>
+
+        <h4>Development Tools</h4>
+        <p><strong><code>killport &lt;port&gt;</code></strong> - Kill process running on specified port</p>
+        <pre><code>killport 3000    # Kills process on port 3000</code></pre>
+
+
+        <h4>File Operations</h4>
+        <p><strong><code>extract &lt;file&gt;</code></strong> - Extract various archive formats</p>
+        <pre><code>extract archive.zip     # Extracts zip file
+extract backup.tar.gz   # Extracts tar.gz file</code></pre>
+        <p>Supports: <code>.tar.bz2</code>, <code>.tar.gz</code>, <code>.bz2</code>, <code>.rar</code>, <code>.gz</code>, <code>.tar</code>, <code>.tbz2</code>, <code>.tgz</code>, <code>.zip</code>, <code>.Z</code>, <code>.7z</code></p>
+
+
+        <h4>Information & Utilities</h4>
+        <p><strong><code>weather [location]</code></strong> - Get weather information</p>
+        <pre><code>weather          # Weather for your location
+weather London   # Weather for London</code></pre>
+
+        <h4>Claude Flow Integration</h4>
+        <p><strong><code>flow &lt;command&gt;</code></strong> - Claude Flow helper function</p>
+        <pre><code>flow init my-app           # Initialize new project
+flow resume               # Resume previous session
+flow resume dotfiles      # Resume specific dotfiles session
+flow wizard              # Run hive-mind wizard</code></pre>
+
+        <h4>Development Environment</h4>
+        <p><strong><code>playwright-install &lt;proxy&gt;</code></strong> - Install Playwright with proxy</p>
+        <pre><code>playwright-install proxy.company.com:8080</code></pre>
+
+        <h4>Performance Optimized (Lazy Loading)</h4>
+        <ul>
+            <li><strong><code>nvm</code></strong> - Node Version Manager (lazy loaded)</li>
+            <li><strong><code>node</code></strong> - Node.js (lazy loaded via NVM)</li>
+            <li><strong><code>npm</code></strong> - NPM (lazy loaded via NVM)</li>
+            <li><strong><code>npx</code></strong> - NPX (lazy loaded via NVM)</li>
+        </ul>
+        <p>These functions automatically load NVM only when first used, improving shell startup time.</p>
 
         <h2>License</h2>
         <p>These dotfiles are released under the CC0 1.0 Universal license.</p>

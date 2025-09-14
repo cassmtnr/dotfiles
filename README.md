@@ -116,9 +116,107 @@ brew bundle --file=~/dotfiles/homebrew/Brewfile
 3. Keep your fork private if it contains sensitive information
 4. Regularly sync with the upstream repository for updates
 
-## Contributing
+## Available Aliases & Functions
 
-Feel free to fork and customize these dotfiles for your own use!
+This dotfiles configuration includes a comprehensive set of aliases and functions to improve your terminal productivity.
+
+**Source files:**
+- Aliases: [`zsh/aliases.zsh`](zsh/aliases.zsh)
+- Functions: [`zsh/functions.zsh`](zsh/functions.zsh)
+
+### Aliases Reference
+
+#### Navigation
+- `..` - Go up one directory
+- `...` - Go up two directories
+- `....` - Go up three directories
+- `.....` - Go up four directories
+
+#### Directory Shortcuts
+- `d` - Go to Documents
+- `dl` - Go to Downloads
+- `dt` - Go to Desktop
+- `work` - Go to Work folder
+- `dev` - Go to Dev folder
+- `dot` - Go to dotfiles and open in VS Code
+- `dotfiles` - Go to dotfiles
+- `meow` - Go to Kitty config and open in VS Code
+
+#### Git Shortcuts
+- `gl` - Pretty git log with graph: `git log --oneline --graph --decorate`
+- `amend` - Amend last commit without editing message
+- `force` - Force push with safety flag
+- `upstream` - Push and set upstream to current branch
+- `rebase` - Rebase on develop branch and run yarn
+- `develop` - Switch to develop, fetch and pull latest changes
+- `wth` - Show current commit hash
+
+#### Configuration Shortcuts
+- `zrc` - Edit .zshrc in VS Code
+- `zshsource` - Reload .zshrc configuration
+
+#### System Utilities
+- `publicip` - Get your public IP address
+- `clean-cache` - Flush DNS cache on macOS
+- `chromekill` - Kill Chrome renderer processes
+- `show` - Show hidden files in Finder
+- `hide` - Hide hidden files in Finder
+- `week` - Get current week number
+
+#### Development Tools
+- `linked` - Show symlinked node modules
+
+### Functions Reference
+
+#### Directory & Navigation
+- **`mkd <directory>`** - Create directory and change into it
+  ```bash
+  mkd new-project  # Creates 'new-project' and cd into it
+  ```
+
+#### Development Tools
+- **`killport <port>`** - Kill process running on specified port
+  ```bash
+  killport 3000    # Kills process on port 3000
+  ```
+
+#### File Operations
+- **`extract <file>`** - Extract various archive formats
+  ```bash
+  extract archive.zip     # Extracts zip file
+  extract backup.tar.gz   # Extracts tar.gz file
+  ```
+  Supports: `.tar.bz2`, `.tar.gz`, `.bz2`, `.rar`, `.gz`, `.tar`, `.tbz2`, `.tgz`, `.zip`, `.Z`, `.7z`
+
+#### Information & Utilities
+- **`weather [location]`** - Get weather information
+  ```bash
+  weather          # Weather for your location
+  weather London   # Weather for London
+  ```
+
+#### Claude Flow Integration
+- **`flow <command>`** - Claude Flow helper function
+  ```bash
+  flow init my-app           # Initialize new project
+  flow resume               # Resume previous session
+  flow resume dotfiles      # Resume specific dotfiles session
+  flow wizard              # Run hive-mind wizard
+  ```
+
+#### Development Environment
+- **`playwright-install <proxy>`** - Install Playwright with proxy
+  ```bash
+  playwright-install proxy.company.com:8080
+  ```
+
+#### Performance Optimized (Lazy Loading)
+- **`nvm`** - Node Version Manager (lazy loaded)
+- **`node`** - Node.js (lazy loaded via NVM)
+- **`npm`** - NPM (lazy loaded via NVM)
+- **`npx`** - NPX (lazy loaded via NVM)
+
+These functions automatically load NVM only when first used, improving shell startup time.
 
 ## License
 
