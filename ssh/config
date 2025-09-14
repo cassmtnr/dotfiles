@@ -32,11 +32,11 @@ Host github.com
     User git
     IdentityFile ~/.ssh/github/id_ed25519
     
-# GitLab (Work) - Customize hostname
-Host gitlab.work.com
-    HostName gitlab.work.com
+# Personal GitLab - Customize hostname
+Host personal.gitlab.com
+    HostName personal.gitlab.com
     User git
-    IdentityFile ~/.ssh/work/gitlab
+    IdentityFile ~/.ssh/personal/id_ed25519
     
 # Personal Server Example
 # Host myserver

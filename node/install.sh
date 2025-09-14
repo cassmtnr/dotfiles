@@ -24,11 +24,11 @@ if ! command -v nvm &> /dev/null; then
     exit 0
 fi
 
-# Install Node.js LTS version
-echo "Installing Node.js LTS..."
-nvm install --lts
-nvm use --lts
-nvm alias default node
+# Install Node.js version 22
+echo "Installing Node.js version 22..."
+nvm install 22
+nvm use 22
+nvm alias default 22
 
 # Show installed version
 echo "Node.js version:"
