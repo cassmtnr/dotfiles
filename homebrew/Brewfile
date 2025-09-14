@@ -12,14 +12,12 @@ brew "wget"
 brew "curl"
 
 # Modern CLI tools
-brew "htop"         # Process viewer
 brew "tldr"         # Simplified man pages
 brew "jq"           # JSON processor
 brew "yq"           # YAML processor
 
 # Development tools
 brew "git"
-brew "watch"
 
 # Shell enhancements
 brew "zsh"

@@ -1,7 +1,7 @@
 # GitHub Pages Jekyll configuration
 title: Dotfiles
 description: Modern, secure, and performant dotfiles configuration for MacOS
-theme: jekyll-theme-cayman
+theme: jekyll-theme-hacker
 show_downloads: true
 google_analytics:
 

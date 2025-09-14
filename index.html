@@ -6,674 +6,214 @@
     <title>cassmtnr@dotfiles</title>
     <meta name="description" content="Modern, secure, and performant dotfiles configuration for MacOS">
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
             line-height: 1.6;
-            color: #333;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
+            color: #e6edf3;
+            background: #0d1117;
+            padding: 2rem;
         }
 
         .container {
-            max-width: 1000px;
+            max-width: 800px;
             margin: 0 auto;
-            background: white;
-            min-height: 100vh;
-            box-shadow: 0 0 50px rgba(0,0,0,0.1);
         }
 
-        header {
-            background: linear-gradient(135deg, #2c3e50, #34495e);
-            color: white;
-            padding: 2rem;
-            text-align: center;
-        }
-
-        header h1 {
-            font-size: 2.5rem;
-            margin-bottom: 0.5rem;
-            font-weight: 300;
-        }
-
-        header p {
-            font-size: 1.1rem;
-            opacity: 0.9;
-        }
-
-        .quick-start {
-            background: #f8f9fa;
-            border-left: 4px solid #28a745;
-            padding: 1.5rem;
-            margin: 2rem;
-            border-radius: 5px;
-        }
-
-        .quick-start h3 {
-            color: #28a745;
+        h1 {
+            font-size: 2rem;
+            font-weight: 600;
+            color: #f0f6fc;
             margin-bottom: 1rem;
-        }
-
-        main {
-            padding: 0 2rem 2rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 1px solid #30363d;
         }
 
         h2 {
-            color: #2c3e50;
-            border-bottom: 2px solid #3498db;
-            padding-bottom: 0.5rem;
-            margin: 2rem 0 1rem;
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #f0f6fc;
+            margin: 2rem 0 1rem 0;
+            padding-bottom: 0.3rem;
+            border-bottom: 1px solid #30363d;
         }
 
         h3 {
-            color: #34495e;
-            margin: 1.5rem 0 0.5rem;
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: #f0f6fc;
+            margin: 1.5rem 0 0.5rem 0;
         }
 
-        .features {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 1rem;
-            margin: 1.5rem 0;
-        }
-
-        .feature {
-            background: #f8f9fa;
-            padding: 1rem;
-            border-left: 4px solid #3498db;
-        }
-
-        .feature strong {
-            color: #2c3e50;
-        }
-
-        .apps-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(380px, 1fr));
-            gap: 1.5rem;
-            margin: 1.5rem 0;
-        }
-
-        .app-category {
-            background: #f8f9fa;
-            padding: 1.5rem;
-            border-top: 4px solid #e74c3c;
-        }
-
-        .app-category h4 {
-            color: #e74c3c;
-            margin-bottom: 1rem;
-            font-size: 1.1rem;
-        }
-
-        .app-list {
-            list-style: none;
-        }
-
-        .app-list li {
-            padding: 0.3rem 0;
-            border-bottom: 1px solid #ecf0f1;
-        }
-
-        .app-list li:last-child {
-            border-bottom: none;
-        }
-
-        .app-list code {
-            background: #34495e;
-            color: white;
-            padding: 0.2rem 0.4rem;
-            border-radius: 3px;
-            font-size: 0.9rem;
-            margin-right: 0.5rem;
+        p {
+            color: #e6edf3;
+            margin: 1rem 0;
         }
 
         code {
-            background: #f1f2f6;
+            background: #262c36;
+            color: #e6edf3;
             padding: 0.2rem 0.4rem;
             border-radius: 3px;
-            font-family: 'Monaco', 'Menlo', monospace;
-            font-size: 0.9rem;
+            font-family: ui-monospace, SFMono-Regular, 'SF Mono', Monaco, Menlo, monospace;
+            font-size: 0.85rem;
         }
 
         pre {
-            background: #2c3e50;
-            color: #ecf0f1;
+            background: #161b22;
+            color: #e6edf3;
             padding: 1rem;
-            border-radius: 5px;
+            border: 1px solid #30363d;
+            border-radius: 6px;
             overflow-x: auto;
             margin: 1rem 0;
-            font-family: 'Monaco', 'Menlo', monospace;
+            font-family: ui-monospace, SFMono-Regular, 'SF Mono', Monaco, Menlo, monospace;
+            font-size: 0.85rem;
         }
 
         pre code {
             background: none;
-            color: inherit;
             padding: 0;
         }
 
-        .install-steps {
-            background: linear-gradient(135deg, #74b9ff, #0984e3);
-            color: white;
-            padding: 2rem;
-            border-radius: 10px;
-            margin: 2rem 0;
-        }
-
-        .install-steps h3 {
-            color: white;
-        }
-
-        .btn {
-            display: inline-block;
-            background: #28a745;
-            color: white;
-            padding: 0.8rem 1.5rem;
-            text-decoration: none;
-            border-radius: 5px;
-            margin: 0.5rem 0.5rem 0.5rem 0;
-            transition: background 0.3s;
-        }
-
-        .btn:hover {
-            background: #218838;
-        }
-
-        .btn-secondary {
-            background: #6c757d;
-        }
-
-        .btn-secondary:hover {
-            background: #545b62;
-        }
-
-        .warning {
-            background: #fff3cd;
-            border: 1px solid #ffeaa7;
-            color: #856404;
-            padding: 1rem;
-            border-radius: 5px;
+        ul, ol {
             margin: 1rem 0;
+            padding-left: 2rem;
         }
 
-        .structure {
-            background: #2c3e50;
-            color: #ecf0f1;
-            padding: 1rem;
-            border-radius: 5px;
-            font-family: 'Monaco', 'Menlo', monospace;
-            font-size: 0.85rem;
-            line-height: 1.4;
-            overflow-x: auto;
+        li {
+            color: #e6edf3;
+            margin: 0.25rem 0;
         }
 
-        footer {
-            background: #2c3e50;
-            color: white;
-            text-align: center;
-            padding: 2rem;
-            margin-top: 3rem;
-        }
-
-        footer a {
-            color: #74b9ff;
+        a {
+            color: #58a6ff;
             text-decoration: none;
         }
 
-        footer a:hover {
+        a:hover {
             text-decoration: underline;
         }
 
-        /* Troubleshooting Grid */
-        .troubleshooting-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 1.5rem;
-            margin: 2rem 0;
-        }
-
-        .issue-card {
-            background: #f8f9fa;
-            border-radius: 8px;
-            padding: 1.5rem;
-            border-left: 4px solid #dc3545;
-        }
-
-        .issue-card h4 {
-            margin: 0 0 0.5rem 0;
-            color: #2c3e50;
-        }
-
-        .issue-card pre {
-            margin: 0.5rem 0;
-        }
-
-        .hint {
-            font-size: 0.85rem;
-            color: #6c757d;
-            font-style: italic;
-            margin-top: 0.5rem;
-        }
-
-        /* Update Section */
-        .update-section {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            padding: 2rem;
-            border-radius: 10px;
-            margin: 2rem 0;
-        }
-
-        .update-steps {
-            display: grid;
-            gap: 1.5rem;
-            margin-top: 1.5rem;
-        }
-
-        .step {
-            display: flex;
-            align-items: flex-start;
-            gap: 1rem;
-        }
-
-        .step-number {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            width: 30px;
-            height: 30px;
-            background: white;
-            color: #667eea;
-            border-radius: 50%;
-            font-weight: bold;
-            flex-shrink: 0;
-        }
-
-        .update-section pre {
-            background: rgba(0,0,0,0.2);
-            border: 1px solid rgba(255,255,255,0.1);
-            margin: 0.5rem 0;
-        }
-
-        /* Security Grid */
-        .security-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 2rem;
-            margin: 2rem 0;
-        }
-
-        .security-card {
-            text-align: center;
-            padding: 2rem 1.5rem;
-            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
-            border-radius: 10px;
-            transition: transform 0.3s;
-        }
-
-        .security-card:hover {
-            transform: translateY(-5px);
-        }
-
-        .security-icon {
-            font-size: 2.5rem;
-            display: block;
-            margin-bottom: 1rem;
-        }
-
-        .security-card h4 {
-            margin: 0.5rem 0;
-            color: #2c3e50;
-        }
-
-        /* Contributing Section */
-        .contributing-section {
-            background: #f8f9fa;
-            padding: 2rem;
-            border-radius: 10px;
-            margin: 2rem 0;
-        }
-
-        .contribute-intro {
-            text-align: center;
-            font-size: 1.1rem;
-            margin-bottom: 2rem;
-            color: #495057;
-        }
-
-        .contribute-steps {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 1.5rem;
-        }
-
-        .contribute-card {
-            background: white;
-            padding: 1.5rem;
-            border-radius: 8px;
-            text-align: center;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-            transition: box-shadow 0.3s;
-        }
-
-        .contribute-card:hover {
-            box-shadow: 0 4px 8px rgba(0,0,0,0.15);
-        }
-
-        .step-icon {
-            font-size: 2rem;
-            margin-bottom: 0.5rem;
-            display: block;
-        }
-
-        .contribute-card h4 {
-            margin: 0.5rem 0;
-            color: #2c3e50;
+        strong {
+            color: #f0f6fc;
         }
 
         @media (max-width: 768px) {
-            header h1 { font-size: 2rem; }
-            .container { margin: 0; box-shadow: none; }
-            main { padding: 0 1rem 1rem; }
-            .quick-start, .install-steps { margin: 1rem; }
-            .features { grid-template-columns: 1fr; }
-            .apps-grid { grid-template-columns: 1fr; }
-            .troubleshooting-grid { grid-template-columns: 1fr; }
-            .security-grid { grid-template-columns: 1fr; }
-            .contribute-steps { grid-template-columns: 1fr; }
+            body { padding: 1rem; }
         }
-
-        .highlight { background: linear-gradient(120deg, #a8edea 0%, #fed6e3 100%); padding: 0.2rem; border-radius: 3px; }
     </style>
 </head>
 <body>
     <div class="container">
-        <header>
-            <h1>🏠 Dotfiles</h1>
-            <p>Modern, secure, and performant dotfiles configuration for MacOS</p>
-        </header>
+        <h1>Dotfiles</h1>
+        <p>Modern, secure, and performant dotfiles configuration for MacOS.</p>
 
-        <div class="quick-start">
-            <h3>🚀 Quick Start</h3>
-            <pre><code># Clone and install
+        <h2>Quick Start</h2>
+        <pre><code># Clone and install
 git clone https://github.com/cassmtnr/dotfiles.git ~/dotfiles
 cd ~/dotfiles
 ./install.sh</code></pre>
-            <a href="https://github.com/cassmtnr/dotfiles" class="btn">View on GitHub</a>
-            <a href="#installation" class="btn btn-secondary">Installation Guide</a>
-        </div>
 
-        <main>
-            <h2>✨ Features</h2>
-            <div class="features">
-                <div class="feature">
-                    <strong>🚀 Performance Optimized</strong><br>
-                    Lazy loading for NVM and other tools
-                </div>
-                <div class="feature">
-                    <strong>🔒 Security First</strong><br>
-                    Secure SSH configuration and key management
-                </div>
-                <div class="feature">
-                    <strong>📦 Modular Design</strong><br>
-                    Well-organized, maintainable configuration files
-                </div>
-                <div class="feature">
-                    <strong>🛠️ Modern Tools</strong><br>
-                    Starship prompt for beautiful terminal experience
-                </div>
-                <div class="feature">
-                    <strong>🔄 Automated Setup</strong><br>
-                    Robust installation with error handling
-                </div>
-                <div class="feature">
-                    <strong>🍎 MacOS Optimized</strong><br>
-                    Designed specifically for MacOS systems
-                </div>
-            </div>
+        <h2>Customization</h2>
 
-            <h2>📁 Project Structure</h2>
-            <div class="structure">
-                dotfiles/ <br>
-                ├── homebrew/<br>
-                │   ├── Brewfile      # All Homebrew packages and casks<br>
-                │   └── install.sh    # Homebrew installer<br>
-                ├── config/<br>
-                │   └── starship.toml # Starship prompt configuration<br>
-                ├── node/<br>
-                │   └── install.sh    # Node.js setup with NPM packages<br>
-                ├── zsh/<br>
-                │   ├── .zshrc        # Main Zsh configuration<br>
-                │   ├── .zshenv       # Environment variables<br>
-                │   ├── aliases.zsh   # Shell aliases<br>
-                │   ├── functions.zsh # Shell functions<br>
-                │   ├── completion.zsh # Shell completions<br>
-                │   └── ssh-agent.zsh # SSH key management<br>
-                ├── macos/<br>
-                │   └── defaults.sh   # MacOS system preferences<br>
-                ├── ssh/<br>
-                │   └── config        # SSH configuration template<br>
-                ├── alfred/<br>
-                │   └── workflows     # Alfred workflows<br>
-                ├── .config/<br>
-                │   └── application   # Application configs<br>
-                │   └── kitty/        # Terminal configuration<br>
-                └── install.sh        # Main installation script<br>
-            </div>
+        <h3>Required Customizations</h3>
 
-            <h2>📦 What's Included</h2>
-            <div class="apps-grid">
-                <div class="app-category">
-                    <h4>🛠️ Core Utilities</h4>
-                    <ul class="app-list">
-                        <li><code>coreutils</code> GNU Core Utilities</li>
-                        <li><code>findutils</code> GNU findutils</li>
-                        <li><code>grep</code> GNU grep</li>
-                        <li><code>wget</code> Web file downloader</li>
-                        <li><code>curl</code> Data transfer tool</li>
-                        <li><code>htop</code> Process viewer</li>
-                        <li><code>jq</code> JSON processor</li>
-                        <li><code>git</code> Version control</li>
-                    </ul>
-                </div>
+        <h4>1. SSH Configuration</h4>
+        <p>The SSH config is automatically symlinked to <code>~/.ssh/config</code>. Edit it directly:</p>
+        <pre><code>vim ~/dotfiles/ssh/config</code></pre>
+        <p>Update the configuration with:</p>
+        <ul>
+            <li>SSH key paths (replace generic paths with your actual key locations)</li>
+            <li>Host configurations for your Git providers</li>
+            <li>Any specific connection settings</li>
+        </ul>
+        <p>Generate SSH keys if needed:</p>
+        <pre><code>ssh-keygen -t ed25519 -C "your_email@example.com"</code></pre>
 
-                <div class="app-category">
-                    <h4>🐚 Shell Tools</h4>
-                    <ul class="app-list">
-                        <li><code>zsh</code> Z Shell</li>
-                        <li><code>zsh-completions</code> Additional completions</li>
-                        <li><code>zsh-autosuggestions</code> Fish-like suggestions</li>
-                        <li><code>starship</code> Cross-shell prompt</li>
-                    </ul>
-                </div>
-
-                <div class="app-category">
-                    <h4>💻 Programming</h4>
-                    <ul class="app-list">
-                        <li><code>nvm</code> Node.js Version Manager</li>
-                        <li><code>python@3.13</code> Python 3.13</li>
-                        <li><code>poetry</code> Python dependency manager</li>
-                        <li><code>go</code> Go programming language</li>
-                        <li><code>rust</code> Rust programming language</li>
-                        <li><code>yarn</code> Package manager</li>
-                    </ul>
-                </div>
-
-                <div class="app-category">
-                    <h4>🚀 Applications</h4>
-                    <ul class="app-list">
-                        <li><code>1password</code> Password manager</li>
-                        <li><code>alfred</code> Productivity app</li>
-                        <li><code>google-chrome</code> Web browser</li>
-                        <li><code>kitty</code> Terminal emulator</li>
-                        <li><code>visual-studio-code</code> Code editor</li>
-                        <li><code>spotify</code> Music streaming</li>
-                    </ul>
-                </div>
-            </div>
-
-            <h2 id="installation">📦 Installation</h2>
-
-            <div class="install-steps">
-                <h3>Prerequisites</h3>
-                <p>Before installing, ensure you have:</p>
-                <ul style="margin: 1rem 0; padding-left: 1.5rem;">
-                    <li>MacOS 10.15 or later</li>
-                    <li>Command Line Tools: <code style="background: rgba(255,255,255,0.2);">xcode-select --install</code></li>
-                    <li>Git installed and configured</li>
-                    <li>Administrative access to your machine</li>
-                </ul>
-            </div>
-
-            <h3>Automatic Installation</h3>
-            <pre><code># One command does everything
-./install.sh</code></pre>
-
-            <p>The installation script will automatically:</p>
-            <ul>
-                <li>Install Homebrew and all packages from the Brewfile</li>
-                <li>Install Oh My Zsh</li>
-                <li>Create symbolic links for all configuration files</li>
-                <li>Configure MacOS system defaults</li>
-            </ul>
-
-            <h2>🎨 Customization</h2>
-            <div class="warning">
-                <strong>⚠️ Required Setup:</strong> After installation, you'll need to configure SSH keys and Git settings for your environment.
-            </div>
-
-            <h3>SSH Configuration</h3>
-            <pre><code># Generate SSH key
-ssh-keygen -t ed25519 -C "your_email@example.com"
-
-# Edit SSH config
-vim ~/dotfiles/ssh/config</code></pre>
-
-            <h3>Git Configuration</h3>
-            <pre><code># Set your Git details
-git config --global user.name "Your Name"
+        <h4>2. Git Configuration</h4>
+        <p>Update git configuration with your details:</p>
+        <pre><code>git config --global user.name "Your Name"
 git config --global user.email "your.email@example.com"</code></pre>
 
-            <h2>🔧 Post-Installation</h2>
-            <h3>Node.js Setup</h3>
-            <pre><code># Load NVM and install Node.js
-node --version  # First use loads NVM
-nvm install 22
-nvm use 22</code></pre>
+        <h4>3. SSH Agent Configuration</h4>
+        <p>Edit <code>zsh/ssh-agent.zsh</code> and update the <code>ssh_keys</code> array with your actual SSH key paths:</p>
+        <pre><code>local ssh_keys=(
+    "$HOME/.ssh/github/id_ed25519"  # GitHub key
+    "$HOME/.ssh/personal/id_ed25519"   # Personal key (if exists)
+    "$HOME/.ssh/id_rsa"              # Legacy RSA key (if exists)
+)</code></pre>
 
-            <h2>🚑 Troubleshooting</h2>
-            <div class="troubleshooting-grid">
-                <div class="issue-card">
-                    <h4>🐌 Slow Shell Startup</h4>
-                    <p>Profile your shell to identify bottlenecks:</p>
-                    <pre><code>zsh -lic exit</code></pre>
-                    <p class="hint">NVM is lazy-loaded for faster startup</p>
-                </div>
-                <div class="issue-card">
-                    <h4>🔑 SSH Connection Issues</h4>
-                    <p>Verify loaded SSH keys:</p>
-                    <pre><code>ssh-add -l</code></pre>
-                    <p class="hint">Keys should be in ~/.ssh/*/</p>
-                </div>
-                <div class="issue-card">
-                    <h4>🔒 Permission Errors</h4>
-                    <p>Fix SSH config permissions:</p>
-                    <pre><code>chmod 600 ~/.ssh/config
-chmod 700 ~/.ssh</code></pre>
-                    <p class="hint">SSH requires strict permissions</p>
-                </div>
-            </div>
+        <h4>4. Machine-Specific Settings</h4>
+        <p>Create a local configuration file for machine-specific settings:</p>
+        <pre><code>touch ~/.zshrc.local</code></pre>
+        <p>Add any local customizations like:</p>
+        <ul>
+            <li>Environment variables</li>
+            <li>Local aliases</li>
+            <li>Machine-specific paths</li>
+            <li>Private configurations</li>
+        </ul>
 
-            <h2>🔄 Keeping Everything Updated</h2>
-            <div class="update-section">
-                <p>Stay current with the latest improvements and security patches:</p>
-                <div class="update-steps">
-                    <div class="step">
-                        <span class="step-number">1</span>
-                        <div>
-                            <strong>Pull Latest Changes</strong>
-                            <pre><code>cd ~/dotfiles
-git pull origin main</code></pre>
-                        </div>
-                    </div>
-                    <div class="step">
-                        <span class="step-number">2</span>
-                        <div>
-                            <strong>Run Installation</strong>
-                            <pre><code>./install.sh</code></pre>
-                        </div>
-                    </div>
-                    <div class="step">
-                        <span class="step-number">3</span>
-                        <div>
-                            <strong>Update Packages</strong>
-                            <pre><code>brew update && brew upgrade</code></pre>
-                        </div>
-                    </div>
-                </div>
-            </div>
+        <h4>5. Package Customization</h4>
+        <p>Review and customize the package lists:</p>
+        <ul>
+            <li><code>homebrew/Brewfile</code> - All Homebrew packages and applications</li>
+            <li><code>node/install.sh</code> - Node.js setup with essential development packages</li>
+        </ul>
 
-            <h2>🔒 Security Best Practices</h2>
-            <div class="security-grid">
-                <div class="security-card">
-                    <span class="security-icon">🔐</span>
-                    <h4>Zero Hardcoded Secrets</h4>
-                    <p>All sensitive data uses templates. Never commit actual keys or passwords.</p>
-                </div>
-                <div class="security-card">
-                    <span class="security-icon">🛡️</span>
-                    <h4>Secure SSH Defaults</h4>
-                    <p>Pre-configured with modern ciphers, key types, and connection multiplexing.</p>
-                </div>
-                <div class="security-card">
-                    <span class="security-icon">🔏</span>
-                    <h4>Private Fork Strategy</h4>
-                    <p>Keep your personalized fork private to protect custom configurations.</p>
-                </div>
-            </div>
+        <h3>Additional Customizations</h3>
 
-            <h2>🤝 Join the Community</h2>
-            <div class="contributing-section">
-                <p class="contribute-intro">These dotfiles are designed to be forked and customized. Make them your own!</p>
-                <div class="contribute-steps">
-                    <div class="contribute-card">
-                        <div class="step-icon">🍴</div>
-                        <h4>Fork & Clone</h4>
-                        <p>Create your own copy on GitHub and clone it locally for customization.</p>
-                    </div>
-                    <div class="contribute-card">
-                        <div class="step-icon">✨</div>
-                        <h4>Personalize</h4>
-                        <p>Add your aliases, functions, and tools. Make it match your workflow.</p>
-                    </div>
-                    <div class="contribute-card">
-                        <div class="step-icon">🔒</div>
-                        <h4>Keep Private</h4>
-                        <p>Set repository to private if adding personal configurations or keys.</p>
-                    </div>
-                    <div class="contribute-card">
-                        <div class="step-icon">🔄</div>
-                        <h4>Stay Synced</h4>
-                        <p>Pull upstream changes regularly to get new features and improvements.</p>
-                    </div>
-                </div>
-            </div>
-        </main>
+        <h4>Adding Aliases</h4>
+        <p>Edit <code>~/dotfiles/zsh/aliases.zsh</code> to add custom aliases.</p>
 
-        <footer>
-            <p>
-                <span class="highlight">CC0 Licensed</span> •
-                <a href="https://github.com/cassmtnr/dotfiles">GitHub</a>
-            </p>
-            <p style="margin-top: 0.5rem;">
-                <strong>Inspired by:</strong>
-                <a href="https://github.com/mathiasbynens/dotfiles">@mathiasbynens</a> •
-                <a href="https://github.com/rodionovd/dotfiles">@rodionovd</a> •
-                <a href="https://github.com/diessica/dotfiles">@diessica</a> •
-                <a href="https://github.com/holman/dotfiles">@holman</a>
-            </p>
-        </footer>
+        <h4>Adding Functions</h4>
+        <p>Edit <code>~/dotfiles/zsh/functions.zsh</code> to add custom functions.</p>
+
+        <h4>Changing the Theme</h4>
+        <ol>
+            <li>For Oh My Zsh themes, edit the <code>ZSH_THEME</code> variable in <code>.zshrc</code></li>
+            <li>For Starship customization, edit <code>~/dotfiles/config/starship.toml</code></li>
+        </ol>
+
+        <h4>Adding Homebrew Packages</h4>
+        <p>Edit <code>~/dotfiles/homebrew/Brewfile</code> and run:</p>
+        <pre><code>brew bundle --file=~/dotfiles/homebrew/Brewfile</code></pre>
+
+        <h2>Security Notes</h2>
+        <ul>
+            <li>Never commit actual SSH keys or sensitive data</li>
+            <li>Use <code>.zshrc.local</code> for private configurations</li>
+            <li>The <code>.gitignore</code> is configured to exclude sensitive files</li>
+            <li>SSH key paths in templates are examples - replace with your actual paths</li>
+        </ul>
+
+        <h2>Pro Tips</h2>
+        <ol>
+            <li>Fork this repository to your own GitHub account</li>
+            <li>Clone your fork and make personal customizations</li>
+            <li>Keep your fork private if it contains sensitive information</li>
+            <li>Regularly sync with the upstream repository for updates</li>
+        </ol>
+
+        <h2>Contributing</h2>
+        <p>Feel free to fork and customize these dotfiles for your own use!</p>
+
+        <h2>License</h2>
+        <p>These dotfiles are released under the CC0 1.0 Universal license.</p>
+
+        <h2>Inspired by</h2>
+        <p>
+            <a href="https://github.com/mathiasbynens/dotfiles">@mathiasbynens</a> •
+            <a href="https://github.com/rodionovd/dotfiles">@rodionovd</a> •
+            <a href="https://github.com/diessica/dotfiles">@diessica</a> •
+            <a href="https://github.com/holman/dotfiles">@holman</a>
+        </p>
     </div>
 </body>
 </html>
