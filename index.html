@@ -1,322 +1,404 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>cassmtnr@dotfiles</title>
-    <meta name="description" content="Modern, secure, and performant dotfiles configuration for MacOS">
+    <meta
+      name="description"
+      content="Modern, secure, and performant dotfiles configuration for MacOS"
+    />
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
 
+      body {
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui,
+          sans-serif;
+        line-height: 1.6;
+        color: #e6edf3;
+        background: #0d1117;
+        padding: 2rem;
+      }
+
+      .container {
+        max-width: 800px;
+        margin: 0 auto;
+      }
+
+      h1 {
+        font-size: 2rem;
+        font-weight: 600;
+        color: #f0f6fc;
+        margin-bottom: 1rem;
+        padding-bottom: 0.5rem;
+        border-bottom: 1px solid #30363d;
+      }
+
+      h2 {
+        font-size: 1.5rem;
+        font-weight: 600;
+        color: #f0f6fc;
+        margin: 2rem 0 1rem 0;
+        padding-bottom: 0.3rem;
+        border-bottom: 1px solid #30363d;
+      }
+
+      h3 {
+        font-size: 1.25rem;
+        font-weight: 600;
+        color: #f0f6fc;
+        margin: 1.5rem 0 0.5rem 0;
+      }
+
+      p {
+        color: #e6edf3;
+        margin: 1rem 0;
+      }
+
+      code {
+        background: #262c36;
+        color: #e6edf3;
+        padding: 0.2rem 0.4rem;
+        border-radius: 3px;
+        font-family: ui-monospace, SFMono-Regular, "SF Mono", Monaco, Menlo,
+          monospace;
+        font-size: 0.85rem;
+      }
+
+      pre {
+        background: #161b22;
+        color: #e6edf3;
+        padding: 1rem;
+        border: 1px solid #30363d;
+        border-radius: 6px;
+        overflow-x: auto;
+        margin: 1rem 0;
+        font-family: ui-monospace, SFMono-Regular, "SF Mono", Monaco, Menlo,
+          monospace;
+        font-size: 0.85rem;
+      }
+
+      pre code {
+        background: none;
+        padding: 0;
+      }
+
+      ul,
+      ol {
+        margin: 1rem 0;
+        padding-left: 2rem;
+      }
+
+      li {
+        color: #e6edf3;
+        margin: 0.25rem 0;
+      }
+
+      a {
+        color: #58a6ff;
+        text-decoration: none;
+      }
+
+      a:hover {
+        text-decoration: underline;
+      }
+
+      strong {
+        color: #f0f6fc;
+      }
+
+      @media (max-width: 768px) {
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
-            line-height: 1.6;
-            color: #e6edf3;
-            background: #0d1117;
-            padding: 2rem;
+          padding: 1rem;
         }
-
-        .container {
-            max-width: 800px;
-            margin: 0 auto;
-        }
-
-        h1 {
-            font-size: 2rem;
-            font-weight: 600;
-            color: #f0f6fc;
-            margin-bottom: 1rem;
-            padding-bottom: 0.5rem;
-            border-bottom: 1px solid #30363d;
-        }
-
-        h2 {
-            font-size: 1.5rem;
-            font-weight: 600;
-            color: #f0f6fc;
-            margin: 2rem 0 1rem 0;
-            padding-bottom: 0.3rem;
-            border-bottom: 1px solid #30363d;
-        }
-
-        h3 {
-            font-size: 1.25rem;
-            font-weight: 600;
-            color: #f0f6fc;
-            margin: 1.5rem 0 0.5rem 0;
-        }
-
-        p {
-            color: #e6edf3;
-            margin: 1rem 0;
-        }
-
-        code {
-            background: #262c36;
-            color: #e6edf3;
-            padding: 0.2rem 0.4rem;
-            border-radius: 3px;
-            font-family: ui-monospace, SFMono-Regular, 'SF Mono', Monaco, Menlo, monospace;
-            font-size: 0.85rem;
-        }
-
-        pre {
-            background: #161b22;
-            color: #e6edf3;
-            padding: 1rem;
-            border: 1px solid #30363d;
-            border-radius: 6px;
-            overflow-x: auto;
-            margin: 1rem 0;
-            font-family: ui-monospace, SFMono-Regular, 'SF Mono', Monaco, Menlo, monospace;
-            font-size: 0.85rem;
-        }
-
-        pre code {
-            background: none;
-            padding: 0;
-        }
-
-        ul, ol {
-            margin: 1rem 0;
-            padding-left: 2rem;
-        }
-
-        li {
-            color: #e6edf3;
-            margin: 0.25rem 0;
-        }
-
-        a {
-            color: #58a6ff;
-            text-decoration: none;
-        }
-
-        a:hover {
-            text-decoration: underline;
-        }
-
-        strong {
-            color: #f0f6fc;
-        }
-
-        @media (max-width: 768px) {
-            body { padding: 1rem; }
-        }
+      }
     </style>
-</head>
-<body>
+  </head>
+  <body>
     <div class="container">
-        <h1>Dotfiles</h1>
-        <p>Modern, secure, and performant dotfiles configuration for MacOS.</p>
+      <h1>Dotfiles</h1>
+      <p>Modern, secure, and performant dotfiles configuration for MacOS.</p>
 
-        <h2>Quick Start</h2>
-        <pre><code># Clone and install
+      <h2>Quick Start</h2>
+      <pre><code># Clone and install
 git clone https://github.com/cassmtnr/dotfiles.git ~/dotfiles
 cd ~/dotfiles
 ./install.sh</code></pre>
 
-        <h2>Customization</h2>
+      <h2>Customization</h2>
 
-        <h3>Required Customizations</h3>
+      <h3>Required Customizations</h3>
 
-        <h4>1. SSH Configuration</h4>
-        <p>The SSH config is automatically symlinked to <code>~/.ssh/config</code>. Edit it directly:</p>
-        <pre><code>vim ~/dotfiles/ssh/config</code></pre>
-        <p>Update the configuration with:</p>
-        <ul>
-            <li>SSH key paths (replace generic paths with your actual key locations)</li>
-            <li>Host configurations for your Git providers</li>
-            <li>Any specific connection settings</li>
-        </ul>
-        <p>Generate SSH keys if needed:</p>
-        <pre><code>ssh-keygen -t ed25519 -C "your_email@example.com"</code></pre>
+      <h4>1. SSH Configuration</h4>
+      <p>
+        The SSH config is automatically symlinked to <code>~/.ssh/config</code>.
+        Edit it directly:
+      </p>
+      <pre><code>vim ~/dotfiles/ssh/config</code></pre>
+      <p>Update the configuration with:</p>
+      <ul>
+        <li>
+          SSH key paths (replace generic paths with your actual key locations)
+        </li>
+        <li>Host configurations for your Git providers</li>
+        <li>Any specific connection settings</li>
+      </ul>
+      <p>Generate SSH keys if needed:</p>
+      <pre><code>ssh-keygen -t ed25519 -C "your_email@example.com"</code></pre>
 
-        <h4>2. Git Configuration</h4>
-        <p>Update git configuration with your details:</p>
-        <pre><code>git config --global user.name "Your Name"
+      <h4>2. Git Configuration</h4>
+      <p>Update git configuration with your details:</p>
+      <pre><code>git config --global user.name "Your Name"
 git config --global user.email "your.email@example.com"</code></pre>
 
-        <h4>3. SSH Agent Configuration</h4>
-        <p>Edit <code>zsh/ssh-agent.zsh</code> and update the <code>ssh_keys</code> array with your actual SSH key paths:</p>
-        <pre><code>local ssh_keys=(
+      <h4>3. SSH Agent Configuration</h4>
+      <p>
+        Edit <code>zsh/ssh-agent.zsh</code> and update the
+        <code>ssh_keys</code> array with your actual SSH key paths:
+      </p>
+      <pre><code>local ssh_keys=(
     "$HOME/.ssh/github/id_ed25519"  # GitHub key
     "$HOME/.ssh/personal/id_ed25519"   # Personal key (if exists)
     "$HOME/.ssh/id_rsa"              # Legacy RSA key (if exists)
 )</code></pre>
 
-        <h4>4. Machine-Specific Settings</h4>
-        <p>Create a local configuration file for machine-specific settings:</p>
-        <pre><code>touch ~/.zshrc.local</code></pre>
-        <p>Add any local customizations like:</p>
-        <ul>
-            <li>Environment variables</li>
-            <li>Local aliases</li>
-            <li>Machine-specific paths</li>
-            <li>Private configurations</li>
-        </ul>
+      <h4>4. Machine-Specific Settings</h4>
+      <p>Create a local configuration file for machine-specific settings:</p>
+      <pre><code>touch ~/.zshrc.local</code></pre>
+      <p>Add any local customizations like:</p>
+      <ul>
+        <li>Environment variables</li>
+        <li>Local aliases</li>
+        <li>Machine-specific paths</li>
+        <li>Private configurations</li>
+      </ul>
 
-        <h4>5. Package Customization</h4>
-        <p>Review and customize the package lists:</p>
-        <ul>
-            <li><code>homebrew/Brewfile</code> - All Homebrew packages and applications</li>
-            <li><code>node/install.sh</code> - Node.js setup with essential development packages</li>
-        </ul>
+      <h4>5. Package Customization</h4>
+      <p>Review and customize the package lists:</p>
+      <ul>
+        <li>
+          <code>homebrew/Brewfile</code> - All Homebrew packages and
+          applications
+        </li>
+        <li>
+          <code>node/install.sh</code> - Node.js setup with essential
+          development packages
+        </li>
+      </ul>
 
-        <h3>Additional Customizations</h3>
+      <h3>Additional Customizations</h3>
 
-        <h4>Adding Aliases</h4>
-        <p>Edit <code>~/dotfiles/zsh/aliases.zsh</code> to add custom aliases.</p>
+      <h4>Adding Aliases</h4>
+      <p>Edit <code>~/dotfiles/zsh/aliases.zsh</code> to add custom aliases.</p>
 
-        <h4>Adding Functions</h4>
-        <p>Edit <code>~/dotfiles/zsh/functions.zsh</code> to add custom functions.</p>
+      <h4>Adding Functions</h4>
+      <p>
+        Edit <code>~/dotfiles/zsh/functions.zsh</code> to add custom functions.
+      </p>
 
-        <h4>Changing the Theme</h4>
-        <ol>
-            <li>For Oh My Zsh themes, edit the <code>ZSH_THEME</code> variable in <code>.zshrc</code></li>
-            <li>For Starship customization, edit <code>~/dotfiles/config/starship.toml</code></li>
-        </ol>
+      <h4>Changing the Theme</h4>
+      <ol>
+        <li>
+          For Oh My Zsh themes, edit the <code>ZSH_THEME</code> variable in
+          <code>.zshrc</code>
+        </li>
+        <li>
+          For Starship customization, edit
+          <code>~/dotfiles/config/starship.toml</code>
+        </li>
+      </ol>
 
-        <h4>Adding Homebrew Packages</h4>
-        <p>Edit <code>~/dotfiles/homebrew/Brewfile</code> and run:</p>
-        <pre><code>brew bundle --file=~/dotfiles/homebrew/Brewfile</code></pre>
+      <h4>Adding Homebrew Packages</h4>
+      <p>Edit <code>~/dotfiles/homebrew/Brewfile</code> and run:</p>
+      <pre><code>brew bundle --file=~/dotfiles/homebrew/Brewfile</code></pre>
 
-        <h2>Security Notes</h2>
-        <ul>
-            <li>Never commit actual SSH keys or sensitive data</li>
-            <li>Use <code>.zshrc.local</code> for private configurations</li>
-            <li>The <code>.gitignore</code> is configured to exclude sensitive files</li>
-            <li>SSH key paths in templates are examples - replace with your actual paths</li>
-        </ul>
+      <h2>Security Notes</h2>
+      <ul>
+        <li>Never commit actual SSH keys or sensitive data</li>
+        <li>Use <code>.zshrc.local</code> for private configurations</li>
+        <li>
+          The <code>.gitignore</code> is configured to exclude sensitive files
+        </li>
+        <li>
+          SSH key paths in templates are examples - replace with your actual
+          paths
+        </li>
+      </ul>
 
-        <h2>Pro Tips</h2>
-        <ol>
-            <li>Fork this repository to your own GitHub account</li>
-            <li>Clone your fork and make personal customizations</li>
-            <li>Keep your fork private if it contains sensitive information</li>
-            <li>Regularly sync with the upstream repository for updates</li>
-        </ol>
+      <h2>Pro Tips</h2>
+      <ol>
+        <li>Fork this repository to your own GitHub account</li>
+        <li>Clone your fork and make personal customizations</li>
+        <li>Keep your fork private if it contains sensitive information</li>
+        <li>Regularly sync with the upstream repository for updates</li>
+      </ol>
 
-        <h2>Available Aliases & Functions</h2>
-        <p>This dotfiles configuration includes a comprehensive set of aliases and functions to improve your terminal productivity.</p>
+      <h2>Available Aliases & Functions</h2>
+      <p>
+        This dotfiles configuration includes a comprehensive set of aliases and
+        functions to improve your terminal productivity.
+      </p>
 
-        <p><strong>Source files:</strong></p>
-        <ul>
-            <li>Aliases: <a href="zsh/aliases.zsh"><code>zsh/aliases.zsh</code></a></li>
-            <li>Functions: <a href="zsh/functions.zsh"><code>zsh/functions.zsh</code></a></li>
-        </ul>
+      <p><strong>Source files:</strong></p>
+      <ul>
+        <li>
+          Aliases: <a href="zsh/aliases.zsh"><code>zsh/aliases.zsh</code></a>
+        </li>
+        <li>
+          Functions:
+          <a href="zsh/functions.zsh"><code>zsh/functions.zsh</code></a>
+        </li>
+      </ul>
 
-        <h3>Aliases Reference</h3>
+      <h3>Aliases Reference</h3>
 
-        <h4>Navigation</h4>
-        <ul>
-            <li><code>..</code> - Go up one directory</li>
-            <li><code>...</code> - Go up two directories</li>
-            <li><code>....</code> - Go up three directories</li>
-            <li><code>.....</code> - Go up four directories</li>
-        </ul>
+      <h4>Navigation</h4>
+      <ul>
+        <li><code>..</code> - Go up one directory</li>
+        <li><code>...</code> - Go up two directories</li>
+        <li><code>....</code> - Go up three directories</li>
+        <li><code>.....</code> - Go up four directories</li>
+      </ul>
 
-        <h4>Directory Shortcuts</h4>
-        <ul>
-            <li><code>d</code> - Go to Documents</li>
-            <li><code>dl</code> - Go to Downloads</li>
-            <li><code>dt</code> - Go to Desktop</li>
-            <li><code>work</code> - Go to Work folder</li>
-            <li><code>dev</code> - Go to Dev folder</li>
-            <li><code>dot</code> - Go to dotfiles and open in VS Code</li>
-            <li><code>dotfiles</code> - Go to dotfiles</li>
-            <li><code>meow</code> - Go to Kitty config and open in VS Code</li>
-        </ul>
+      <h4>Directory Shortcuts</h4>
+      <ul>
+        <li><code>d</code> - Go to Documents</li>
+        <li><code>dl</code> - Go to Downloads</li>
+        <li><code>dt</code> - Go to Desktop</li>
+        <li><code>work</code> - Go to Work folder</li>
+        <li><code>dev</code> - Go to Dev folder</li>
+        <li><code>dot</code> - Go to dotfiles and open in VS Code</li>
+        <li><code>dotfiles</code> - Go to dotfiles</li>
+        <li><code>meow</code> - Go to Kitty config and open in VS Code</li>
+      </ul>
 
-        <h4>Git Shortcuts</h4>
-        <ul>
-            <li><code>gl</code> - Pretty git log with graph: <code>git log --oneline --graph --decorate</code></li>
-            <li><code>amend</code> - Amend last commit without editing message</li>
-            <li><code>force</code> - Force push with safety flag</li>
-            <li><code>upstream</code> - Push and set upstream to current branch</li>
-            <li><code>rebase</code> - Rebase on develop branch and run yarn</li>
-            <li><code>develop</code> - Switch to develop, fetch and pull latest changes</li>
-            <li><code>wth</code> - Show current commit hash</li>
-        </ul>
+      <h4>Git Shortcuts</h4>
+      <ul>
+        <li>
+          <code>gl</code> - Pretty git log with graph:
+          <code>git log --oneline --graph --decorate</code>
+        </li>
+        <li><code>amend</code> - Amend last commit without editing message</li>
+        <li><code>force</code> - Force push with safety flag</li>
+        <li><code>upstream</code> - Push and set upstream to current branch</li>
+        <li><code>rebase</code> - Rebase on develop branch and run yarn</li>
+        <li>
+          <code>develop</code> - Switch to develop, fetch and pull latest
+          changes
+        </li>
+        <li><code>wth</code> - Show current commit hash</li>
+      </ul>
 
-        <h4>Configuration Shortcuts</h4>
-        <ul>
-            <li><code>zrc</code> - Edit .zshrc in VS Code</li>
-            <li><code>zshsource</code> - Reload .zshrc configuration</li>
-        </ul>
+      <h4>Configuration Shortcuts</h4>
+      <ul>
+        <li><code>zrc</code> - Edit .zshrc in VS Code</li>
+        <li><code>zshsource</code> - Reload .zshrc configuration</li>
+      </ul>
 
-        <h4>System Utilities</h4>
-        <ul>
-            <li><code>publicip</code> - Get your public IP address</li>
-            <li><code>clean-cache</code> - Flush DNS cache on macOS</li>
-            <li><code>chromekill</code> - Kill Chrome renderer processes</li>
-            <li><code>show</code> - Show hidden files in Finder</li>
-            <li><code>hide</code> - Hide hidden files in Finder</li>
-            <li><code>week</code> - Get current week number</li>
-        </ul>
+      <h4>System Utilities</h4>
+      <ul>
+        <li><code>publicip</code> - Get your public IP address</li>
+        <li><code>clean-cache</code> - Flush DNS cache on macOS</li>
+        <li><code>chromekill</code> - Kill Chrome renderer processes</li>
+        <li><code>show</code> - Show hidden files in Finder</li>
+        <li><code>hide</code> - Hide hidden files in Finder</li>
+        <li><code>week</code> - Get current week number</li>
+      </ul>
 
-        <h4>Development Tools</h4>
-        <ul>
-            <li><code>linked</code> - Show symlinked node modules</li>
-        </ul>
+      <h4>Development Tools</h4>
+      <ul>
+        <li><code>linked</code> - Show symlinked node modules</li>
+      </ul>
 
-        <h3>Functions Reference</h3>
+      <h3>Functions Reference</h3>
 
-        <h4>Directory & Navigation</h4>
-        <p><strong><code>mkd &lt;directory&gt;</code></strong> - Create directory and change into it</p>
-        <pre><code>mkd new-project  # Creates 'new-project' and cd into it</code></pre>
+      <h4>Directory & Navigation</h4>
+      <p>
+        <strong><code>mkd &lt;directory&gt;</code></strong> - Create directory
+        and change into it
+      </p>
+      <pre><code>mkd new-project  # Creates 'new-project' and cd into it</code></pre>
 
-        <h4>Development Tools</h4>
-        <p><strong><code>killport &lt;port&gt;</code></strong> - Kill process running on specified port</p>
-        <pre><code>killport 3000    # Kills process on port 3000</code></pre>
+      <h4>Development Tools</h4>
+      <p>
+        <strong><code>killport &lt;port&gt;</code></strong> - Kill process
+        running on specified port
+      </p>
+      <pre><code>killport 3000    # Kills process on port 3000</code></pre>
 
-
-        <h4>File Operations</h4>
-        <p><strong><code>extract &lt;file&gt;</code></strong> - Extract various archive formats</p>
-        <pre><code>extract archive.zip     # Extracts zip file
+      <h4>File Operations</h4>
+      <p>
+        <strong><code>extract &lt;file&gt;</code></strong> - Extract various
+        archive formats
+      </p>
+      <pre><code>extract archive.zip     # Extracts zip file
 extract backup.tar.gz   # Extracts tar.gz file</code></pre>
-        <p>Supports: <code>.tar.bz2</code>, <code>.tar.gz</code>, <code>.bz2</code>, <code>.rar</code>, <code>.gz</code>, <code>.tar</code>, <code>.tbz2</code>, <code>.tgz</code>, <code>.zip</code>, <code>.Z</code>, <code>.7z</code></p>
+      <p>
+        Supports: <code>.tar.bz2</code>, <code>.tar.gz</code>,
+        <code>.bz2</code>, <code>.rar</code>, <code>.gz</code>,
+        <code>.tar</code>, <code>.tbz2</code>, <code>.tgz</code>,
+        <code>.zip</code>, <code>.Z</code>, <code>.7z</code>
+      </p>
 
-
-        <h4>Information & Utilities</h4>
-        <p><strong><code>weather [location]</code></strong> - Get weather information</p>
-        <pre><code>weather          # Weather for your location
+      <h4>Information & Utilities</h4>
+      <p>
+        <strong><code>weather [location]</code></strong> - Get weather
+        information
+      </p>
+      <pre><code>weather          # Weather for your location
 weather London   # Weather for London</code></pre>
 
-        <h4>Claude Flow Integration</h4>
-        <p><strong><code>flow &lt;command&gt;</code></strong> - Claude Flow helper function</p>
-        <pre><code>flow init my-app           # Initialize new project
+      <h4>Claude Flow Integration</h4>
+      <p>
+        <strong><code>flow &lt;command&gt;</code></strong> - Claude Flow helper
+        function
+      </p>
+      <pre><code>flow create my-app           # Initialize new project
 flow resume               # Resume previous session
 flow resume dotfiles      # Resume specific dotfiles session
 flow wizard              # Run hive-mind wizard</code></pre>
 
-        <h4>Development Environment</h4>
-        <p><strong><code>playwright-install &lt;proxy&gt;</code></strong> - Install Playwright with proxy</p>
-        <pre><code>playwright-install proxy.company.com:8080</code></pre>
+      <h4>Development Environment</h4>
+      <p>
+        <strong><code>playwright-install &lt;proxy&gt;</code></strong> - Install
+        Playwright with proxy
+      </p>
+      <pre><code>playwright-install proxy.company.com:8080</code></pre>
 
-        <h4>Performance Optimized (Lazy Loading)</h4>
-        <ul>
-            <li><strong><code>nvm</code></strong> - Node Version Manager (lazy loaded)</li>
-            <li><strong><code>node</code></strong> - Node.js (lazy loaded via NVM)</li>
-            <li><strong><code>npm</code></strong> - NPM (lazy loaded via NVM)</li>
-            <li><strong><code>npx</code></strong> - NPX (lazy loaded via NVM)</li>
-        </ul>
-        <p>These functions automatically load NVM only when first used, improving shell startup time.</p>
+      <h4>Performance Optimized (Lazy Loading)</h4>
+      <ul>
+        <li>
+          <strong><code>nvm</code></strong> - Node Version Manager (lazy loaded)
+        </li>
+        <li>
+          <strong><code>node</code></strong> - Node.js (lazy loaded via NVM)
+        </li>
+        <li>
+          <strong><code>npm</code></strong> - NPM (lazy loaded via NVM)
+        </li>
+        <li>
+          <strong><code>npx</code></strong> - NPX (lazy loaded via NVM)
+        </li>
+      </ul>
+      <p>
+        These functions automatically load NVM only when first used, improving
+        shell startup time.
+      </p>
 
-        <h2>License</h2>
-        <p>These dotfiles are released under the CC0 1.0 Universal license.</p>
+      <h2>License</h2>
+      <p>These dotfiles are released under the CC0 1.0 Universal license.</p>
 
-        <h2>Inspired by</h2>
-        <p>
-            <a href="https://github.com/mathiasbynens/dotfiles">@mathiasbynens</a> •
-            <a href="https://github.com/rodionovd/dotfiles">@rodionovd</a> •
-            <a href="https://github.com/diessica/dotfiles">@diessica</a> •
-            <a href="https://github.com/holman/dotfiles">@holman</a>
-        </p>
+      <h2>Inspired by</h2>
+      <p>
+        <a href="https://github.com/mathiasbynens/dotfiles">@mathiasbynens</a> •
+        <a href="https://github.com/rodionovd/dotfiles">@rodionovd</a> •
+        <a href="https://github.com/diessica/dotfiles">@diessica</a> •
+        <a href="https://github.com/holman/dotfiles">@holman</a>
+      </p>
     </div>
-</body>
+  </body>
 </html>

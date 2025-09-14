@@ -42,7 +42,7 @@ extract() {
 # Claude Flow helper function
 flow() {
     if [[ "$1" == "init" ]] && [[ -n "$2" ]]; then
-        npx claude-flow init --force --project-name="$2"
+        npx claude-flow create --force --project-name="$2"
     elif [[ "$1" == "resume" ]]; then
         if [[ "$2" == "dotfiles" ]]; then
             npx claude-flow hive-mind resume session-1757710180784-9lvy5ayjp --claude
@@ -53,13 +53,13 @@ flow() {
         npx claude-flow hive-mind wizard
     else
         echo "Usage:"
-        echo "  flow init <project-name>     - Initialize a new project"
+        echo "  flow create <project-name>     - Initialize a new project"
         echo "  flow resume                  - Resume previous session with summary"
         echo "  flow resume dotfiles         - Resume specific dotfiles session"
         echo "  flow wizard                  - Run hive-mind wizard"
         echo ""
         echo "Examples:"
-        echo "  flow init my-app"
+        echo "  flow create my-app"
         echo "  flow resume"
         echo "  flow resume dotfiles"
         echo "  flow wizard"
