@@ -8,7 +8,8 @@ Modern, secure, and performant dotfiles configuration for MacOS.
 - 🔒 **Security First**: Secure SSH configuration and key management
 - 📦 **Modular Design**: Well-organized, maintainable configuration files
 - 🛠️ **Modern Tools**: Starship prompt for beautiful terminal experience
-- 🔄 **Automated Setup**: Robust installation with backup and error handling
+- 🔄 **Automated Setup**: Robust installation with error handling
+- 🔐 **Minimal Password Requests**: Streamlined authentication process
 - 🍎 **MacOS Optimized**: Designed specifically for MacOS systems
 
 ## 🚀 Quick Start
@@ -19,6 +20,8 @@ git clone https://github.com/cassmtnr/dotfiles.git ~/dotfiles
 cd ~/dotfiles
 ./install.sh
 ```
+
+**✨ Streamlined Setup**: Administrative privileges are requested only when needed for system configuration.
 
 ## 📁 Project Structure
 
@@ -44,10 +47,8 @@ dotfiles/
 │   └── config        # SSH configuration template
 ├── alfred/           # Alfred workflows
 ├── .config/          # Application configs
-│   ├── kitty/        # Terminal configuration
-│   └── gh/           # GitHub CLI config
-├── install.sh        # Main installation script
-└── start.sh          # Alternative installation script
+│   └── kitty/        # Terminal configuration
+└── install.sh        # Main installation script
 ```
 
 ## 📋 What's Included
@@ -201,7 +202,6 @@ Before installing these dotfiles, ensure you have:
 
 The installation script will automatically:
 
-- Create a timestamped backup of your existing configuration
 - Install Homebrew and all packages from the Brewfile
 - Install Oh My Zsh
 - Create symbolic links for all configuration files
@@ -460,4 +460,5 @@ These dotfiles are released under the CC0 1.0 Universal license.
 
 [@mathiasbynens](https://github.com/mathiasbynens/dotfiles)
 [@rodionovd](https://github.com/rodionovd/dotfiles)
+[@diessica](https://github.com/diessica/dotfiles)
 [@holman](https://github.com/holman/dotfiles)

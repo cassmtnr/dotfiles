@@ -225,6 +225,153 @@
             text-decoration: underline;
         }
 
+        /* Troubleshooting Grid */
+        .troubleshooting-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin: 2rem 0;
+        }
+
+        .issue-card {
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 1.5rem;
+            border-left: 4px solid #dc3545;
+        }
+
+        .issue-card h4 {
+            margin: 0 0 0.5rem 0;
+            color: #2c3e50;
+        }
+
+        .issue-card pre {
+            margin: 0.5rem 0;
+        }
+
+        .hint {
+            font-size: 0.85rem;
+            color: #6c757d;
+            font-style: italic;
+            margin-top: 0.5rem;
+        }
+
+        /* Update Section */
+        .update-section {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 2rem;
+            border-radius: 10px;
+            margin: 2rem 0;
+        }
+
+        .update-steps {
+            display: grid;
+            gap: 1.5rem;
+            margin-top: 1.5rem;
+        }
+
+        .step {
+            display: flex;
+            align-items: flex-start;
+            gap: 1rem;
+        }
+
+        .step-number {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 30px;
+            height: 30px;
+            background: white;
+            color: #667eea;
+            border-radius: 50%;
+            font-weight: bold;
+            flex-shrink: 0;
+        }
+
+        .update-section pre {
+            background: rgba(0,0,0,0.2);
+            border: 1px solid rgba(255,255,255,0.1);
+            margin: 0.5rem 0;
+        }
+
+        /* Security Grid */
+        .security-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            margin: 2rem 0;
+        }
+
+        .security-card {
+            text-align: center;
+            padding: 2rem 1.5rem;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            border-radius: 10px;
+            transition: transform 0.3s;
+        }
+
+        .security-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .security-icon {
+            font-size: 2.5rem;
+            display: block;
+            margin-bottom: 1rem;
+        }
+
+        .security-card h4 {
+            margin: 0.5rem 0;
+            color: #2c3e50;
+        }
+
+        /* Contributing Section */
+        .contributing-section {
+            background: #f8f9fa;
+            padding: 2rem;
+            border-radius: 10px;
+            margin: 2rem 0;
+        }
+
+        .contribute-intro {
+            text-align: center;
+            font-size: 1.1rem;
+            margin-bottom: 2rem;
+            color: #495057;
+        }
+
+        .contribute-steps {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .contribute-card {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 8px;
+            text-align: center;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            transition: box-shadow 0.3s;
+        }
+
+        .contribute-card:hover {
+            box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+        }
+
+        .step-icon {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+            display: block;
+        }
+
+        .contribute-card h4 {
+            margin: 0.5rem 0;
+            color: #2c3e50;
+        }
+
         @media (max-width: 768px) {
             header h1 { font-size: 2rem; }
             .container { margin: 0; box-shadow: none; }
@@ -232,6 +379,9 @@
             .quick-start, .install-steps { margin: 1rem; }
             .features { grid-template-columns: 1fr; }
             .apps-grid { grid-template-columns: 1fr; }
+            .troubleshooting-grid { grid-template-columns: 1fr; }
+            .security-grid { grid-template-columns: 1fr; }
+            .contribute-steps { grid-template-columns: 1fr; }
         }
 
         .highlight { background: linear-gradient(120deg, #a8edea 0%, #fed6e3 100%); padding: 0.2rem; border-radius: 3px; }
@@ -275,7 +425,7 @@ cd ~/dotfiles
                 </div>
                 <div class="feature">
                     <strong>🔄 Automated Setup</strong><br>
-                    Robust installation with backup and error handling
+                    Robust installation with error handling
                 </div>
                 <div class="feature">
                     <strong>🍎 MacOS Optimized</strong><br>
@@ -308,10 +458,8 @@ cd ~/dotfiles
                 │   └── workflows     # Alfred workflows<br>
                 ├── .config/<br>
                 │   └── application   # Application configs<br>
-                │   ├── kitty/        # Terminal configuration<br>
-                │   └── gh/           # GitHub CLI config<br>
-                ├── install.sh        # Main installation script<br>
-                └── start.sh          # Alternative installation script
+                │   └── kitty/        # Terminal configuration<br>
+                └── install.sh        # Main installation script<br>
             </div>
 
             <h2>📦 What's Included</h2>
@@ -384,7 +532,6 @@ cd ~/dotfiles
 
             <p>The installation script will automatically:</p>
             <ul>
-                <li>Create a timestamped backup of existing configuration</li>
                 <li>Install Homebrew and all packages from the Brewfile</li>
                 <li>Install Oh My Zsh</li>
                 <li>Create symbolic links for all configuration files</li>
@@ -416,24 +563,115 @@ nvm install 22
 nvm use 22</code></pre>
 
             <h2>🚑 Troubleshooting</h2>
-            <h3>Common Issues</h3>
-            <ul>
-                <li><strong>Slow startup:</strong> Profile with <code>zsh -lic exit</code></li>
-                <li><strong>SSH issues:</strong> Check keys with <code>ssh-add -l</code></li>
-                <li><strong>Permissions:</strong> Run <code>chmod 600 ~/.ssh/config</code></li>
-            </ul>
+            <div class="troubleshooting-grid">
+                <div class="issue-card">
+                    <h4>🐌 Slow Shell Startup</h4>
+                    <p>Profile your shell to identify bottlenecks:</p>
+                    <pre><code>zsh -lic exit</code></pre>
+                    <p class="hint">NVM is lazy-loaded for faster startup</p>
+                </div>
+                <div class="issue-card">
+                    <h4>🔑 SSH Connection Issues</h4>
+                    <p>Verify loaded SSH keys:</p>
+                    <pre><code>ssh-add -l</code></pre>
+                    <p class="hint">Keys should be in ~/.ssh/*/</p>
+                </div>
+                <div class="issue-card">
+                    <h4>🔒 Permission Errors</h4>
+                    <p>Fix SSH config permissions:</p>
+                    <pre><code>chmod 600 ~/.ssh/config
+chmod 700 ~/.ssh</code></pre>
+                    <p class="hint">SSH requires strict permissions</p>
+                </div>
+            </div>
 
-            <h2>🔄 Updates</h2>
-            <pre><code>cd ~/dotfiles
-git pull origin main
-./install.sh</code></pre>
+            <h2>🔄 Keeping Everything Updated</h2>
+            <div class="update-section">
+                <p>Stay current with the latest improvements and security patches:</p>
+                <div class="update-steps">
+                    <div class="step">
+                        <span class="step-number">1</span>
+                        <div>
+                            <strong>Pull Latest Changes</strong>
+                            <pre><code>cd ~/dotfiles
+git pull origin main</code></pre>
+                        </div>
+                    </div>
+                    <div class="step">
+                        <span class="step-number">2</span>
+                        <div>
+                            <strong>Run Installation</strong>
+                            <pre><code>./install.sh</code></pre>
+                        </div>
+                    </div>
+                    <div class="step">
+                        <span class="step-number">3</span>
+                        <div>
+                            <strong>Update Packages</strong>
+                            <pre><code>brew update && brew upgrade</code></pre>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <h2>🔒 Security Best Practices</h2>
+            <div class="security-grid">
+                <div class="security-card">
+                    <span class="security-icon">🔐</span>
+                    <h4>Zero Hardcoded Secrets</h4>
+                    <p>All sensitive data uses templates. Never commit actual keys or passwords.</p>
+                </div>
+                <div class="security-card">
+                    <span class="security-icon">🛡️</span>
+                    <h4>Secure SSH Defaults</h4>
+                    <p>Pre-configured with modern ciphers, key types, and connection multiplexing.</p>
+                </div>
+                <div class="security-card">
+                    <span class="security-icon">🔏</span>
+                    <h4>Private Fork Strategy</h4>
+                    <p>Keep your personalized fork private to protect custom configurations.</p>
+                </div>
+            </div>
+
+            <h2>🤝 Join the Community</h2>
+            <div class="contributing-section">
+                <p class="contribute-intro">These dotfiles are designed to be forked and customized. Make them your own!</p>
+                <div class="contribute-steps">
+                    <div class="contribute-card">
+                        <div class="step-icon">🍴</div>
+                        <h4>Fork & Clone</h4>
+                        <p>Create your own copy on GitHub and clone it locally for customization.</p>
+                    </div>
+                    <div class="contribute-card">
+                        <div class="step-icon">✨</div>
+                        <h4>Personalize</h4>
+                        <p>Add your aliases, functions, and tools. Make it match your workflow.</p>
+                    </div>
+                    <div class="contribute-card">
+                        <div class="step-icon">🔒</div>
+                        <h4>Keep Private</h4>
+                        <p>Set repository to private if adding personal configurations or keys.</p>
+                    </div>
+                    <div class="contribute-card">
+                        <div class="step-icon">🔄</div>
+                        <h4>Stay Synced</h4>
+                        <p>Pull upstream changes regularly to get new features and improvements.</p>
+                    </div>
+                </div>
+            </div>
         </main>
 
         <footer>
             <p>
-                <span class="highlight">MIT Licensed</span> •
-                <a href="https://github.com/cassmtnr/dotfiles">GitHub</a> •
-                Inspired by <a href="https://github.com/mathiasbynens/dotfiles">@mathiasbynens</a>
+                <span class="highlight">CC0 Licensed</span> •
+                <a href="https://github.com/cassmtnr/dotfiles">GitHub</a>
+            </p>
+            <p style="margin-top: 0.5rem;">
+                <strong>Inspired by:</strong>
+                <a href="https://github.com/mathiasbynens/dotfiles">@mathiasbynens</a> •
+                <a href="https://github.com/rodionovd/dotfiles">@rodionovd</a> •
+                <a href="https://github.com/diessica/dotfiles">@diessica</a> •
+                <a href="https://github.com/holman/dotfiles">@holman</a>
             </p>
         </footer>
     </div>

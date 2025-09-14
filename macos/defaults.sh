@@ -9,12 +9,11 @@ echo "========================================="
 osascript -e 'tell application "System Preferences" to quit' 2>/dev/null || true
 osascript -e 'tell application "System Settings" to quit' 2>/dev/null || true
 
-# Note: sudo privileges should already be available from main install script
-# Verify sudo access is still available
-sudo -n true 2>/dev/null || {
-    echo "Administrative privileges required for MacOS configuration..."
+# Check if we need administrative privileges for system configuration
+if ! sudo -n true 2>/dev/null; then
+    echo "Administrative privileges required for MacOS configuration."
     sudo -v
-}
+fi
 
 echo "Setup started... Hold on..."
 
