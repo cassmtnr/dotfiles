@@ -10,7 +10,7 @@
 - 🔒 **Security First**: Secure SSH configuration and key management
 - 📦 **Modular Design**: Well-organized, maintainable configuration files
 - 🛠️ **Modern Tools**: Starship prompt for beautiful terminal experience
-- 🔄 **Automated Setup**: Robust installation with backup and error handling
+- 🔄 **Automated Setup**: Robust installation with error handling
 - 🍎 **MacOS Optimized**: Designed specifically for MacOS systems
 
 ### What's Included

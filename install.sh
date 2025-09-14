@@ -6,13 +6,24 @@
 
 set -euo pipefail  # Exit on error, undefined variable, or pipe failure
 
-# Request sudo password upfront for operations that require it
-echo "This script will configure your system and may require administrative privileges."
-echo "Please enter your password to allow automated installation:"
+# Show welcome message first
+echo "======================================"
+echo "     Dotfiles Installation Script     "
+echo "======================================"
+echo
+echo "This script will install and configure:"
+echo "  • Homebrew package manager"
+echo "  • Oh My Zsh shell framework"
+echo "  • Starship prompt"
+echo "  • Node.js environment via NVM"
+echo "  • Essential development tools"
+echo "  • MacOS system optimizations"
+echo "  • Configuration file symlinks"
+echo
+echo "Administrative privileges are required for system configuration."
+echo "Please enter your password to continue:"
 sudo -v
 
-# Keep sudo alive throughout the script
-while true; do sudo -n true; sleep 60; kill -0 "$$" || exit; done 2>/dev/null &
 
 # Colors for output
 RED='\033[0;31m'
@@ -23,7 +34,6 @@ NC='\033[0m' # No Color
 
 # Configuration
 DOTFILES_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-BACKUP_DIR="$HOME/.dotfiles.backup.$(date +%Y%m%d_%H%M%S)"
 
 # Logging functions
 log() { echo -e "${BLUE}[INFO]${NC} $1"; }
@@ -39,7 +49,6 @@ Usage: $(basename "$0")
 Install dotfiles and configure system with full setup including applications.
 
 This script will:
-- Create a backup of your existing configuration
 - Install Homebrew and packages
 - Install Oh My Zsh
 - Create symbolic links for dotfiles
@@ -91,31 +100,6 @@ check_prerequisites() {
     success "Prerequisites check passed"
 }
 
-# Create backup of existing files
-create_backup() {
-    log "Creating backup in $BACKUP_DIR..."
-
-    mkdir -p "$BACKUP_DIR"
-
-    # Backup existing dotfiles
-    local files_to_backup=(
-        ".zshrc"
-        ".zshenv"
-        ".gitconfig"
-        ".ssh/config"
-    )
-
-    for file in "${files_to_backup[@]}"; do
-        if [[ -e "$HOME/$file" ]]; then
-            local backup_path="$BACKUP_DIR/$file"
-            mkdir -p "$(dirname "$backup_path")"
-            cp -R "$HOME/$file" "$backup_path"
-            log "Backed up: $file"
-        fi
-    done
-
-    success "Backup created at: $BACKUP_DIR"
-}
 
 # Install Homebrew
 install_homebrew() {
@@ -223,7 +207,7 @@ configure_macos() {
     # Run detailed MacOS configuration script if it exists
     if [[ -f "$DOTFILES_ROOT/macos/defaults.sh" ]]; then
         log "Running detailed MacOS configuration..."
-        bash "$DOTFILES_ROOT/macos/defaults.sh"
+        source "$DOTFILES_ROOT/macos/defaults.sh"
     else
         # Basic configuration if script not found
         mkdir -p "$HOME/Screenshots"
@@ -282,32 +266,22 @@ post_install() {
     echo "  ✓ Node.js environment via NVM"
     echo "  ✓ MacOS system optimizations"
     echo "  ✓ Symbolic links for all configurations"
+    echo ""
     echo
     echo "Optional next steps:"
     echo "  • Configure your SSH keys in ~/.ssh/"
     echo "  • Customize ~/.zshrc.local for machine-specific settings"
     echo "  • Open a new terminal to see the full configuration"
     echo
-    if [[ -d "$BACKUP_DIR" ]]; then
-        echo "Your old configuration was backed up to:"
-        echo "  $BACKUP_DIR"
-        echo
-    fi
     echo "For more information, see: $DOTFILES_ROOT/README.md"
 }
 
 # Main installation flow
 main() {
-    echo "======================================"
-    echo "     Dotfiles Installation Script     "
-    echo "======================================"
-    echo
-
     parse_args "$@"
 
     # Run installation steps
     check_prerequisites || exit 1
-    create_backup
     install_homebrew
     install_oh_my_zsh
     create_symlinks
