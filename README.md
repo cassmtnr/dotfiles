@@ -101,7 +101,6 @@ Edit `~/dotfiles/homebrew/Brewfile` and run:
 brew bundle --file=~/dotfiles/homebrew/Brewfile
 ```
 
-
 ## Security Notes
 
 - Never commit actual SSH keys or sensitive data
@@ -121,18 +120,21 @@ brew bundle --file=~/dotfiles/homebrew/Brewfile
 This dotfiles configuration includes a comprehensive set of aliases and functions to improve your terminal productivity.
 
 **Source files:**
+
 - Aliases: [`zsh/aliases.zsh`](zsh/aliases.zsh)
 - Functions: [`zsh/functions.zsh`](zsh/functions.zsh)
 
 ### Aliases Reference
 
 #### Navigation
+
 - `..` - Go up one directory
 - `...` - Go up two directories
 - `....` - Go up three directories
 - `.....` - Go up four directories
 
 #### Directory Shortcuts
+
 - `d` - Go to Documents
 - `dl` - Go to Downloads
 - `dt` - Go to Desktop
@@ -143,6 +145,7 @@ This dotfiles configuration includes a comprehensive set of aliases and function
 - `meow` - Go to Kitty config and open in VS Code
 
 #### Git Shortcuts
+
 - `gl` - Pretty git log with graph: `git log --oneline --graph --decorate`
 - `amend` - Amend last commit without editing message
 - `force` - Force push with safety flag
@@ -152,10 +155,12 @@ This dotfiles configuration includes a comprehensive set of aliases and function
 - `wth` - Show current commit hash
 
 #### Configuration Shortcuts
+
 - `zrc` - Edit .zshrc in VS Code
 - `zshsource` - Reload .zshrc configuration
 
 #### System Utilities
+
 - `publicip` - Get your public IP address
 - `clean-cache` - Flush DNS cache on macOS
 - `chromekill` - Kill Chrome renderer processes
@@ -164,23 +169,27 @@ This dotfiles configuration includes a comprehensive set of aliases and function
 - `week` - Get current week number
 
 #### Development Tools
+
 - `linked` - Show symlinked node modules
 
 ### Functions Reference
 
 #### Directory & Navigation
+
 - **`mkd <directory>`** - Create directory and change into it
   ```bash
   mkd new-project  # Creates 'new-project' and cd into it
   ```
 
 #### Development Tools
+
 - **`killport <port>`** - Kill process running on specified port
   ```bash
   killport 3000    # Kills process on port 3000
   ```
 
 #### File Operations
+
 - **`extract <file>`** - Extract various archive formats
   ```bash
   extract archive.zip     # Extracts zip file
@@ -189,6 +198,7 @@ This dotfiles configuration includes a comprehensive set of aliases and function
   Supports: `.tar.bz2`, `.tar.gz`, `.bz2`, `.rar`, `.gz`, `.tar`, `.tbz2`, `.tgz`, `.zip`, `.Z`, `.7z`
 
 #### Information & Utilities
+
 - **`weather [location]`** - Get weather information
   ```bash
   weather          # Weather for your location
@@ -196,21 +206,24 @@ This dotfiles configuration includes a comprehensive set of aliases and function
   ```
 
 #### Claude Flow Integration
+
 - **`flow <command>`** - Claude Flow helper function
   ```bash
-  flow init my-app           # Initialize new project
+  flow create my-app           # Initialize new project
   flow resume               # Resume previous session
   flow resume dotfiles      # Resume specific dotfiles session
   flow wizard              # Run hive-mind wizard
   ```
 
 #### Development Environment
+
 - **`playwright-install <proxy>`** - Install Playwright with proxy
   ```bash
   playwright-install proxy.company.com:8080
   ```
 
 #### Performance Optimized (Lazy Loading)
+
 - **`nvm`** - Node Version Manager (lazy loaded)
 - **`node`** - Node.js (lazy loaded via NVM)
 - **`npm`** - NPM (lazy loaded via NVM)

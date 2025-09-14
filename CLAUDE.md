@@ -82,7 +82,7 @@ brew bundle check --file=homebrew/Brewfile  # Check Homebrew packages
 # Resume Claude Flow sessions
 flow resume              # General resume with summary
 flow resume dotfiles     # Resume specific dotfiles session
-flow init <project>      # Initialize new project
+flow create <project>      # Initialize new project
 flow wizard             # Run hive-mind wizard
 
 # Dotfiles management
