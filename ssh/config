@@ -8,37 +8,41 @@ Host *
     ChallengeResponseAuthentication no
     PubkeyAuthentication yes
     StrictHostKeyChecking ask
-    
+
     # Performance
     Compression yes
     ServerAliveInterval 60
     ServerAliveCountMax 3
     TCPKeepAlive yes
-    
+
     # Multiplexing for faster connections
     ControlMaster auto
     ControlPath ~/.ssh/sockets/%r@%h-%p
     ControlPersist 600
-    
+
     # Use ssh-agent for key management
     AddKeysToAgent yes
-    
+
     # Default identity file
     IdentitiesOnly yes
 
-# GitHub
+# Personal GitHub
 Host github.com
     HostName github.com
+    User cassmtnr
+    IdentityFile ~/.ssh/personal/github
+
+# Work GitLab
+Host gitlab.dev.codefactory.sh
+    HostName gitlab.dev.codefactory.sh
+    Port 7999
     User git
-    IdentityFile ~/.ssh/github/id_ed25519
-    
-# Personal GitLab - Customize hostname
-Host personal.gitlab.com
-    HostName personal.gitlab.com
-    User git
-    IdentityFile ~/.ssh/personal/id_ed25519
-    
-# Personal Server Example
+    AddKeysToAgent yes
+    PreferredAuthentications publickey
+    IdentityFile ~/.ssh/work/gitlab
+
+
+# Example
 # Host myserver
 #     HostName server.example.com
 #     User myusername

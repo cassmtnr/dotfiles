@@ -31,6 +31,7 @@ DOTFILES_ZSH="${DOTFILES_ROOT:-$HOME/dotfiles}/zsh"
 [[ -f "$DOTFILES_ZSH/completion.zsh" ]] && source "$DOTFILES_ZSH/completion.zsh"
 [[ -f "$DOTFILES_ZSH/aliases.zsh" ]] && source "$DOTFILES_ZSH/aliases.zsh"
 [[ -f "$DOTFILES_ZSH/functions.zsh" ]] && source "$DOTFILES_ZSH/functions.zsh"
+[[ -f "$DOTFILES_ZSH/ssh-agent.zsh" ]] && source "$DOTFILES_ZSH/ssh-agent.zsh"
 
 # Load Homebrew shell integrations
 if [[ -n "$HOMEBREW_PREFIX" ]]; then
