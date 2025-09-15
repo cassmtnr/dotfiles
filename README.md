@@ -50,9 +50,8 @@ Edit `zsh/ssh-agent.zsh` and update the `ssh_keys` array with your actual SSH ke
 
 ```bash
 local ssh_keys=(
-    "$HOME/.ssh/github/id_ed25519"  # GitHub key
-    "$HOME/.ssh/personal/id_ed25519"   # Personal key (if exists)
-    "$HOME/.ssh/id_rsa"              # Legacy RSA key (if exists)
+    "$HOME/.ssh/personal/github"  # GitHub key
+    "$HOME/.ssh/work/gitlab"      # Work key (if exists)
 )
 ```
 
@@ -202,7 +201,7 @@ This dotfiles configuration includes a comprehensive set of aliases and function
 - **`weather [location]`** - Get weather information
   ```bash
   weather          # Weather for your location
-  weather London   # Weather for London
+  weather Leipzig   # Weather for Leipzig
   ```
 
 #### Claude Flow Integration

@@ -13,7 +13,10 @@ $python\
 $rust\
 $golang\
 $docker_context\
-$character"""
+$character """
+
+# Disable newline at start of prompt
+add_newline = false
 
 # Wait up to 500ms for commands to execute
 command_timeout = 500

@@ -4,12 +4,12 @@
 # Function to start ssh-agent if not running
 start_ssh_agent() {
     local ssh_env="$HOME/.ssh/agent.env"
-    
+
     # Source existing agent environment if it exists
     if [[ -f "$ssh_env" ]]; then
         source "$ssh_env" > /dev/null
     fi
-    
+
     # Check if agent is running
     if ! ssh-add -l &>/dev/null; then
         # Start new agent
@@ -17,7 +17,7 @@ start_ssh_agent() {
         ssh-agent > "$ssh_env"
         chmod 600 "$ssh_env"
         source "$ssh_env" > /dev/null
-        
+
         # Add keys if they exist
         add_ssh_keys
     fi
@@ -26,20 +26,19 @@ start_ssh_agent() {
 # Function to add SSH keys
 add_ssh_keys() {
     local keys_added=0
-    
+
     # Define your SSH keys here
     local ssh_keys=(
-        "$HOME/.ssh/github/id_ed25519"  # GitHub key
-        "$HOME/.ssh/personal/id_ed25519"   # Personal key (if exists)
-        "$HOME/.ssh/id_rsa"              # Legacy RSA key (if exists)
+        "$HOME/.ssh/personal/github"  # GitHub key
+        "$HOME/.ssh/work/gitlab"      # Work key (if exists)
     )
-    
+
     for key in "${ssh_keys[@]}"; do
         if [[ -f "$key" ]]; then
             ssh-add -q "$key" 2>/dev/null && ((keys_added++))
         fi
     done
-    
+
     if [[ $keys_added -gt 0 ]]; then
         echo "Added $keys_added SSH key(s) to agent"
     fi
@@ -51,5 +50,8 @@ start_ssh_agent
 # Alias to list loaded SSH keys
 alias ssh-list="ssh-add -l"
 
-# Alias to reload SSH keys
-alias ssh-reload="ssh-add -D && add_ssh_keys"
+# Function to reload SSH keys
+ssh-reload() {
+    ssh-add -D
+    add_ssh_keys
+}
