@@ -61,6 +61,43 @@ Update with your actual SSH key paths and host configurations. Generate keys in 
 - **Git**: Set your identity with `git config --global user.name/user.email`
 - **Local Settings**: Create `~/.zshrc.local` for machine-specific configurations
 
+## Project Structure
+
+```
+dotfiles/
+├── install.sh                 # Main installation script (8,327+ bytes)
+├── start.sh                   # Quick startup script
+├── homebrew/
+│   ├── Brewfile              # Package definitions (90+ packages)
+│   └── install.sh            # Homebrew installer
+├── zsh/
+│   ├── .zshrc                # Main shell configuration
+│   ├── functions.zsh         # Custom functions + Claude Flow helper
+│   ├── aliases.zsh           # Shell aliases (40+ shortcuts)
+│   ├── ssh-agent.zsh         # SSH agent management
+│   └── completion.zsh        # Shell completions
+├── ssh/
+│   └── config                # SSH configuration template
+├── alfred/
+│   └── Alfred.alfredpreferences/ # Alfred workflows and settings
+├── macos/
+│   └── defaults.sh           # macOS system preferences
+├── node/
+│   └── install.sh            # Node.js environment setup
+├── config/                   # Additional configuration files
+└── .claude-flow/
+    └── metrics/              # Claude Flow session data and metrics
+```
+
+### Core Components
+
+- **`install.sh`** - Comprehensive installation with error handling and progress feedback
+- **`zsh/.zshrc`** - Modular shell configuration with performance optimizations
+- **`zsh/functions.zsh`** - 40+ utility functions including Claude Flow integration (`flow()` command)
+- **`homebrew/Brewfile`** - Curated collection of 90+ essential development tools
+- **`ssh/config`** - Security-focused SSH template with organized key management
+- **`.claude-flow/`** - AI workflow integration with session management and metrics
+
 ## Additional Customization
 
 - **Aliases**: Edit `zsh/aliases.zsh` for custom shortcuts

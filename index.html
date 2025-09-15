@@ -318,6 +318,41 @@ cd ~/dotfiles
         <li><strong>Local Settings:</strong> Create <code>~/.zshrc.local</code> for machine-specific configurations</li>
       </ol>
 
+      <h2>Project Structure</h2>
+      <pre><code>dotfiles/
+├── install.sh                 # Main installation script (8,327+ bytes)
+├── start.sh                   # Quick startup script
+├── homebrew/
+│   ├── Brewfile              # Package definitions (90+ packages)
+│   └── install.sh            # Homebrew installer
+├── zsh/
+│   ├── .zshrc                # Main shell configuration
+│   ├── functions.zsh         # Custom functions + Claude Flow helper
+│   ├── aliases.zsh           # Shell aliases (40+ shortcuts)
+│   ├── ssh-agent.zsh         # SSH agent management
+│   └── completion.zsh        # Shell completions
+├── ssh/
+│   └── config                # SSH configuration template
+├── alfred/
+│   └── Alfred.alfredpreferences/ # Alfred workflows and settings
+├── macos/
+│   └── defaults.sh           # macOS system preferences
+├── node/
+│   └── install.sh            # Node.js environment setup
+├── config/                   # Additional configuration files
+└── .claude-flow/
+    └── metrics/              # Claude Flow session data and metrics</code></pre>
+
+      <h3>Core Components</h3>
+      <ul>
+        <li><strong><code>install.sh</code></strong> - Comprehensive installation with error handling and progress feedback</li>
+        <li><strong><code>zsh/.zshrc</code></strong> - Modular shell configuration with performance optimizations</li>
+        <li><strong><code>zsh/functions.zsh</code></strong> - 40+ utility functions including Claude Flow integration (<code>flow()</code> command)</li>
+        <li><strong><code>homebrew/Brewfile</code></strong> - Curated collection of 90+ essential development tools</li>
+        <li><strong><code>ssh/config</code></strong> - Security-focused SSH template with organized key management</li>
+        <li><strong><code>.claude-flow/</code></strong> - AI workflow integration with session management and metrics</li>
+      </ul>
+
       <h2>Customization</h2>
       <ul>
         <li><strong>Aliases & Functions:</strong> Edit <code>zsh/aliases.zsh</code> and <code>zsh/functions.zsh</code></li>
