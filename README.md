@@ -1,234 +1,100 @@
 # Dotfiles
 
-Modern, secure, and performant dotfiles configuration for MacOS.
+## What are Dotfiles?
 
-## Quick Start
+Dotfiles are configuration files that customize your development environment and command line tools. They're called "dotfiles" because they typically start with a dot (.) and are hidden by default in Unix-like systems. These files control everything from your shell prompt to your text editor settings, making your development environment consistent and personalized across different machines.
+
+## What This Repository Does
+
+This dotfiles repository will transform your macOS system into a comprehensive, secure, and performant development environment. It provides:
+
+🚀 **Performance Optimized**: Lazy loading for NVM and other tools, resulting in fast shell startup
+🔒 **Security First**: Secure SSH configuration templates and key management
+📦 **Complete Package Management**: 90+ essential development tools and applications
+🛠️ **Modern Toolchain**: Starship prompt, Oh My Zsh, and contemporary CLI utilities
+🔄 **Automated Setup**: One-command installation with comprehensive error handling
+🍎 **macOS Optimized**: System defaults and configurations designed specifically for macOS
+
+## Installation
+
+### Quick Start
 
 ```bash
-# Clone and install
+# Clone the repository
 git clone https://github.com/cassmtnr/dotfiles.git ~/dotfiles
 cd ~/dotfiles
+
+# Run the installation
 ./install.sh
 ```
 
-## Customization
+The installation script automatically sets up your complete development environment with error handling and progress feedback. It's idempotent, so you can run it multiple times safely.
 
-### Required Customizations
+## Available Aliases & Functions
 
-#### 1. SSH Configuration
+This configuration includes a comprehensive set of productivity-enhancing aliases and functions.
 
-The SSH config is automatically symlinked to `~/.ssh/config`. Edit it directly:
+**Key productivity features:**
+
+- **40+ aliases** for navigation, git, and system utilities ([`zsh/aliases.zsh`](zsh/aliases.zsh))
+- **Utility functions** including `mkd`, `killport`, `extract` ([`zsh/functions.zsh`](zsh/functions.zsh))
+- **Claude Flow integration** with `flow create`, `flow resume`, `flow wizard` commands
+- **Performance optimized** lazy loading for Node.js tools
+
+## Required Customizations
+
+After installation, you'll need to configure these components for your specific environment:
+
+### 1. SSH Configuration
+
+The SSH config is automatically symlinked to `~/.ssh/config`. Customize it with your actual settings:
 
 ```bash
 vim ~/dotfiles/ssh/config
 ```
 
-Update the configuration with:
+Update with your actual SSH key paths and host configurations. Generate keys in organized folders (e.g., `~/.ssh/github/`, `~/.ssh/work/`).
 
-- SSH key paths (replace generic paths with your actual key locations)
-- Host configurations for your Git providers
-- Any specific connection settings
+### 2. Update Key Configurations
 
-Generate SSH keys if needed:
+- **SSH Agent**: Edit `zsh/ssh-agent.zsh` with your actual key paths
+- **Git**: Set your identity with `git config --global user.name/user.email`
+- **Local Settings**: Create `~/.zshrc.local` for machine-specific configurations
 
-```bash
-ssh-keygen -t ed25519 -C "your_email@example.com"
-```
+## Additional Customization
 
-#### 2. Git Configuration
-
-Update git configuration with your details:
-
-```bash
-git config --global user.name "Your Name"
-git config --global user.email "your.email@example.com"
-```
-
-#### 3. SSH Agent Configuration
-
-Edit `zsh/ssh-agent.zsh` and update the `ssh_keys` array with your actual SSH key paths:
-
-```bash
-local ssh_keys=(
-    "$HOME/.ssh/personal/github"  # GitHub key
-    "$HOME/.ssh/work/gitlab"      # Work key (if exists)
-)
-```
-
-#### 4. Machine-Specific Settings
-
-Create a local configuration file for machine-specific settings:
-
-```bash
-touch ~/.zshrc.local
-```
-
-Add any local customizations like:
-
-- Environment variables
-- Local aliases
-- Machine-specific paths
-- Private configurations
-
-#### 5. Package Customization
-
-Review and customize the package lists:
-
-- `homebrew/Brewfile` - All Homebrew packages and applications
-- `node/install.sh` - Node.js setup with essential development packages
-
-### Additional Customizations
-
-#### Adding Aliases
-
-Edit `~/dotfiles/zsh/aliases.zsh` to add custom aliases.
-
-#### Adding Functions
-
-Edit `~/dotfiles/zsh/functions.zsh` to add custom functions.
-
-#### Changing the Theme
-
-1. For Oh My Zsh themes, edit the `ZSH_THEME` variable in `.zshrc`
-2. For Starship customization, edit `~/dotfiles/config/starship.toml`
-
-#### Adding Homebrew Packages
-
-Edit `~/dotfiles/homebrew/Brewfile` and run:
-
-```bash
-brew bundle --file=~/dotfiles/homebrew/Brewfile
-```
+- **Aliases**: Edit `zsh/aliases.zsh` for custom shortcuts
+- **Functions**: Add utilities to `zsh/functions.zsh`
+- **Packages**: Modify `homebrew/Brewfile` and run `brew bundle`
+- **Prompt**: Customize `config/starship.toml` for terminal appearance
 
 ## Security Notes
 
-- Never commit actual SSH keys or sensitive data
-- Use `.zshrc.local` for private configurations
-- The `.gitignore` is configured to exclude sensitive files
-- SSH key paths in templates are examples - replace with your actual paths
+🔒 **Important Security Practices:**
 
-## Pro Tips
+- **Never commit actual SSH keys** - only configuration templates
+- **Use `.zshrc.local`** for private/sensitive configurations
+- **Keep secrets out of version control** - the `.gitignore` is configured to protect sensitive files
+- **Template paths are examples** - replace with your actual key locations
+- **Review permissions** - SSH keys should have `600` permissions (`chmod 600 ~/.ssh/*/id_*`)
+- **Use strong passphrases** for SSH keys in sensitive environments
 
-1. Fork this repository to your own GitHub account
-2. Clone your fork and make personal customizations
-3. Keep your fork private if it contains sensitive information
-4. Regularly sync with the upstream repository for updates
+## Troubleshooting
 
-## Available Aliases & Functions
+- **Slow startup**: Profile with `time zsh -lic exit` and `zmodload zsh/zprof`
+- **SSH issues**: Test with `ssh -T git@github.com` and debug with `ssh -vT`
+- **Homebrew**: Check with `brew doctor` and update with `brew update`
 
-This dotfiles configuration includes a comprehensive set of aliases and functions to improve your terminal productivity.
+## Reporting Issues
 
-**Source files:**
+Found a bug or have a suggestion? Please report it on the [GitHub Issues page](https://github.com/cassmtnr/dotfiles/issues).
 
-- Aliases: [`zsh/aliases.zsh`](zsh/aliases.zsh)
-- Functions: [`zsh/functions.zsh`](zsh/functions.zsh)
+When reporting issues, please include:
 
-### Aliases Reference
-
-#### Navigation
-
-- `..` - Go up one directory
-- `...` - Go up two directories
-- `....` - Go up three directories
-- `.....` - Go up four directories
-
-#### Directory Shortcuts
-
-- `d` - Go to Documents
-- `dl` - Go to Downloads
-- `dt` - Go to Desktop
-- `work` - Go to Work folder
-- `dev` - Go to Dev folder
-- `dot` - Go to dotfiles and open in VS Code
-- `dotfiles` - Go to dotfiles
-- `meow` - Go to Kitty config and open in VS Code
-
-#### Git Shortcuts
-
-- `gl` - Pretty git log with graph: `git log --oneline --graph --decorate`
-- `amend` - Amend last commit without editing message
-- `force` - Force push with safety flag
-- `upstream` - Push and set upstream to current branch
-- `rebase` - Rebase on develop branch and run yarn
-- `develop` - Switch to develop, fetch and pull latest changes
-- `wth` - Show current commit hash
-
-#### Configuration Shortcuts
-
-- `zrc` - Edit .zshrc in VS Code
-- `zshsource` - Reload .zshrc configuration
-
-#### System Utilities
-
-- `publicip` - Get your public IP address
-- `clean-cache` - Flush DNS cache on macOS
-- `chromekill` - Kill Chrome renderer processes
-- `show` - Show hidden files in Finder
-- `hide` - Hide hidden files in Finder
-- `week` - Get current week number
-
-#### Development Tools
-
-- `linked` - Show symlinked node modules
-
-### Functions Reference
-
-#### Directory & Navigation
-
-- **`mkd <directory>`** - Create directory and change into it
-  ```bash
-  mkd new-project  # Creates 'new-project' and cd into it
-  ```
-
-#### Development Tools
-
-- **`killport <port>`** - Kill process running on specified port
-  ```bash
-  killport 3000    # Kills process on port 3000
-  ```
-
-#### File Operations
-
-- **`extract <file>`** - Extract various archive formats
-  ```bash
-  extract archive.zip     # Extracts zip file
-  extract backup.tar.gz   # Extracts tar.gz file
-  ```
-  Supports: `.tar.bz2`, `.tar.gz`, `.bz2`, `.rar`, `.gz`, `.tar`, `.tbz2`, `.tgz`, `.zip`, `.Z`, `.7z`
-
-#### Information & Utilities
-
-- **`weather [location]`** - Get weather information
-  ```bash
-  weather          # Weather for your location
-  weather Leipzig   # Weather for Leipzig
-  ```
-
-#### Claude Flow Integration
-
-- **`flow <command>`** - Claude Flow helper function
-  ```bash
-  flow create my-app           # Initialize new project
-  flow resume               # Resume previous session
-  flow resume dotfiles      # Resume specific dotfiles session
-  flow wizard              # Run hive-mind wizard
-  ```
-
-#### Development Environment
-
-- **`playwright-install <proxy>`** - Install Playwright with proxy
-  ```bash
-  playwright-install proxy.company.com:8080
-  ```
-
-#### Performance Optimized (Lazy Loading)
-
-- **`nvm`** - Node Version Manager (lazy loaded)
-- **`node`** - Node.js (lazy loaded via NVM)
-- **`npm`** - NPM (lazy loaded via NVM)
-- **`npx`** - NPX (lazy loaded via NVM)
-
-These functions automatically load NVM only when first used, improving shell startup time.
+- macOS version
+- Error messages (if any)
+- Steps to reproduce
+- Expected vs actual behavior
 
 ## License
 
@@ -236,9 +102,8 @@ These dotfiles are released under the CC0 1.0 Universal license.
 
 [![CC0](http://mirrors.creativecommons.org/presskit/buttons/88x31/svg/cc-zero.svg)](http://creativecommons.org/publicdomain/zero/1.0/)
 
-## Inspired by
+## Inspired By
 
-[@mathiasbynens](https://github.com/mathiasbynens/dotfiles)
-[@rodionovd](https://github.com/rodionovd/dotfiles)
-[@diessica](https://github.com/diessica/dotfiles)
-[@holman](https://github.com/holman/dotfiles)
+- [@mathiasbynens](https://github.com/mathiasbynens/dotfiles)
+- [@rodionovd](https://github.com/rodionovd/dotfiles)
+- [@holman](https://github.com/holman/dotfiles)
