@@ -1,0 +1,78 @@
+# Homebrew Bundle file
+# Install with: brew bundle --file=~/dotfiles/.brewfile
+
+# Note: Most taps are no longer needed as they've been integrated into core Homebrew
+
+# Core utilities
+brew "coreutils"
+brew "findutils"
+brew "gnu-sed"
+brew "grep"
+brew "wget"
+brew "curl"
+
+# Modern CLI tools
+brew "tldr"         # Simplified man pages
+brew "jq"           # JSON processor
+brew "yq"           # YAML processor
+
+# Development tools
+brew "git"
+
+# Shell enhancements
+brew "zsh"
+brew "zsh-completions"
+brew "zsh-autosuggestions"
+brew "zsh-syntax-highlighting"
+brew "starship"    # Cross-shell prompt for beautiful terminal
+
+# Programming languages and tools
+brew "nvm"
+brew "python@3.13"
+brew "poetry"
+brew "pipx"
+brew "yarn"
+brew "pnpm"
+
+# Container and orchestration
+brew "docker"
+brew "docker-compose"
+brew "kubectl"
+brew "helm"
+
+# Database tools
+brew "postgresql@16"
+brew "sqlite"
+
+# Security tools
+brew "gnupg"
+brew "openssh"
+brew "openssl"
+
+# System monitoring
+# Removed neofetch and speedtest-cli
+
+# Fonts
+cask "font-fira-code"
+cask "font-jetbrains-mono"
+cask "font-cascadia-code"
+cask "font-hack-nerd-font"
+cask "font-meslo-for-powerline"
+cask "font-meslo-lg"
+
+# Applications
+cask "1password"
+cask "alfred"
+cask "google-chrome"
+cask "kitty"
+cask "spotify"
+cask "the-unarchiver"
+cask "visual-studio-code"
+cask "vlc"
+cask "dbeaver-community"
+
+# Optional Applications (uncomment if needed)
+# cask "iterm2"
+# cask "docker"  # Note: docker formula already included above
+# cask "postman"
+# cask "insomnia"
