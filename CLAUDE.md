@@ -37,13 +37,13 @@ The project represents a modern approach to dotfiles management with enterprise-
 ```bash
 # Validate shell configuration
 ./install.sh --dry-run          # Test installation without changes
-zsh -n zsh/.zshrc               # Syntax check primary Zsh config
+zsh -n .zshrc                   # Syntax check primary Zsh config
 shellcheck zsh/*.zsh            # Shell script linting (if available)
 
 # Validate specific components
-zsh -n zsh/functions.zsh        # Check custom functions
-zsh -n zsh/aliases.zsh          # Check aliases
-zsh -n zsh/ssh-agent.zsh        # Check SSH agent setup
+zsh -n .functions               # Check custom functions
+zsh -n .aliases                 # Check aliases
+zsh -n .ssh-agent               # Check SSH agent setup
 ```
 
 ### Test Commands
@@ -53,9 +53,9 @@ zsh -n zsh/ssh-agent.zsh        # Check SSH agent setup
 ./install.sh
 
 # Test shell functions
-zsh -c "source zsh/functions.zsh && mkd test_dir"    # Test directory creation
-zsh -c "source zsh/functions.zsh && weather London" # Test weather function
-zsh -c "source zsh/aliases.zsh && ll"               # Test aliases
+zsh -c "source .functions && mkd test_dir"      # Test directory creation
+zsh -c "source .functions && weather London"    # Test weather function
+zsh -c "source .aliases && ll"                  # Test aliases
 
 # Test Claude Flow integration
 flow resume dotfiles            # Resume dotfiles session
@@ -74,8 +74,8 @@ time zsh -lic exit             # Measure shell startup time
 
 ```bash
 # Package validation
-brew bundle check --file=homebrew/Brewfile  # Check Homebrew packages
-brew bundle install --file=homebrew/Brewfile # Install missing packages
+brew bundle check --file=.brewfile  # Check Homebrew packages
+brew bundle install --file=.brewfile # Install missing packages
 
 # System validation
 brew doctor                     # Check Homebrew health
@@ -87,17 +87,22 @@ git config --list              # Verify git configuration
 ### Essential Files
 
 - **`install.sh`** - Main installation script (8,327+ bytes, comprehensive setup)
-- **`zsh/.zshrc`** - Primary shell configuration with modular loading
-- **`zsh/functions.zsh`** - Custom shell functions including Claude Flow helper (`flow()` at lines 43-67)
-- **`homebrew/Brewfile`** - Package definitions for 90+ essential tools
-- **`ssh/config`** - SSH configuration template for secure key management
-- **`alfred/`** - Alfred workflows and preferences
+- **`.zshrc`** - Primary shell configuration with modular loading
+- **`.functions`** - Custom shell functions including Claude Flow helper (`flow()` at lines 43-67)
+- **`.aliases`** - Shell aliases and shortcuts
+- **`.ssh-agent`** - SSH agent management and key loading
+- **`.completion`** - Zsh completion configurations
+- **`.brewfile`** - Package definitions for 90+ essential tools (in root)
+- **`.defaults`** - MacOS system preferences configuration (in root)
+- **`.node`** - Node.js environment setup script (in root)
+- **`.ssh/config`** - SSH configuration template for secure key management
+- **`.alfred/`** - Alfred workflows and preferences
 - **`.claude-flow/`** - Claude Flow session data and metrics
 
 ### Claude Flow Integration
 
 - **Session ID**: `session-1757710180784-9lvy5ayjp`
-- **Helper Function**: `flow()` in `zsh/functions.zsh:43-67`
+- **Helper Function**: `flow()` in `.functions:43-67`
 - **Metrics Directory**: `.claude-flow/metrics/`
   - `system-metrics.json` - Real-time system performance (memory, CPU, uptime)
   - `performance.json` - Task execution metrics
@@ -116,7 +121,6 @@ flow wizard                    # Run hive-mind wizard
 # Dotfiles Management
 ./install.sh                   # Install/update complete dotfiles system
 git status                     # Check configuration changes
-./start.sh                     # Quick startup script
 ```
 
 ### Project Structure
@@ -124,25 +128,23 @@ git status                     # Check configuration changes
 ```
 dotfiles/
 ├── install.sh                 # Main installation script
-├── start.sh                   # Quick startup script
-├── homebrew/
-│   ├── Brewfile              # Package definitions
-│   └── install.sh            # Homebrew installer
-├── zsh/
-│   ├── .zshrc                # Main shell config
-│   ├── functions.zsh         # Custom functions + Claude Flow
-│   ├── aliases.zsh           # Shell aliases
-│   ├── ssh-agent.zsh         # SSH agent management
-│   └── completion.zsh        # Shell completions
-├── ssh/
+├── .brewfile                  # Homebrew packages definition
+├── .defaults                  # MacOS system preferences
+├── .node                      # Node.js environment setup
+├── .zshrc                     # Main shell configuration
+├── .zshenv                    # Environment variables
+├── .functions                 # Custom functions + Claude Flow
+├── .aliases                   # Shell aliases and shortcuts
+├── .ssh-agent                 # SSH agent management
+├── .completion                # Shell completions
+├── .ssh/
 │   └── config                # SSH configuration template
-├── alfred/
+├── .alfred/
 │   └── Alfred.alfredpreferences/ # Alfred workflows
-├── macos/
-│   └── defaults.sh           # MacOS system preferences
-├── node/
-│   └── install.sh            # Node.js environment setup
-├── config/                   # Additional configuration files
+├── .config/                  # Application configurations
+│   ├── kitty/                # Kitty terminal config
+│   └── gh/                   # GitHub CLI config
+├── .starship                  # Starship prompt configuration
 └── .claude-flow/
     └── metrics/              # Claude Flow session data
 ```
@@ -177,8 +179,8 @@ dotfiles/
    ```
 
 2. **Update Configuration**:
-   - Update `ssh/config` with actual key paths
-   - Modify `zsh/ssh-agent.zsh` with real key locations (lines 32-34)
+   - Update `.ssh/config` with actual key paths
+   - Modify `.ssh-agent` with real key locations (lines 32-34)
    - Add public keys to respective services (GitHub, GitLab, etc.)
 
 3. **Test SSH Setup**:

@@ -1,0 +1,112 @@
+# Starship prompt configuration
+# https://starship.rs/config/
+
+# Format of the prompt
+format = """
+$username\
+$hostname\
+$directory\
+$git_branch\
+$git_status\
+$nodejs\
+$python\
+$docker_context\
+$character """
+
+# Disable newline at start of prompt
+add_newline = false
+
+# Wait up to 500ms for commands to execute
+command_timeout = 500
+
+# Directory module - shows current path
+[directory]
+truncation_length = 3
+truncate_to_repo = true
+format = "[$path]($style) "
+style = "bold cyan"
+
+# Git branch module
+[git_branch]
+symbol = "🌱 "
+format = "on [$symbol$branch]($style) "
+style = "bold purple"
+
+# Git status module
+[git_status]
+format = '([\[$all_status$ahead_behind\]]($style) )'
+conflicted = "⚔️"
+ahead = "⇡${count}"
+behind = "⇣${count}"
+diverged = "⇕⇡${ahead_count}⇣${behind_count}"
+untracked = "🆕"
+stashed = "📦${count}"
+modified = "📝"
+staged = '[++\($count\)](green)'
+renamed = "➡️"
+deleted = "❌"
+
+# Character module - success/error indicator
+[character]
+success_symbol = "[➜](bold green)"
+error_symbol = "[➜](bold red)"
+
+# Username module
+[username]
+style_user = "bold blue"
+style_root = "bold red"
+format = "[$user]($style) "
+disabled = false
+show_always = false
+
+# Hostname module
+[hostname]
+ssh_only = true
+format = "on [$hostname](bold yellow) "
+disabled = false
+
+# Node.js version
+[nodejs]
+format = "via [⬢ $version](bold green) "
+detect_extensions = ["js", "mjs", "cjs", "ts", "tsx", "jsx"]
+detect_files = ["package.json", ".node-version", ".nvmrc"]
+detect_folders = ["node_modules"]
+
+# Python version
+[python]
+format = 'via [🐍 $version](bold yellow) '
+detect_extensions = ["py"]
+detect_files = [
+	".python-version",
+	"Pipfile",
+	"pyproject.toml",
+	"requirements.txt",
+]
+
+
+# Docker context
+[docker_context]
+format = 'via [🐳 $context](blue bold) '
+only_with_files = true
+detect_files = ["docker-compose.yml", "docker-compose.yaml", "Dockerfile"]
+
+# Duration of the last command
+[cmd_duration]
+min_time = 2_000
+format = "took [$duration](bold yellow) "
+
+# Memory usage
+[memory_usage]
+disabled = false
+threshold = 75
+format = "via $symbol [${ram_pct}](bold red) "
+
+# Battery
+[battery]
+full_symbol = "🔋"
+charging_symbol = "⚡️"
+discharging_symbol = "💀"
+
+[[battery.display]]
+threshold = 30
+style = "bold red"

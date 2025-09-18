@@ -146,10 +146,10 @@ create_symlinks() {
 
     # Define symlinks as source:target pairs
     local symlink_pairs=(
-        "$DOTFILES_ROOT/zsh/.zshrc:$HOME/.zshrc"
-        "$DOTFILES_ROOT/zsh/.zshenv:$HOME/.zshenv"
-        "$DOTFILES_ROOT/config/starship.toml:$HOME/.config/starship.toml"
-        "$DOTFILES_ROOT/ssh/config:$HOME/.ssh/config"
+        "$DOTFILES_ROOT/.zshrc:$HOME/.zshrc"
+        "$DOTFILES_ROOT/.zshenv:$HOME/.zshenv"
+        "$DOTFILES_ROOT/.starship:$HOME/.config/starship.toml"
+        "$DOTFILES_ROOT/.ssh/config:$HOME/.ssh/config"
         "$DOTFILES_ROOT/.config/kitty:$HOME/.config/kitty"
         "$DOTFILES_ROOT/.config/gh:$HOME/.config/gh"
     )
@@ -186,8 +186,8 @@ create_symlinks() {
 install_packages() {
     log "Installing Homebrew packages..."
 
-    if [[ -f "$DOTFILES_ROOT/homebrew/Brewfile" ]]; then
-        brew bundle --file="$DOTFILES_ROOT/homebrew/Brewfile"
+    if [[ -f "$DOTFILES_ROOT/.brewfile" ]]; then
+        brew bundle --file="$DOTFILES_ROOT/.brewfile"
     else
         warning "Brewfile not found"
     fi
@@ -205,9 +205,9 @@ configure_macos() {
     log "Configuring MacOS defaults..."
 
     # Run detailed MacOS configuration script if it exists
-    if [[ -f "$DOTFILES_ROOT/macos/defaults.sh" ]]; then
+    if [[ -f "$DOTFILES_ROOT/.defaults" ]]; then
         log "Running detailed MacOS configuration..."
-        source "$DOTFILES_ROOT/macos/defaults.sh"
+        source "$DOTFILES_ROOT/.defaults"
     else
         # Basic configuration if script not found
         mkdir -p "$HOME/Screenshots"
@@ -226,10 +226,10 @@ configure_macos() {
 setup_nodejs() {
     log "Setting up Node.js environment..."
 
-    if [[ -f "$DOTFILES_ROOT/node/install.sh" ]]; then
+    if [[ -f "$DOTFILES_ROOT/.node" ]]; then
         log "Running Node.js setup script..."
         # Execute the Node.js script and automatically handle the shell restart requirement
-        if bash "$DOTFILES_ROOT/node/install.sh"; then
+        if bash "$DOTFILES_ROOT/.node"; then
             success "Node.js setup complete"
         else
             log "NVM requires shell environment reload - executing source command..."
@@ -238,7 +238,7 @@ setup_nodejs() {
                 source "$HOME/.zshrc" 2>/dev/null || true
             fi
             # Try the Node.js setup again after reloading
-            bash "$DOTFILES_ROOT/node/install.sh" || warning "Node.js setup may require manual shell restart"
+            bash "$DOTFILES_ROOT/.node" || warning "Node.js setup may require manual shell restart"
         fi
     else
         log "Node.js setup script not found, skipping..."

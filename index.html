@@ -312,7 +312,7 @@ cd ~/dotfiles
 
       <h3>Essential Setup Steps</h3>
       <ol>
-        <li><strong>SSH Configuration:</strong> Edit <code>~/dotfiles/ssh/config</code> with your key paths and hosts</li>
+        <li><strong>SSH Configuration:</strong> Edit <code>~/dotfiles/.ssh/config</code> with your key paths and hosts</li>
         <li><strong>SSH Keys:</strong> Generate organized keys in folders like <code>~/.ssh/github/</code></li>
         <li><strong>Git Identity:</strong> Set your name and email with <code>git config --global</code></li>
         <li><strong>Local Settings:</strong> Create <code>~/.zshrc.local</code> for machine-specific configurations</li>
@@ -321,44 +321,41 @@ cd ~/dotfiles
       <h2>Project Structure</h2>
       <pre><code>dotfiles/
 ├── install.sh                 # Main installation script (8,327+ bytes)
-├── start.sh                   # Quick startup script
-├── homebrew/
-│   ├── Brewfile              # Package definitions (90+ packages)
-│   └── install.sh            # Homebrew installer
-├── zsh/
-│   ├── .zshrc                # Main shell configuration
-│   ├── functions.zsh         # Custom functions + Claude Flow helper
-│   ├── aliases.zsh           # Shell aliases (40+ shortcuts)
-│   ├── ssh-agent.zsh         # SSH agent management
-│   └── completion.zsh        # Shell completions
-├── ssh/
+├── .brewfile              # Package definitions (90+ packages)
+├── .zshrc                     # Main shell configuration
+├── .functions                 # Custom functions + Claude Flow helper
+├── .aliases                   # Shell aliases (40+ shortcuts)
+├── .ssh-agent                 # SSH agent management
+├── .completion                # Shell completions
+├── .ssh/
 │   └── config                # SSH configuration template
-├── alfred/
+├── .alfred/
 │   └── Alfred.alfredpreferences/ # Alfred workflows and settings
-├── macos/
-│   └── defaults.sh           # macOS system preferences
-├── node/
-│   └── install.sh            # Node.js environment setup
-├── config/                   # Additional configuration files
+├── .defaults                  # macOS system preferences
+├── .node                      # Node.js environment setup
+├── .starship                  # Starship prompt configuration
+├── .config/                   # Application configurations
+│   ├── kitty/                # Kitty terminal config
+│   └── gh/                   # GitHub CLI config
 └── .claude-flow/
     └── metrics/              # Claude Flow session data and metrics</code></pre>
 
       <h3>Core Components</h3>
       <ul>
         <li><strong><code>install.sh</code></strong> - Comprehensive installation with error handling and progress feedback</li>
-        <li><strong><code>zsh/.zshrc</code></strong> - Modular shell configuration with performance optimizations</li>
-        <li><strong><code>zsh/functions.zsh</code></strong> - 40+ utility functions including Claude Flow integration (<code>flow()</code> command)</li>
-        <li><strong><code>homebrew/Brewfile</code></strong> - Curated collection of 90+ essential development tools</li>
-        <li><strong><code>ssh/config</code></strong> - Security-focused SSH template with organized key management</li>
+        <li><strong><code>.zshrc</code></strong> - Modular shell configuration with performance optimizations</li>
+        <li><strong><code>.functions</code></strong> - 40+ utility functions including Claude Flow integration (<code>flow()</code> command)</li>
+        <li><strong><code>.brewfile</code></strong> - Curated collection of 90+ essential development tools</li>
+        <li><strong><code>.ssh/config</code></strong> - Security-focused SSH template with organized key management</li>
         <li><strong><code>.claude-flow/</code></strong> - AI workflow integration with session management and metrics</li>
       </ul>
 
       <h2>Customization</h2>
       <ul>
         <li><strong>Aliases & Functions:</strong> Edit <code>zsh/aliases.zsh</code> and <code>zsh/functions.zsh</code></li>
-        <li><strong>Packages:</strong> Modify <code>homebrew/Brewfile</code> and run <code>brew bundle</code></li>
+        <li><strong>Packages:</strong> Modify <code>.brewfile</code> and run <code>brew bundle</code></li>
         <li><strong>Prompt:</strong> Customize <code>config/starship.toml</code></li>
-        <li><strong>Node.js:</strong> Update <code>node/install.sh</code> for additional packages</li>
+        <li><strong>Node.js:</strong> Update <code>.node</code> for additional packages</li>
       </ul>
 
       <h2>Security Notes</h2>

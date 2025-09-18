@@ -50,7 +50,7 @@ After installation, you'll need to configure these components for your specific 
 The SSH config is automatically symlinked to `~/.ssh/config`. Customize it with your actual settings:
 
 ```bash
-vim ~/dotfiles/ssh/config
+vim ~/dotfiles/.ssh/config
 ```
 
 Update with your actual SSH key paths and host configurations. Generate keys in organized folders (e.g., `~/.ssh/github/`, `~/.ssh/work/`).
@@ -66,24 +66,19 @@ Update with your actual SSH key paths and host configurations. Generate keys in 
 ```
 dotfiles/
 ├── install.sh                 # Main installation script (8,327+ bytes)
-├── start.sh                   # Quick startup script
-├── homebrew/
-│   ├── Brewfile              # Package definitions (90+ packages)
-│   └── install.sh            # Homebrew installer
-├── zsh/
-│   ├── .zshrc                # Main shell configuration
-│   ├── functions.zsh         # Custom functions + Claude Flow helper
-│   ├── aliases.zsh           # Shell aliases (40+ shortcuts)
-│   ├── ssh-agent.zsh         # SSH agent management
-│   └── completion.zsh        # Shell completions
-├── ssh/
+├── .brewfile              # Package definitions (90+ packages)
+├── .zshrc                     # Main shell configuration
+├── .functions                 # Custom functions + Claude Flow helper
+├── .aliases                   # Shell aliases (40+ shortcuts)
+├── .ssh-agent                 # SSH agent management
+├── .completion                # Shell completions
+├── .ssh/
 │   └── config                # SSH configuration template
-├── alfred/
+├── .alfred/
 │   └── Alfred.alfredpreferences/ # Alfred workflows and settings
 ├── macos/
-│   └── defaults.sh           # macOS system preferences
-├── node/
-│   └── install.sh            # Node.js environment setup
+│   └── .defaults             # macOS system preferences
+├── .node                  # Node.js environment setup
 ├── config/                   # Additional configuration files
 └── .claude-flow/
     └── metrics/              # Claude Flow session data and metrics
@@ -92,17 +87,17 @@ dotfiles/
 ### Core Components
 
 - **`install.sh`** - Comprehensive installation with error handling and progress feedback
-- **`zsh/.zshrc`** - Modular shell configuration with performance optimizations
-- **`zsh/functions.zsh`** - 40+ utility functions including Claude Flow integration (`flow()` command)
-- **`homebrew/Brewfile`** - Curated collection of 90+ essential development tools
-- **`ssh/config`** - Security-focused SSH template with organized key management
+- **`.zshrc`** - Modular shell configuration with performance optimizations
+- **`.functions`** - 40+ utility functions including Claude Flow integration (`flow()` command)
+- **`.brewfile`** - Curated collection of 90+ essential development tools
+- **`.ssh/config`** - Security-focused SSH template with organized key management
 - **`.claude-flow/`** - AI workflow integration with session management and metrics
 
 ## Additional Customization
 
 - **Aliases**: Edit `zsh/aliases.zsh` for custom shortcuts
 - **Functions**: Add utilities to `zsh/functions.zsh`
-- **Packages**: Modify `homebrew/Brewfile` and run `brew bundle`
+- **Packages**: Modify `.brewfile` and run `brew bundle`
 - **Prompt**: Customize `config/starship.toml` for terminal appearance
 
 ## Security Notes
