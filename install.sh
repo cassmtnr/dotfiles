@@ -150,8 +150,7 @@ create_symlinks() {
         "$DOTFILES_ROOT/.zshenv:$HOME/.zshenv"
         "$DOTFILES_ROOT/.starship:$HOME/.config/starship.toml"
         "$DOTFILES_ROOT/.ssh/config:$HOME/.ssh/config"
-        "$DOTFILES_ROOT/.config/kitty:$HOME/.config/kitty"
-        "$DOTFILES_ROOT/.config/gh:$HOME/.config/gh"
+        "$DOTFILES_ROOT/.kitty:$HOME/.config/kitty"
     )
 
     for pair in "${symlink_pairs[@]}"; do

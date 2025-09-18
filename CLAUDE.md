@@ -141,9 +141,7 @@ dotfiles/
 │   └── config                # SSH configuration template
 ├── .alfred/
 │   └── Alfred.alfredpreferences/ # Alfred workflows
-├── .config/                  # Application configurations
-│   ├── kitty/                # Kitty terminal config
-│   └── gh/                   # GitHub CLI config
+├── .kitty/                   # Kitty terminal configuration
 ├── .starship                  # Starship prompt configuration
 └── .claude-flow/
     └── metrics/              # Claude Flow session data
