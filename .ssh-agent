@@ -30,7 +30,7 @@ add_ssh_keys() {
     # Define your SSH keys here
     local ssh_keys=(
         "$HOME/.ssh/personal/github"  # Personal GitHub key
-        "$HOME/.ssh/id_ed25519"       # Main GitHub key
+        "$HOME/.ssh/work/gitlab"      # Work GitLab key
     )
 
     for key in "${ssh_keys[@]}"; do
