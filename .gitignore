@@ -22,9 +22,11 @@
 
 # SSH configs with personal info #
 ##################################
-# Uncomment these lines after customizing .ssh/config with personal info:
-# .ssh/config
-# .ssh/
+# These files are stored in dotfiles/ but symlinked to ~/.ssh/
+# This keeps all configs centralized while maintaining privacy
+.ssh/config.work
+.ssh/config.local
+.ssh/config.*.local
 
 # Sensitive data #
 ##################
