@@ -21,6 +21,15 @@ plugins=(
     kubectl
 )
 
+# Completion optimization
+autoload -Uz compinit
+# Check for new completions once per day
+if [[ -n ${ZDOTDIR}/.zcompdump(#qN.mh+24) ]]; then
+    compinit
+else
+    compinit -C
+fi
+
 # Source Oh My Zsh
 [[ -f "$ZSH/oh-my-zsh.sh" ]] && source "$ZSH/oh-my-zsh.sh"
 
@@ -37,11 +46,11 @@ DOTFILES_ROOT="${DOTFILES_ROOT:-$HOME/dotfiles}"
 if [[ -n "$HOMEBREW_PREFIX" ]]; then
     # Zsh completions
     [[ -f "$HOMEBREW_PREFIX/share/zsh-completions" ]] && fpath=($HOMEBREW_PREFIX/share/zsh-completions $fpath)
-    
+
     # Zsh autosuggestions
     [[ -f "$HOMEBREW_PREFIX/share/zsh-autosuggestions/zsh-autosuggestions.zsh" ]] && \
         source "$HOMEBREW_PREFIX/share/zsh-autosuggestions/zsh-autosuggestions.zsh"
-    
+
     # Zsh syntax highlighting (load last)
     [[ -f "$HOMEBREW_PREFIX/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh" ]] && \
         source "$HOMEBREW_PREFIX/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh"

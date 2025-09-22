@@ -1,4 +1,6 @@
-# Dotfiles
+# Dotfiles v2.0.0
+
+> **Modern, secure, and performance-optimized macOS development environment**
 
 ## What are Dotfiles?
 
