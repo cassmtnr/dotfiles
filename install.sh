@@ -153,6 +153,26 @@ create_symlinks() {
         "$DOTFILES_ROOT/.kitty:$HOME/.config/kitty"
     )
 
+    # Create conditional symlinks for private configs (only if they exist)
+    local private_configs=(
+        "$DOTFILES_ROOT/.zshrc.local:$HOME/.zshrc.local"
+        "$DOTFILES_ROOT/.ssh/config.work:$HOME/.ssh/config.work"
+    )
+
+    # Process private configs
+    for pair in "${private_configs[@]}"; do
+        local source="${pair%:*}"
+        local target="${pair#*:}"
+
+        if [[ -f "$source" ]]; then
+            log "Creating symlink for private config: $(basename "$source")"
+            # Remove existing file/symlink
+            [[ -e "$target" || -L "$target" ]] && rm -f "$target"
+            # Create symlink
+            ln -sf "$source" "$target"
+        fi
+    done
+
     for pair in "${symlink_pairs[@]}"; do
         local source="${pair%:*}"
         local target="${pair#*:}"
