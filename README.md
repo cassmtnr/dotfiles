@@ -10,12 +10,12 @@ Dotfiles are configuration files that customize your development environment and
 
 This dotfiles repository will transform your macOS system into a comprehensive, secure, and performant development environment. It provides:
 
-🚀 **Performance Optimized**: Lazy loading for NVM and other tools, resulting in fast shell startup
-🔒 **Security First**: Secure SSH configuration templates and key management
-📦 **Complete Package Management**: 90+ essential development tools and applications
-🛠️ **Modern Toolchain**: Starship prompt, Oh My Zsh, and contemporary CLI utilities
-🔄 **Automated Setup**: One-command installation with comprehensive error handling
-🍎 **macOS Optimized**: System defaults and configurations designed specifically for macOS
+- 🚀 **Performance Optimized**: Lazy loading for NVM and other tools, resulting in fast shell startup
+- 🔒 **Security First**: Secure SSH configuration templates and key management
+- 📦 **Complete Package Management**: 90+ essential development tools and applications
+- 🛠️ **Modern Toolchain**: Starship prompt, Oh My Zsh, and contemporary CLI utilities
+- 🔄 **Automated Setup**: One-command installation with comprehensive error handling
+- 🍎 **macOS Optimized**: System defaults and configurations designed specifically for macOS
 
 ## Installation
 
