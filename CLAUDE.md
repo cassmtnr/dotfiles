@@ -6,7 +6,7 @@
 
 ### Key Features
 
-- 🚀 **Performance Optimized**: Lazy loading for NVM and Node.js tools, optimized shell startup
+- 🚀 **Performance Optimized**: Optimized shell startup with immediate Node.js/npm availability
 - 🔒 **Security First**: SSH key organization, agent management, no hardcoded secrets
 - 📦 **Modular Architecture**: Well-organized, maintainable configuration with 374+ lines of code
 - 🛠️ **Modern Toolchain**: Starship prompt, Oh My Zsh, 90+ Homebrew packages
@@ -157,7 +157,7 @@ dotfiles/
 2. **Performance Verification**:
    - Check shell startup time: `time zsh -lic exit`
    - Monitor system metrics in `.claude-flow/metrics/`
-   - Verify lazy loading functions work correctly
+   - Verify Node.js tools are immediately available
 
 3. **Security Audit**:
    - Ensure SSH keys are not committed
@@ -189,7 +189,7 @@ dotfiles/
 
 ### Performance Notes
 
-- **NVM Lazy Loading**: Node.js environment loads on-demand for faster shell startup
+- **NVM Auto-Loading**: Node.js environment loads automatically for immediate availability
 - **Modular Configuration**: Functions organized for easy maintenance and debugging
 - **Starship Integration**: Git-aware prompt with optimized performance
 - **Memory Management**: System actively monitored (currently 98.6% usage)
@@ -221,7 +221,7 @@ dotfiles/
 1. **Performance Optimization** (Critical):
    - Address high memory usage (98.6% - near critical threshold)
    - Fix Starship prompt timeout on Node.js commands
-   - Optimize shell startup time and lazy loading efficiency
+   - Optimize shell startup time and Node.js loading efficiency
 
 2. **Configuration Completion** (High Priority):
    - Generate and organize SSH keys in structured directories

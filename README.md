@@ -1,4 +1,4 @@
-# Dotfiles v2.0.0
+# Dotfiles v2.1.0
 
 > **Modern, secure, and performance-optimized macOS development environment**
 
@@ -10,7 +10,7 @@ Dotfiles are configuration files that customize your development environment and
 
 This dotfiles repository will transform your macOS system into a comprehensive, secure, and performant development environment. It provides:
 
-- 🚀 **Performance Optimized**: Lazy loading for NVM and other tools, resulting in fast shell startup
+- 🚀 **Performance Optimized**: Optimized shell startup with immediate Node.js/npm availability
 - 🔒 **Security First**: Secure SSH configuration templates and key management
 - 📦 **Complete Package Management**: 90+ essential development tools and applications
 - 🛠️ **Modern Toolchain**: Starship prompt, Oh My Zsh, and contemporary CLI utilities
@@ -41,7 +41,7 @@ This configuration includes a comprehensive set of productivity-enhancing aliase
 - **40+ aliases** for navigation, git, and system utilities ([`zsh/aliases.zsh`](zsh/aliases.zsh))
 - **Utility functions** including `mkd`, `killport`, `extract` ([`zsh/functions.zsh`](zsh/functions.zsh))
 - **Claude Flow integration** with `flow create`, `flow resume`, `flow wizard` commands
-- **Performance optimized** lazy loading for Node.js tools
+- **Performance optimized** with immediate Node.js tool availability
 
 ## Required Customizations
 

@@ -7,21 +7,22 @@ set -e
 
 echo "Setting up Node.js environment..."
 
-# Load NVM if installed via Homebrew
-if [[ -s "/opt/homebrew/opt/nvm/nvm.sh" ]]; then
+# Load NVM from shell environment (ensures consistency with .zshrc)
+if ! command -v nvm &> /dev/null; then
+    echo "Loading NVM environment..."
     export NVM_DIR="$HOME/.nvm"
-    source "/opt/homebrew/opt/nvm/nvm.sh"
-elif [[ -s "/usr/local/opt/nvm/nvm.sh" ]]; then
-    export NVM_DIR="$HOME/.nvm"
-    source "/usr/local/opt/nvm/nvm.sh"
+    if [[ -s "/opt/homebrew/opt/nvm/nvm.sh" ]]; then
+        source "/opt/homebrew/opt/nvm/nvm.sh"
+    elif [[ -s "$NVM_DIR/nvm.sh" ]]; then
+        source "$NVM_DIR/nvm.sh"
+    fi
 fi
 
-# Check if NVM is now available
+# Verify NVM is available
 if ! command -v nvm &> /dev/null; then
-    echo "NVM not found. It may need a shell restart to be available."
-    echo "Please restart your terminal and run this script again."
-    echo "Or manually run: source ~/.zshrc"
-    exit 0
+    echo "NVM not found. Please ensure NVM is installed and restart your terminal."
+    echo "You can install NVM with: brew install nvm"
+    exit 1
 fi
 
 # Install Node.js version 22
