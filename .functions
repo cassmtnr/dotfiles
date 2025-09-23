@@ -49,47 +49,6 @@ playwright-install() {
     HTTPS_PROXY="http://$1" npx playwright install
 }
 
-# Lazy load NVM to improve shell startup time
-nvm() {
-    unset -f nvm
-    [ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"
-    nvm "$@"
-}
-
-# Lazy load Node (via NVM)
-node() {
-    unset -f node
-    [ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"
-    node "$@"
-}
-
-# Lazy load npm (via NVM)
-npm() {
-    unset -f npm
-    [ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"
-    npm "$@"
-}
-
-# Lazy load npx (via NVM)
-npx() {
-    unset -f npx
-    [ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"
-    npx "$@"
-}
-
-# Lazy load yarn (via NVM)
-yarn() {
-    unset -f yarn
-    [ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"
-    yarn "$@"
-}
-
-# Lazy load pnpm (via NVM)
-pnpm() {
-    unset -f pnpm
-    [ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"
-    pnpm "$@"
-}
 
 # Claude Flow helper function
 flow() {

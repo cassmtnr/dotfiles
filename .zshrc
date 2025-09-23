@@ -62,8 +62,20 @@ if command -v starship &> /dev/null; then
 fi
 
 
-# Load Deno
-[[ -f "$HOME/.deno/env" ]] && source "$HOME/.deno/env"
+# Load NVM (Node Version Manager)
+export NVM_DIR="$HOME/.nvm"
+if [[ -s "/opt/homebrew/opt/nvm/nvm.sh" ]]; then
+    source "/opt/homebrew/opt/nvm/nvm.sh"
+elif [[ -s "$NVM_DIR/nvm.sh" ]]; then
+    source "$NVM_DIR/nvm.sh"
+fi
+
+# Load NVM bash completion
+if [[ -s "/opt/homebrew/opt/nvm/etc/bash_completion.d/nvm" ]]; then
+    source "/opt/homebrew/opt/nvm/etc/bash_completion.d/nvm"
+elif [[ -s "$NVM_DIR/bash_completion" ]]; then
+    source "$NVM_DIR/bash_completion"
+fi
 
 # Load local/private configuration (not tracked in git)
 [[ -f "$HOME/.zshrc.local" ]] && source "$HOME/.zshrc.local"
