@@ -16,7 +16,7 @@ $character """
 # Disable newline at start of prompt
 add_newline = false
 
-# Wait up to 3000ms for commands to execute (increased for Node.js lazy loading)
+# Wait up to 3000ms for commands to execute (increased for Node.js tools)
 command_timeout = 3000
 
 # Directory module - shows current path
