@@ -43,6 +43,7 @@ npm_packages=(
     typescript
     eslint
     nodemon
+    @anthropic-ai/claude-code
 )
 
 # Install global NPM packages
