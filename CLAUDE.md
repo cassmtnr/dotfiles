@@ -95,6 +95,7 @@ git config --list              # Verify git configuration
 - **`.brewfile`** - Package definitions for 90+ essential tools (in root)
 - **`.defaults`** - MacOS system preferences configuration (in root)
 - **`.node`** - Node.js environment setup script (in root)
+- **`.bun`** - Bun JavaScript runtime configuration (modular config)
 - **`.ssh/config`** - SSH configuration template for secure key management
 - **`.alfred/`** - Alfred workflows and preferences
 - **`.claude-flow/`** - Claude Flow session data and metrics
@@ -186,6 +187,33 @@ dotfiles/
    ssh -T git@github.com       # Test GitHub
    ssh-add -l                  # List loaded keys
    ```
+
+### Bun Setup Requirements
+
+**Note:** Bun is not available via Homebrew and must be installed manually.
+
+1. **Install Bun**:
+   ```bash
+   # Official installation method
+   curl -fsSL https://bun.sh/install | bash
+   ```
+
+2. **Configuration**:
+   - Bun config file: `.bun` (automatically loaded via `.zshrc`)
+   - Installation path: `~/.bun/`
+   - Completions: Auto-loaded from `~/.bun/_bun`
+
+3. **Verify Installation**:
+   ```bash
+   bun --version              # Check installed version
+   which bun                  # Verify PATH setup
+   ```
+
+4. **Usage**:
+   - Package manager: `bun install`, `bun add <package>`
+   - Run scripts: `bun run <script>`
+   - Execute files: `bun <file.ts>` or `bun <file.js>`
+   - Test runner: `bun test`
 
 ### Performance Notes
 
