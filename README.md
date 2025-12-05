@@ -1,4 +1,4 @@
-# Dotfiles v2.1.0
+# Dotfiles v2.2.0
 
 > **Modern, secure, and performance-optimized macOS development environment**
 
@@ -14,6 +14,7 @@ This dotfiles repository will transform your macOS system into a comprehensive, 
 - 🔒 **Security First**: Secure SSH configuration templates and key management
 - 📦 **Complete Package Management**: 90+ essential development tools and applications
 - 🛠️ **Modern Toolchain**: Starship prompt, Oh My Zsh, and contemporary CLI utilities
+- 👻 **Ghostty Terminal**: GPU-accelerated terminal with Nord theme and custom keybindings
 - 🔄 **Automated Setup**: One-command installation with comprehensive error handling
 - 🍎 **macOS Optimized**: System defaults and configurations designed specifically for macOS
 
@@ -68,20 +69,22 @@ Update with your actual SSH key paths and host configurations. Generate keys in 
 ```
 dotfiles/
 ├── install.sh                 # Main installation script (8,327+ bytes)
-├── .brewfile              # Package definitions (90+ packages)
+├── .brewfile                  # Package definitions (90+ packages)
 ├── .zshrc                     # Main shell configuration
 ├── .functions                 # Custom functions + Claude Flow helper
 ├── .aliases                   # Shell aliases (40+ shortcuts)
 ├── .ssh-agent                 # SSH agent management
 ├── .completion                # Shell completions
+├── .ghostty/
+│   └── config                # Ghostty terminal configuration (Nord theme)
 ├── .ssh/
 │   └── config                # SSH configuration template
 ├── .alfred/
 │   └── Alfred.alfredpreferences/ # Alfred workflows and settings
 ├── macos/
 │   └── .defaults             # macOS system preferences
-├── .node                  # Node.js environment setup
-├── config/                   # Additional configuration files
+├── .node                      # Node.js environment setup
+├── config/                    # Additional configuration files
 └── .claude-flow/
     └── metrics/              # Claude Flow session data and metrics
 ```
@@ -92,6 +95,7 @@ dotfiles/
 - **`.zshrc`** - Modular shell configuration with performance optimizations
 - **`.functions`** - 40+ utility functions including Claude Flow integration (`flow()` command)
 - **`.brewfile`** - Curated collection of 90+ essential development tools
+- **`.ghostty/config`** - Ghostty terminal with Nord theme, custom keybindings, and shell integration
 - **`.ssh/config`** - Security-focused SSH template with organized key management
 - **`.claude-flow/`** - AI workflow integration with session management and metrics
 

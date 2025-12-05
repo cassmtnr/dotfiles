@@ -16,6 +16,7 @@ echo "  • Homebrew package manager"
 echo "  • Oh My Zsh shell framework"
 echo "  • Starship prompt"
 echo "  • Node.js environment via NVM"
+echo "  • Bun JavaScript runtime"
 echo "  • Essential development tools"
 echo "  • MacOS system optimizations"
 echo "  • Configuration file symlinks"
@@ -150,7 +151,7 @@ create_symlinks() {
         "$DOTFILES_ROOT/.zshenv:$HOME/.zshenv"
         "$DOTFILES_ROOT/.starship:$HOME/.config/starship.toml"
         "$DOTFILES_ROOT/.ssh/config:$HOME/.ssh/config"
-        "$DOTFILES_ROOT/.kitty:$HOME/.config/kitty"
+        "$DOTFILES_ROOT/.ghostty:$HOME/.config/ghostty"
     )
 
     # Create conditional symlinks for private configs (only if they exist)
@@ -264,6 +265,35 @@ setup_nodejs() {
     fi
 }
 
+# Setup Bun runtime
+setup_bun() {
+    log "Setting up Bun JavaScript runtime..."
+
+    # Check if Bun is already installed
+    if command -v bun &> /dev/null; then
+        log "Bun is already installed ($(bun --version))"
+        return 0
+    fi
+
+    log "Installing Bun..."
+
+    # Install Bun using official installer
+    if curl -fsSL https://bun.sh/install | bash; then
+        # Add Bun to PATH for current session
+        export BUN_INSTALL="$HOME/.bun"
+        export PATH="$BUN_INSTALL/bin:$PATH"
+
+        # Verify installation
+        if command -v bun &> /dev/null; then
+            success "Bun installed successfully ($(bun --version))"
+        else
+            warning "Bun installed but not found in PATH - restart your shell"
+        fi
+    else
+        warning "Bun installation failed - you can install manually later with: curl -fsSL https://bun.sh/install | bash"
+    fi
+}
+
 # Post-installation message
 post_install() {
     echo
@@ -283,6 +313,7 @@ post_install() {
     echo "  ✓ Oh My Zsh with custom configuration"
     echo "  ✓ Starship prompt for enhanced terminal"
     echo "  ✓ Node.js environment via NVM"
+    echo "  ✓ Bun JavaScript runtime"
     echo "  ✓ MacOS system optimizations"
     echo "  ✓ Symbolic links for all configurations"
     echo ""
@@ -306,6 +337,7 @@ main() {
     create_symlinks
     install_packages
     setup_nodejs
+    setup_bun
     configure_macos
 
     post_install

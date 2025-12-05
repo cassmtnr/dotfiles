@@ -5,6 +5,46 @@ All notable changes to this dotfiles project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.2.0] - 2024-12-03
+
+### 👻 Terminal Migration: Kitty → Ghostty
+
+- **Ghostty Terminal**: Migrated to Ghostty as primary terminal emulator
+  - GPU-accelerated terminal with platform-native UI
+  - Built-in Nord theme (no custom theme files needed)
+  - Shell integration with auto-detection for Zsh
+  - Custom keybindings matching previous Kitty setup
+
+### 🎨 Ghostty Configuration
+- **Font Settings**: Fira Code 14pt with font-thicken enabled
+- **Key Bindings**:
+  - Tab navigation: Cmd+1-9 for quick tab switching
+  - Text navigation: Alt+Left/Right for word movement
+  - Line navigation: Cmd+Left/Right for line start/end
+  - Clear screen: Cmd+K
+- **Window Settings**: 4px horizontal, 2px vertical padding with state persistence
+- **Shell Integration**: Auto-detect with cursor, sudo, and title features
+
+### 📁 File Changes
+- **Added**: `.ghostty/config` - Complete Ghostty configuration
+- **Updated**: `install.sh` - Added Ghostty symlink to `~/.config/ghostty`
+- **Updated**: `.brewfile` - Added `ghostty` cask, kept `kitty` for transition
+- **Updated**: `.aliases` - Changed `meow` alias to Ghostty, added `kittyconf` for Kitty
+
+### 📚 Documentation
+- **Added**: `docs/KITTY_TO_GHOSTTY_MIGRATION.md` - Comprehensive migration guide
+- **Updated**: `README.md` - Added Ghostty to features and project structure
+- **Updated**: `CLAUDE.md` - Updated terminal references throughout
+
+### 🗑️ Removed
+- **Kitty Terminal**: Fully removed after successful migration
+  - Removed `.kitty/` directory (kitty.conf, nord.conf, tab_bar.py, search.py, scroll_mark.py)
+  - Removed `kitty` from `.brewfile`
+  - Removed Kitty symlink from `install.sh`
+  - Custom Python kittens not portable to Ghostty (use built-in search Cmd+F)
+
+---
+
 ## [2.1.0] - 2025-09-23
 
 ### 🚀 Node.js Environment Improvements

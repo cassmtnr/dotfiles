@@ -41,6 +41,7 @@ DOTFILES_ROOT="${DOTFILES_ROOT:-$HOME/dotfiles}"
 [[ -f "$DOTFILES_ROOT/.aliases" ]] && source "$DOTFILES_ROOT/.aliases"
 [[ -f "$DOTFILES_ROOT/.functions" ]] && source "$DOTFILES_ROOT/.functions"
 [[ -f "$DOTFILES_ROOT/.ssh-agent" ]] && source "$DOTFILES_ROOT/.ssh-agent"
+[[ -f "$DOTFILES_ROOT/.bun" ]] && source "$DOTFILES_ROOT/.bun"
 
 # Load Homebrew shell integrations
 if [[ -n "$HOMEBREW_PREFIX" ]]; then

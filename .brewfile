@@ -49,8 +49,9 @@ brew "gnupg"
 brew "openssh"
 brew "openssl"
 
-# System monitoring
-# Removed neofetch and speedtest-cli
+# AI CLI tools
+cask "claude-code"    # Anthropic's Claude Code CLI
+brew "gemini-cli"     # Google's Gemini CLI
 
 # Fonts
 cask "font-fira-code"
@@ -63,16 +64,10 @@ cask "font-meslo-lg"
 # Applications
 cask "1password"
 cask "alfred"
+cask "dbeaver-community"
+cask "ghostty"
 cask "google-chrome"
-cask "kitty"
 cask "spotify"
 cask "the-unarchiver"
 cask "visual-studio-code"
 cask "vlc"
-cask "dbeaver-community"
-
-# Optional Applications (uncomment if needed)
-# cask "iterm2"
-# cask "docker"  # Note: docker formula already included above
-# cask "postman"
-# cask "insomnia"
