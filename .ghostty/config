@@ -11,7 +11,7 @@
 # 1. macos-icon = custom (enables custom icon mode)
 # 2. macos-custom-icon = path/to/icon (the actual icon file)
 macos-icon = custom
-macos-custom-icon = ~/dotfiles/.ghostty/icon.icns
+macos-custom-icon = ~/dotfiles/icons/ghostty.icns
 
 # -----------------------------------------------------------------------------
 # FONT SETTINGS
