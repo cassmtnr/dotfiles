@@ -265,22 +265,6 @@ setup_nodejs() {
     fi
 }
 
-# Apply custom application icons
-apply_custom_icons() {
-    log "Applying custom application icons..."
-
-    if [[ -f "$DOTFILES_ROOT/.icons" ]]; then
-        # Check if fileicon is installed
-        if command -v fileicon &> /dev/null; then
-            bash "$DOTFILES_ROOT/.icons" apply
-            success "Custom icons applied"
-        else
-            warning "fileicon not installed - skipping custom icons (install with: brew install fileicon)"
-        fi
-    else
-        warning "Icons script not found"
-    fi
-}
 
 # Setup Bun runtime
 setup_bun() {
@@ -332,7 +316,6 @@ post_install() {
     echo "  ✓ Node.js environment via NVM"
     echo "  ✓ Bun JavaScript runtime"
     echo "  ✓ MacOS system optimizations"
-    echo "  ✓ Custom application icons"
     echo "  ✓ Symbolic links for all configurations"
     echo ""
     echo
@@ -357,7 +340,6 @@ main() {
     setup_nodejs
     setup_bun
     configure_macos
-    apply_custom_icons
 
     post_install
 }

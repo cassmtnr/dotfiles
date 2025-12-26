@@ -7,12 +7,6 @@
 # Reload config: Cmd+Shift+,
 # =============================================================================
 
-# Custom app icon - requires both settings:
-# 1. macos-icon = custom (enables custom icon mode)
-# 2. macos-custom-icon = path/to/icon (the actual icon file)
-macos-icon = custom
-macos-custom-icon = ~/dotfiles/icons/ghostty.icns
-
 # -----------------------------------------------------------------------------
 # FONT SETTINGS
 # -----------------------------------------------------------------------------
@@ -124,6 +118,10 @@ keybind = cmd+k=clear_screen
 # MACOS-SPECIFIC SETTINGS
 # -----------------------------------------------------------------------------
 
+# Custom application icon (absolute path required)
+macos-icon = custom
+macos-custom-icon = /Users/cassiano/dotfiles/.ghostty/icon.icns
+
 # Titlebar style: native, transparent, or tabs
 macos-titlebar-style = native
 
@@ -149,3 +147,4 @@ mouse-hide-while-typing = true
 
 # Clickable URLs
 link-url = true
+keybind = shift+enter=text:\x1b\r

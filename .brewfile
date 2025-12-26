@@ -72,6 +72,3 @@ cask "the-unarchiver"
 cask "visual-studio-code"
 cask "vlc"
 
-# Utilities
-brew "fileicon"
-
