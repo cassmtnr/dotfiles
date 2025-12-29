@@ -69,17 +69,17 @@ flow() {
     elif [[ "$1" == "init" ]] && [[ -n "$2" ]]; then
         claude-flow create --force --project-name="$2"
     elif [[ "$1" == "resume" ]]; then
-        # Resume from .claude-flow:session file or provided session ID
+        # Resume from .claude-flow-session file or provided session ID
         if [[ -n "$2" ]]; then
             # Resume specific session by ID
             claude-flow hive-mind resume "$2" --claude
-        elif [[ -f ".claude-flow:session" ]]; then
+        elif [[ -f ".claude-flow-session" ]]; then
             # Resume from session file in current directory
-            local session_name=$(cat .claude-flow:session)
+            local session_name=$(cat .claude-flow-session)
             echo "Resuming session: $session_name"
             claude-flow hive-mind resume "$session_name" --claude
         else
-            echo "No .claude-flow:session file found in current directory"
+            echo "No .claude-flow-session file found in current directory"
             echo "Usage: flow resume [session-id]"
             return 1
         fi
@@ -91,7 +91,7 @@ flow() {
         echo "Usage:"
         echo "  flow start [objective]       - Start hive-mind with optional objective"
         echo "  flow init <project-name>     - Initialize a new project"
-        echo "  flow resume                  - Resume from .claude-flow:session file"
+        echo "  flow resume                  - Resume from .claude-flow-session file"
         echo "  flow resume <session-id>     - Resume specific session by ID"
         echo "  flow wizard                  - Run hive-mind wizard"
         echo "  flow status                  - Check hive-mind status"
