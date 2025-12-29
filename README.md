@@ -39,9 +39,9 @@ This configuration includes a comprehensive set of productivity-enhancing aliase
 
 **Key productivity features:**
 
-- **40+ aliases** for navigation, git, and system utilities ([`zsh/aliases.zsh`](zsh/aliases.zsh))
-- **Utility functions** including `mkd`, `killport`, `extract` ([`zsh/functions.zsh`](zsh/functions.zsh))
-- **Claude Flow integration** with `flow create`, `flow resume`, `flow wizard` commands
+- **40+ aliases** for navigation, git, and system utilities ([`.aliases`](.aliases))
+- **Utility functions** including `mkd`, `killport`, `extract` ([`.functions`](.functions))
+- **Claude Flow integration** with `flow start`, `flow resume`, `flow wizard` commands
 - **Performance optimized** with immediate Node.js tool availability
 
 ## Required Customizations
@@ -60,7 +60,7 @@ Update with your actual SSH key paths and host configurations. Generate keys in 
 
 ### 2. Update Key Configurations
 
-- **SSH Agent**: Edit `zsh/ssh-agent.zsh` with your actual key paths
+- **SSH Agent**: Edit `.ssh-agent` with your actual key paths
 - **Git**: Set your identity with `git config --global user.name/user.email`
 - **Local Settings**: Create `~/.zshrc.local` for machine-specific configurations
 
@@ -68,23 +68,24 @@ Update with your actual SSH key paths and host configurations. Generate keys in 
 
 ```
 dotfiles/
-├── install.sh                 # Main installation script (8,327+ bytes)
-├── .brewfile                  # Package definitions (90+ packages)
+├── install.sh                 # Main installation script
+├── .brewfile                  # Package definitions (30+ packages)
 ├── .zshrc                     # Main shell configuration
+├── .zshenv                    # Environment variables
 ├── .functions                 # Custom functions + Claude Flow helper
 ├── .aliases                   # Shell aliases (40+ shortcuts)
 ├── .ssh-agent                 # SSH agent management
 ├── .completion                # Shell completions
+├── .starship                  # Starship prompt configuration
+├── .defaults                  # macOS system preferences
+├── .node                      # Node.js environment setup
+├── .bun                       # Bun JavaScript runtime config
 ├── .ghostty/
 │   └── config                # Ghostty terminal configuration (Nord theme)
 ├── .ssh/
 │   └── config                # SSH configuration template
 ├── .alfred/
 │   └── Alfred.alfredpreferences/ # Alfred workflows and settings
-├── macos/
-│   └── .defaults             # macOS system preferences
-├── .node                      # Node.js environment setup
-├── config/                    # Additional configuration files
 └── .claude-flow/
     └── metrics/              # Claude Flow session data and metrics
 ```
@@ -101,10 +102,10 @@ dotfiles/
 
 ## Additional Customization
 
-- **Aliases**: Edit `zsh/aliases.zsh` for custom shortcuts
-- **Functions**: Add utilities to `zsh/functions.zsh`
+- **Aliases**: Edit `.aliases` for custom shortcuts
+- **Functions**: Add utilities to `.functions`
 - **Packages**: Modify `.brewfile` and run `brew bundle`
-- **Prompt**: Customize `config/starship.toml` for terminal appearance
+- **Prompt**: Customize `.starship` for terminal appearance
 
 ## Security Notes
 

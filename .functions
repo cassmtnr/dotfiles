@@ -52,6 +52,13 @@ playwright-install() {
 
 # Claude Flow helper function
 flow() {
+    # Check if claude-flow is installed
+    if ! command -v claude-flow &> /dev/null; then
+        echo "Error: claude-flow is not installed"
+        echo "Install with: npm install -g claude-flow"
+        return 1
+    fi
+
     if [[ "$1" == "start" ]]; then
         # Start hive-mind with optional objective
         if [[ -n "$2" ]]; then
@@ -70,7 +77,7 @@ flow() {
             # Resume from session file in current directory
             local session_name=$(cat .claude-flow:session)
             echo "Resuming session: $session_name"
-            claude --resume "$session_name"
+            claude-flow hive-mind resume "$session_name" --claude
         else
             echo "No .claude-flow:session file found in current directory"
             echo "Usage: flow resume [session-id]"

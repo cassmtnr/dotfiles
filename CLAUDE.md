@@ -9,7 +9,7 @@
 - 🚀 **Performance Optimized**: Optimized shell startup with immediate Node.js/npm availability
 - 🔒 **Security First**: SSH key organization, agent management, no hardcoded secrets
 - 📦 **Modular Architecture**: Well-organized, maintainable configuration with 374+ lines of code
-- 🛠️ **Modern Toolchain**: Starship prompt, Oh My Zsh, 90+ Homebrew packages
+- 🛠️ **Modern Toolchain**: Starship prompt, Oh My Zsh, 30+ Homebrew packages
 - 🔄 **Automated Setup**: Robust installation script with comprehensive error handling
 - 🤖 **Claude Flow Integration**: Advanced session management and AI workflow automation
 - 🍎 **MacOS Native**: Optimized specifically for MacOS development environments
@@ -17,7 +17,7 @@
 ### What's Included
 
 - **Shell Configuration**: Zsh with Oh My Zsh, modular configs, Starship prompt, custom functions
-- **Package Management**: 90+ essential packages via Homebrew (core utils, dev tools, apps)
+- **Package Management**: 30+ essential packages via Homebrew (core utils, dev tools, apps)
 - **Applications**: 1Password, Alfred, VSCode, Chrome, Ghostty terminal, Docker Desktop
 - **Security Framework**: SSH templates, key organization, secure agent management
 - **Alfred Workflows**: Mac App Store search, productivity automation
@@ -36,9 +36,8 @@ The project represents a modern approach to dotfiles management with enterprise-
 
 ```bash
 # Validate shell configuration
-./install.sh --dry-run          # Test installation without changes
 zsh -n .zshrc                   # Syntax check primary Zsh config
-shellcheck zsh/*.zsh            # Shell script linting (if available)
+shellcheck .functions .aliases .ssh-agent  # Shell script linting (if available)
 
 # Validate specific components
 zsh -n .functions               # Check custom functions
@@ -60,7 +59,7 @@ zsh -c "source .aliases && ll"                  # Test aliases
 # Test Claude Flow integration
 flow resume dotfiles            # Resume dotfiles session
 flow wizard                     # Test hive-mind wizard
-flow create test-project        # Test project creation
+flow init test-project          # Initialize new project
 
 # Test SSH configuration
 ssh -T git@github.com          # Test GitHub SSH (after setup)
@@ -88,11 +87,11 @@ git config --list              # Verify git configuration
 
 - **`install.sh`** - Main installation script (8,327+ bytes, comprehensive setup)
 - **`.zshrc`** - Primary shell configuration with modular loading
-- **`.functions`** - Custom shell functions including Claude Flow helper (`flow()` at lines 43-67)
+- **`.functions`** - Custom shell functions including Claude Flow helper (`flow()` at lines 53-107)
 - **`.aliases`** - Shell aliases and shortcuts
 - **`.ssh-agent`** - SSH agent management and key loading
 - **`.completion`** - Zsh completion configurations
-- **`.brewfile`** - Package definitions for 90+ essential tools (in root)
+- **`.brewfile`** - Package definitions for 30+ essential tools (in root)
 - **`.defaults`** - MacOS system preferences configuration (in root)
 - **`.node`** - Node.js environment setup script (in root)
 - **`.bun`** - Bun JavaScript runtime configuration (modular config)
@@ -103,8 +102,8 @@ git config --list              # Verify git configuration
 
 ### Claude Flow Integration
 
-- **Session ID**: `session-1757710180784-9lvy5ayjp`
-- **Helper Function**: `flow()` in `.functions:43-67`
+- **Session ID**: Dynamic (stored in `.claude-flow:session` when active)
+- **Helper Function**: `flow()` in `.functions:53-107`
 - **Metrics Directory**: `.claude-flow/metrics/`
   - `system-metrics.json` - Real-time system performance (memory, CPU, uptime)
   - `performance.json` - Task execution metrics
@@ -117,7 +116,7 @@ git config --list              # Verify git configuration
 # Claude Flow Session Management
 flow resume                     # Resume previous session with summary
 flow resume dotfiles           # Resume specific dotfiles session
-flow create <project>          # Initialize new project
+flow init <project>            # Initialize new project
 flow wizard                    # Run hive-mind wizard
 
 # Dotfiles Management
@@ -154,7 +153,6 @@ dotfiles/
 
 1. **Validation Checks**:
    - Run syntax checks on all shell files
-   - Test installation with `./install.sh --dry-run`
    - Verify no secrets are committed to repository
 
 2. **Performance Verification**:
@@ -226,49 +224,27 @@ dotfiles/
 
 ## Recent Implementation Summary
 
-### ✅ What Was Completed
+### ✅ What's Implemented
 
-- **Complete Infrastructure Rewrite** (374+ lines of configuration code)
-- **Claude Flow Integration** with session `session-1757710180784-9lvy5ayjp`
-- **Advanced Alfred Workflows** with Mac App Store search and JavaScript automation
-- **Modular Shell System** with 40+ utility functions and performance optimizations
+- **Complete Infrastructure** with modular shell configuration
+- **Claude Flow Integration** with hive-mind support and session management
+- **Alfred Workflows** with Mac App Store search and productivity automation
+- **Modular Shell System** with utility functions and performance optimizations
 - **Security Framework** with SSH templates and organized key management
-- **Real-time Monitoring** with system metrics tracking and performance analysis
-- **Automated Installation** with comprehensive error handling and validation
+- **Automated Installation** with comprehensive error handling
 
-### 🚧 Current Status
+### 🎯 Post-Installation Steps
 
-- **Repository State**: Clean working tree, up to date with origin/main
-- **System Performance**:
-  - Memory: 98.6% utilization (38GB used of ~38GB total)
-  - CPU: 12-core system with ~22% average load
-  - Uptime: 417,895+ seconds
-- **Session Context**: Active Claude Flow integration with continuous monitoring
-- **Recent Commits**: Documentation updates, SSH flow improvements, flow command enhancements
+1. **SSH Configuration**:
+   - Generate and organize SSH keys in structured directories (`~/.ssh/github/`, etc.)
+   - Update `.ssh/config` with actual key paths
+   - Test with `ssh -T git@github.com`
 
-### 🎯 Next Steps Required
+2. **Git Configuration**:
+   - Set your identity with `git config --global user.name/user.email`
 
-1. **Performance Optimization** (Critical):
-   - Address high memory usage (98.6% - near critical threshold)
-   - Fix Starship prompt timeout on Node.js commands
-   - Optimize shell startup time and Node.js loading efficiency
-
-2. **Configuration Completion** (High Priority):
-   - Generate and organize SSH keys in structured directories
-   - Configure Git global user settings
-   - Create machine-specific `~/.zshrc.local` for personal settings
-   - Test complete installation flow
-
-3. **System Hardening**:
-   - Validate all security configurations
-   - Test SSH agent functionality
-   - Verify Alfred workflows integration
-   - Run comprehensive system tests
-
-4. **Documentation & Maintenance**:
-   - Update any missing documentation
-   - Create troubleshooting guides for common issues
-   - Document machine-specific setup requirements
+3. **Local Customization**:
+   - Create `~/.zshrc.local` for machine-specific settings
 
 ## Troubleshooting
 
@@ -282,9 +258,11 @@ dotfiles/
 
 ### Claude Flow Commands
 
-- **Session Recovery**: `flow resume` or `flow resume dotfiles`
-- **New Projects**: `flow create project-name`
+- **Start Session**: `flow start` or `flow start 'objective'`
+- **Session Recovery**: `flow resume` or `flow resume <session-id>`
+- **New Projects**: `flow init project-name`
 - **Interactive Setup**: `flow wizard`
+- **Check Status**: `flow status`
 - **Session Debugging**: Check `.claude-flow/metrics/` for performance data
 
 ### Performance Monitoring

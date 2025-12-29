@@ -120,7 +120,7 @@ keybind = cmd+k=clear_screen
 
 # Custom application icon (absolute path required)
 macos-icon = custom
-macos-custom-icon = /Users/cassiano/dotfiles/.ghostty/icon.icns
+macos-custom-icon = ~/dotfiles/.ghostty/icon.icns
 
 # Titlebar style: native, transparent, or tabs
 macos-titlebar-style = native

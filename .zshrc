@@ -115,6 +115,3 @@ fi
 
 # Performance profiling (uncomment to see results)
 # zprof
-
-# Clear the terminal
-clear
