@@ -69,6 +69,7 @@ shell-integration-features = cursor,sudo,title
 clipboard-read = allow
 clipboard-write = allow
 clipboard-trim-trailing-spaces = true
+clipboard-paste-protection = false
 
 # Copy on select (like X11 behavior) - uncomment if desired
 # copy-on-select = clipboard
