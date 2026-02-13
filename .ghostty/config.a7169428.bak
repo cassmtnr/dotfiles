@@ -1,0 +1,150 @@
+# =============================================================================
+# GHOSTTY CONFIGURATION
+# =============================================================================
+# Documentation: https://ghostty.org/docs/config/reference
+# List themes: ghostty +list-themes
+# List fonts: ghostty +list-fonts
+# Reload config: Cmd+Shift+,
+# =============================================================================
+
+# -----------------------------------------------------------------------------
+# FONT SETTINGS
+# -----------------------------------------------------------------------------
+# Primary font family (Fira Code - installed via Homebrew)
+font-family = "Fira Code"
+
+# Font size in points
+font-size = 14
+
+# Disable ligatures if needed (uncomment)
+# font-feature = -calt
+
+# macOS font rendering enhancement
+font-thicken = true
+
+# -----------------------------------------------------------------------------
+# THEME
+# -----------------------------------------------------------------------------
+# Nord theme is built-in - no custom theme file needed!
+# For light/dark auto-switching: theme = light:Nord Light,dark:Nord
+theme = Nord
+
+# -----------------------------------------------------------------------------
+# WINDOW SETTINGS
+# -----------------------------------------------------------------------------
+# Padding (in points)
+window-padding-x = 4
+window-padding-y = 2
+
+# Balance padding when window is resized
+window-padding-balance = true
+
+# Window state persistence (macOS)
+window-save-state = always
+
+# Inherit working directory from previous window
+window-inherit-working-directory = true
+
+# New tabs appear at the end
+window-new-tab-position = end
+
+# -----------------------------------------------------------------------------
+# CURSOR
+# -----------------------------------------------------------------------------
+cursor-style = block
+cursor-style-blink = true
+
+# -----------------------------------------------------------------------------
+# SHELL INTEGRATION
+# -----------------------------------------------------------------------------
+# Auto-detect shell (zsh, bash, fish, etc.)
+shell-integration = detect
+
+# Enable shell integration features
+shell-integration-features = cursor,sudo,title
+
+# -----------------------------------------------------------------------------
+# CLIPBOARD
+# -----------------------------------------------------------------------------
+clipboard-read = allow
+clipboard-write = allow
+clipboard-trim-trailing-spaces = true
+
+# Copy on select (like X11 behavior) - uncomment if desired
+# copy-on-select = clipboard
+
+# -----------------------------------------------------------------------------
+# SCROLLBACK
+# -----------------------------------------------------------------------------
+# Scrollback buffer size (in bytes, allocated lazily)
+scrollback-limit = 10000000
+
+# -----------------------------------------------------------------------------
+# KEY BINDINGS - Tab Navigation
+# -----------------------------------------------------------------------------
+# Cmd+1 through Cmd+9
+keybind = cmd+one=goto_tab:1
+keybind = cmd+two=goto_tab:2
+keybind = cmd+three=goto_tab:3
+keybind = cmd+four=goto_tab:4
+keybind = cmd+five=goto_tab:5
+keybind = cmd+six=goto_tab:6
+keybind = cmd+seven=goto_tab:7
+keybind = cmd+eight=goto_tab:8
+keybind = cmd+nine=goto_tab:9
+
+# -----------------------------------------------------------------------------
+# KEY BINDINGS - Text Navigation (Shell Line Editing)
+# -----------------------------------------------------------------------------
+# Alt+Left = Move cursor one word backward (ESC b)
+keybind = alt+left=text:\x1b\x62
+
+# Alt+Right = Move cursor one word forward (ESC f)
+keybind = alt+right=text:\x1b\x66
+
+# Cmd+Left = Move cursor to line start (Ctrl+A)
+keybind = cmd+left=text:\x01
+
+# Cmd+Right = Move cursor to line end (Ctrl+E)
+keybind = cmd+right=text:\x05
+
+# -----------------------------------------------------------------------------
+# KEY BINDINGS - Additional Useful Shortcuts
+# -----------------------------------------------------------------------------
+# Cmd+K = Clear screen (like Ctrl+L but clears scrollback too)
+keybind = cmd+k=clear_screen
+
+# -----------------------------------------------------------------------------
+# MACOS-SPECIFIC SETTINGS
+# -----------------------------------------------------------------------------
+# Custom app icon - requires both settings:
+# 1. macos-icon = custom (enables custom icon mode)
+# 2. macos-custom-icon = path/to/icon (the actual icon file)
+macos-icon = custom
+macos-custom-icon = ~/dotfiles/.ghostty/MyIcon.icns
+
+# Titlebar style: native, transparent, or tabs
+macos-titlebar-style = native
+
+# Option key behavior: send escape sequences
+macos-option-as-alt = true
+
+# -----------------------------------------------------------------------------
+# QUICK TERMINAL (Global Hotkey Terminal)
+# -----------------------------------------------------------------------------
+# Uncomment to enable a quake-style dropdown terminal
+# quick-terminal-position = top
+# quick-terminal-size = 50%
+# quick-terminal-animation-duration = 0.2
+
+# -----------------------------------------------------------------------------
+# MISCELLANEOUS
+# -----------------------------------------------------------------------------
+# Confirm before closing terminal with running processes
+confirm-close-surface = true
+
+# Mouse hide while typing
+mouse-hide-while-typing = true
+
+# Clickable URLs
+link-url = true

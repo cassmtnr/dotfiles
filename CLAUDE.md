@@ -11,7 +11,6 @@
 - 📦 **Modular Architecture**: Well-organized, maintainable configuration with 374+ lines of code
 - 🛠️ **Modern Toolchain**: Starship prompt, Oh My Zsh, 30+ Homebrew packages
 - 🔄 **Automated Setup**: Robust installation script with comprehensive error handling
-- 🤖 **Claude Flow Integration**: Advanced session management and AI workflow automation
 - 🍎 **MacOS Native**: Optimized specifically for MacOS development environments
 
 ### What's Included
@@ -21,14 +20,12 @@
 - **Applications**: 1Password, Alfred, VSCode, Chrome, Ghostty terminal, Docker Desktop
 - **Security Framework**: SSH templates, key organization, secure agent management
 - **Alfred Workflows**: Mac App Store search, productivity automation
-- **Claude Flow System**: Session `session-1757710180784-9lvy5ayjp`, hive-mind integration
-- **Performance Monitoring**: Real-time system metrics tracking
 
 ## Project Context
 
-This is a production-ready dotfiles ecosystem that transforms a fresh MacOS installation into a fully configured development environment. The system has evolved from basic configuration management to an intelligent development workflow with Claude Flow integration for enhanced session management, AI-assisted development, and automated workflow optimization.
+This is a production-ready dotfiles ecosystem that transforms a fresh MacOS installation into a fully configured development environment.
 
-The project represents a modern approach to dotfiles management with enterprise-level security practices, performance optimization, and intelligent automation.
+The project represents a modern approach to dotfiles management with enterprise-level security practices and performance optimization.
 
 ## Commands to Run After Changes
 
@@ -56,11 +53,6 @@ zsh -c "source .functions && mkd test_dir"      # Test directory creation
 zsh -c "source .functions && weather London"    # Test weather function
 zsh -c "source .aliases && ll"                  # Test aliases
 
-# Test Claude Flow integration
-flow resume dotfiles            # Resume dotfiles session
-flow wizard                     # Test hive-mind wizard
-flow init test-project          # Initialize new project
-
 # Test SSH configuration
 ssh -T git@github.com          # Test GitHub SSH (after setup)
 ssh-add -l                     # List loaded SSH keys
@@ -87,7 +79,7 @@ git config --list              # Verify git configuration
 
 - **`install.sh`** - Main installation script (8,327+ bytes, comprehensive setup)
 - **`.zshrc`** - Primary shell configuration with modular loading
-- **`.functions`** - Custom shell functions including Claude Flow helper (`flow()` at lines 53-107)
+- **`.functions`** - Custom shell functions (utility helpers)
 - **`.aliases`** - Shell aliases and shortcuts
 - **`.ssh-agent`** - SSH agent management and key loading
 - **`.completion`** - Zsh completion configurations
@@ -98,27 +90,10 @@ git config --list              # Verify git configuration
 - **`.ghostty/config`** - Ghostty terminal configuration (Nord theme, keybindings)
 - **`.ssh/config`** - SSH configuration template for secure key management
 - **`.alfred/`** - Alfred workflows and preferences
-- **`.claude-flow/`** - Claude Flow session data and metrics
-
-### Claude Flow Integration
-
-- **Session ID**: Dynamic (stored in `.claude-flow:session` when active)
-- **Helper Function**: `flow()` in `.functions:53-107`
-- **Metrics Directory**: `.claude-flow/metrics/`
-  - `system-metrics.json` - Real-time system performance (memory, CPU, uptime)
-  - `performance.json` - Task execution metrics
-  - `task-metrics.json` - Swarm task tracking
-  - `agent-metrics.json` - Agent performance data
 
 ### Key Commands
 
 ```bash
-# Claude Flow Session Management
-flow resume                     # Resume previous session with summary
-flow resume dotfiles           # Resume specific dotfiles session
-flow init <project>            # Initialize new project
-flow wizard                    # Run hive-mind wizard
-
 # Dotfiles Management
 ./install.sh                   # Install/update complete dotfiles system
 git status                     # Check configuration changes
@@ -134,7 +109,7 @@ dotfiles/
 ├── .node                      # Node.js environment setup
 ├── .zshrc                     # Main shell configuration
 ├── .zshenv                    # Environment variables
-├── .functions                 # Custom functions + Claude Flow
+├── .functions                 # Custom functions
 ├── .aliases                   # Shell aliases and shortcuts
 ├── .ssh-agent                 # SSH agent management
 ├── .completion                # Shell completions
@@ -144,9 +119,7 @@ dotfiles/
 │   └── Alfred.alfredpreferences/ # Alfred workflows
 ├── .ghostty/
 │   └── config                # Ghostty terminal configuration
-├── .starship                  # Starship prompt configuration
-└── .claude-flow/
-    └── metrics/              # Claude Flow session data
+└── .starship                  # Starship prompt configuration
 ```
 
 ### Before Committing
@@ -157,7 +130,6 @@ dotfiles/
 
 2. **Performance Verification**:
    - Check shell startup time: `time zsh -lic exit`
-   - Monitor system metrics in `.claude-flow/metrics/`
    - Verify Node.js tools are immediately available
 
 3. **Security Audit**:
@@ -227,7 +199,6 @@ dotfiles/
 ### ✅ What's Implemented
 
 - **Complete Infrastructure** with modular shell configuration
-- **Claude Flow Integration** with hive-mind support and session management
 - **Alfred Workflows** with Mac App Store search and productivity automation
 - **Modular Shell System** with utility functions and performance optimizations
 - **Security Framework** with SSH templates and organized key management
@@ -254,24 +225,6 @@ dotfiles/
 - **SSH Key Issues**: `ssh-add -l` to verify loaded keys
 - **Homebrew Problems**: `brew doctor` for health check
 - **Node.js Timeout**: Check Starship `command_timeout` setting
-- **Memory Issues**: Monitor with `.claude-flow/metrics/system-metrics.json`
-
-### Claude Flow Commands
-
-- **Start Session**: `flow start` or `flow start 'objective'`
-- **Session Recovery**: `flow resume` or `flow resume <session-id>`
-- **New Projects**: `flow init project-name`
-- **Interactive Setup**: `flow wizard`
-- **Check Status**: `flow status`
-- **Session Debugging**: Check `.claude-flow/metrics/` for performance data
-
-### Performance Monitoring
-
-System metrics are automatically tracked in `.claude-flow/metrics/system-metrics.json`:
-- Memory usage and efficiency
-- CPU load and core utilization
-- System uptime and stability
-- Performance trends over time
 
 ## System Requirements
 
@@ -289,4 +242,4 @@ System metrics are automatically tracked in `.claude-flow/metrics/system-metrics
 - **Permission Controls**: Proper file permissions for security
 - **Template System**: SSH config templates prevent accidental exposure
 
-This dotfiles system represents a comprehensive, production-ready development environment with enterprise security practices, performance optimization, and intelligent automation through Claude Flow integration.
+This dotfiles system represents a comprehensive, production-ready development environment with enterprise security practices and performance optimization.
