@@ -145,6 +145,11 @@ install_oh_my_zsh() {
 create_symlinks() {
     log "Creating symbolic links..."
 
+    # Ensure target directories exist before symlinking
+    mkdir -p "$HOME/.claude/commands"
+    mkdir -p "$HOME/.config"
+    mkdir -p "$HOME/.ssh"
+
     # Define symlinks as source:target pairs
     local symlink_pairs=(
         "$DOTFILES_ROOT/.zshrc:$HOME/.zshrc"
@@ -152,6 +157,10 @@ create_symlinks() {
         "$DOTFILES_ROOT/.starship:$HOME/.config/starship.toml"
         "$DOTFILES_ROOT/.ssh/config:$HOME/.ssh/config"
         "$DOTFILES_ROOT/.ghostty:$HOME/.config/ghostty"
+        "$DOTFILES_ROOT/.claude/CLAUDE.md:$HOME/.claude/CLAUDE.md"
+        "$DOTFILES_ROOT/.claude/settings.json:$HOME/.claude/settings.json"
+        "$DOTFILES_ROOT/.claude/statusline-command.ts:$HOME/.claude/statusline-command.ts"
+        "$DOTFILES_ROOT/.claude/commands:$HOME/.claude/commands"
     )
 
     # Create conditional symlinks for private configs (only if they exist)
@@ -316,6 +325,7 @@ post_install() {
     echo "  ✓ Node.js environment via NVM"
     echo "  ✓ Bun JavaScript runtime"
     echo "  ✓ MacOS system optimizations"
+    echo "  ✓ Claude Code configuration (CLAUDE.md, statusline, commands)"
     echo "  ✓ Symbolic links for all configurations"
     echo ""
     echo
