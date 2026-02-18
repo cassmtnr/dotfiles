@@ -62,7 +62,6 @@ npm_packages=(
     typescript
     eslint
     nodemon
-    # claude-flow@latest
 )
 
 # Install global NPM packages

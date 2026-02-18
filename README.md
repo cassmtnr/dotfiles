@@ -41,7 +41,6 @@ This configuration includes a comprehensive set of productivity-enhancing aliase
 
 - **40+ aliases** for navigation, git, and system utilities ([`.aliases`](.aliases))
 - **Utility functions** including `mkd`, `killport`, `extract` ([`.functions`](.functions))
-- **Claude Flow integration** with `flow start`, `flow resume`, `flow wizard` commands
 - **Performance optimized** with immediate Node.js tool availability
 
 ## Required Customizations
@@ -69,10 +68,10 @@ Update with your actual SSH key paths and host configurations. Generate keys in 
 ```
 dotfiles/
 ├── install.sh                 # Main installation script
-├── .brewfile                  # Package definitions (30+ packages)
+├── .brewfile                  # Package definitions (45+ packages)
 ├── .zshrc                     # Main shell configuration
 ├── .zshenv                    # Environment variables
-├── .functions                 # Custom functions + Claude Flow helper
+├── .functions                 # Custom functions (40+ utilities)
 ├── .aliases                   # Shell aliases (40+ shortcuts)
 ├── .ssh-agent                 # SSH agent management
 ├── .completion                # Shell completions
@@ -84,21 +83,25 @@ dotfiles/
 │   └── config                # Ghostty terminal configuration (Nord theme)
 ├── .ssh/
 │   └── config                # SSH configuration template
-├── .alfred/
-│   └── Alfred.alfredpreferences/ # Alfred workflows and settings
-└── .claude-flow/
-    └── metrics/              # Claude Flow session data and metrics
+├── .claude/
+│   ├── CLAUDE.md             # Global Claude Code instructions
+│   ├── settings.json         # Claude Code settings
+│   ├── statusline-command.ts # Custom statusline (Bun/TypeScript)
+│   └── commands/
+│       └── ralph-prompt.md   # /ralph-prompt slash command
+└── .alfred/
+    └── Alfred.alfredpreferences/ # Alfred workflows and settings
 ```
 
 ### Core Components
 
 - **`install.sh`** - Comprehensive installation with error handling and progress feedback
 - **`.zshrc`** - Modular shell configuration with performance optimizations
-- **`.functions`** - 40+ utility functions including Claude Flow integration (`flow()` command)
+- **`.functions`** - Utility functions (`mkd`, `killport`, `extract`, `flow()`, etc.)
 - **`.brewfile`** - Curated collection of 45+ essential development tools
 - **`.ghostty/config`** - Ghostty terminal with Nord theme, custom keybindings, and shell integration
 - **`.ssh/config`** - Security-focused SSH template with organized key management
-- **`.claude-flow/`** - AI workflow integration with session management and metrics
+- **`.claude/`** - Claude Code configuration (symlinked to `~/.claude/`)
 
 ## Additional Customization
 

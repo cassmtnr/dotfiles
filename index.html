@@ -322,7 +322,7 @@ cd ~/dotfiles
       <h2>Productivity Features</h2>
       <p>
         Includes 40+ aliases for navigation, git operations, and system
-        utilities, plus utility functions and Claude Flow integration.
+        utilities, plus utility functions.
       </p>
 
       <div class="highlight-box">
@@ -331,14 +331,6 @@ cd ~/dotfiles
           <code>gl</code> (git log), <code>dot</code> (open dotfiles),
           <code>mkd</code> (make & cd), <code>killport</code> (kill process on
           port)
-        </p>
-      </div>
-
-      <div class="highlight-box">
-        <p>
-          <strong>Claude Flow Integration:</strong> <code>flow create</code>,
-          <code>flow resume</code>, <code>flow wizard</code> commands for
-          enhanced development workflow
         </p>
       </div>
 
@@ -373,7 +365,7 @@ cd ~/dotfiles
 ├── install.sh                 # Main installation script (8,327+ bytes)
 ├── .brewfile              # Package definitions (90+ packages)
 ├── .zshrc                     # Main shell configuration
-├── .functions                 # Custom functions + Claude Flow helper
+├── .functions                 # Custom functions
 ├── .aliases                   # Shell aliases (40+ shortcuts)
 ├── .ssh-agent                 # SSH agent management
 ├── .completion                # Shell completions
@@ -384,9 +376,7 @@ cd ~/dotfiles
 ├── .defaults                  # macOS system preferences
 ├── .node                      # Node.js environment setup
 ├── .starship                  # Starship prompt configuration
-├── .Ghostty/                   # Ghostty terminal configuration
-└── .claude-flow/
-    └── metrics/              # Claude Flow session data and metrics</code></pre>
+└── .Ghostty/                   # Ghostty terminal configuration</code></pre>
 
       <h3>Core Components</h3>
       <ul>
@@ -399,8 +389,8 @@ cd ~/dotfiles
           with performance optimizations
         </li>
         <li>
-          <strong><code>.functions</code></strong> - 40+ utility functions
-          including Claude Flow integration (<code>flow()</code> command)
+          <strong><code>.functions</code></strong> - Utility functions
+          (<code>mkd</code>, <code>killport</code>, <code>extract</code>, etc.)
         </li>
         <li>
           <strong><code>.brewfile</code></strong> - Curated collection of 90+
@@ -409,10 +399,6 @@ cd ~/dotfiles
         <li>
           <strong><code>.ssh/config</code></strong> - Security-focused SSH
           template with organized key management
-        </li>
-        <li>
-          <strong><code>.claude-flow/</code></strong> - AI workflow integration
-          with session management and metrics
         </li>
       </ul>
 

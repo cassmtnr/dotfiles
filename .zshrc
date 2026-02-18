@@ -116,3 +116,9 @@ fi
 # Performance profiling (uncomment to see results)
 # zprof
 export PATH="/opt/homebrew/opt/python@3.14/libexec/bin:$PATH"
+
+# bun completions
+[ -s "/Users/cassiano.montanari/.bun/_bun" ] && source "/Users/cassiano.montanari/.bun/_bun"
+
+# Work tracker CLI
+export PATH="$HOME/.work-tracker:$PATH"
