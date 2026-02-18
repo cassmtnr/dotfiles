@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dotfiles — macOS Development Environment</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/github-markdown-css/5.5.1/github-markdown-dark.min.css">
+  <style>
+    body {
+      background: #0d1117;
+      color: #e6edf3;
+      margin: 0;
+      padding: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+    }
+    .markdown-body {
+      max-width: 960px;
+      margin: 0 auto;
+      padding: 2rem 1.5rem;
+    }
+    .loading {
+      text-align: center;
+      padding: 4rem;
+      color: #8b949e;
+    }
+  </style>
+</head>
+<body>
+  <article class="markdown-body" id="content">
+    <p class="loading">Loading...</p>
+  </article>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/marked/12.0.1/marked.min.js"></script>
+  <script>
+    const repo = "cassmtnr/dotfiles";
+    const branch = "main";
+    fetch(`https://raw.githubusercontent.com/${repo}/${branch}/README.md`)
+      .then(r => r.text())
+      .then(md => {
+        document.getElementById("content").innerHTML = marked.parse(md);
+      })
+      .catch(() => {
+        document.getElementById("content").innerHTML =
+          `<p>Failed to load README. <a href="https://github.com/${repo}">View on GitHub</a></p>`;
+      });
+  </script>
+</body>
+</html>
