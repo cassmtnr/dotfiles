@@ -12,7 +12,7 @@ This dotfiles repository will transform your macOS system into a comprehensive, 
 
 - 🚀 **Performance Optimized**: Optimized shell startup with immediate Node.js/npm availability
 - 🔒 **Security First**: Secure SSH configuration templates and key management
-- 📦 **Complete Package Management**: 90+ essential development tools and applications
+- 📦 **Complete Package Management**: 45+ essential development tools and applications
 - 🛠️ **Modern Toolchain**: Starship prompt, Oh My Zsh, and contemporary CLI utilities
 - 👻 **Ghostty Terminal**: GPU-accelerated terminal with Nord theme and custom keybindings
 - 🔄 **Automated Setup**: One-command installation with comprehensive error handling
@@ -95,7 +95,7 @@ dotfiles/
 - **`install.sh`** - Comprehensive installation with error handling and progress feedback
 - **`.zshrc`** - Modular shell configuration with performance optimizations
 - **`.functions`** - 40+ utility functions including Claude Flow integration (`flow()` command)
-- **`.brewfile`** - Curated collection of 90+ essential development tools
+- **`.brewfile`** - Curated collection of 45+ essential development tools
 - **`.ghostty/config`** - Ghostty terminal with Nord theme, custom keybindings, and shell integration
 - **`.ssh/config`** - Security-focused SSH template with organized key management
 - **`.claude-flow/`** - AI workflow integration with session management and metrics

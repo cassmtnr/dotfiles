@@ -71,95 +71,12 @@ When ALL tasks are complete and verified, write LOOP_COMPLETE to the scratchpad.
 
 ## Mandatory Safety Rules Section
 
-EVERY PROMPT.md MUST include this section near the top. This applies to **ralph**, **ralph-orchestrator**, **ralph-wiggum**, **Claude Code**, or **any AI agent or skill** executing the prompt:
+EVERY PROMPT.md MUST include a "Critical Safety Rules" section near the top. To generate it:
 
-```markdown
-## Critical Safety Rules
-
-**DO NOT** run any of the following commands during Ralph iterations or autonomous agent execution. The user will handle these manually after the loop completes.
-
-### Git commands - NEVER run these:
-
-**Remote state modifications:**
-- `git push` (including `--force`, `--force-with-lease`, `--mirror`, `--all`, `--tags`)
-- `git push origin --delete` or `git push origin :<branch>` (deletes remote branches/tags)
-- `git push --prune` (removes remote branches not present locally)
-
-**Fetching and pulling:**
-- `git pull` (including `--rebase`, `--force`)
-- `git fetch` (including `--all`, `--prune`, `--prune-tags`)
-- `git clone` (including `--recursive`, `--mirror`)
-
-**Committing and staging:**
-- `git add` (do not stage files)
-- `git commit` (including `--amend`, `--no-edit`)
-- `git merge` (do not merge branches)
-
-**Destructive local operations:**
-- `git reset --hard` (discards all uncommitted changes)
-- `git checkout -- .` or `git restore .` (discards unstaged changes)
-- `git clean -f` / `-fd` / `-fdx` (permanently deletes untracked/ignored files)
-- `git stash drop` / `git stash clear` (permanently deletes stashes)
-- `git branch -D` (force-deletes branches)
-
-**History rewriting:**
-- `git rebase` (including interactive)
-- `git filter-branch` / `git filter-repo`
-- `git reflog expire` / `git gc --prune=now`
-- `git update-ref -d HEAD`
-
-**Remote configuration:**
-- `git remote add/set-url/remove`
-- `git submodule add/update`
-- `git config --global` / `git config --system`
-
-### Destructive system commands - NEVER run these:
-- `rm -rf` (especially with `/`, `~`, `.`, `*`)
-- `sudo` anything
-- `chmod -R` / `chown -R` on broad paths
-- `kill -9 -1` / `killall` (mass process killing)
-- Disk operations (`dd`, `mkfs`, `fdisk`, `wipefs`)
-- `> file` or `truncate` (emptying files)
-
-### Publishing and deployment - NEVER run these:
-- `npm publish` / `cargo publish` / `pip upload` / `gem push` / `pod trunk push`
-- `vercel --prod` / `netlify deploy --prod` / `fly deploy` / `firebase deploy`
-- `terraform apply` / `terraform destroy`
-- `kubectl apply` / `kubectl delete`
-- `docker push`
-- `heroku` deployment commands
-- Any CI/CD trigger or production deployment
-
-### Network and infrastructure - NEVER run these:
-- `curl -X POST/PUT/DELETE` to external APIs (unless required by the task and explicitly stated)
-- `ssh` / `scp` / `rsync --delete` to remote hosts
-- `docker rm -f $(docker ps -aq)` / `docker system prune -a` / `docker volume prune`
-- `iptables -F` / `ufw disable` (firewall manipulation)
-
-### Database operations - NEVER run these unless explicitly required by the task:
-- `DROP DATABASE` / `DROP TABLE` / `TRUNCATE`
-- `redis-cli FLUSHALL` / `FLUSHDB`
-- `prisma migrate reset` / `rails db:drop` / `django flush`
-- Any command that destroys or resets persistent data
-
-### Credential exposure - NEVER do these:
-- Print or log contents of `.env`, `credentials.json`, `~/.ssh/`, `~/.aws/`
-- Expose API keys, tokens, or secrets in output
-- `env` / `printenv` (may contain secrets)
-- `history` (may contain passwords)
-
-### Package installation safety:
-- NEVER run `curl <url> | sh` or `wget <url> | sh` (piped remote scripts)
-- NEVER run `npx <unknown-package>` without explicit user instruction
-- NEVER run `npm audit fix --force` (can introduce breaking changes)
-
-### What you SHOULD do instead:
-- Make changes to files directly
-- Run tests and linters
-- Run local dev servers if needed for verification
-- Document progress in `.ralph/agent/scratchpad.md`
-- The user will review and handle git operations manually after the loop completes
-```
+1. Read the complete safety rules from `~/.claude/CLAUDE.md` (the global rules file)
+2. Copy the entire "Critical Safety Rules" section into a fenced markdown code block
+3. Add this line to the "What you SHOULD do instead" list: `- Document progress in .ralph/agent/scratchpad.md`
+4. Add this line: `- The user will review and handle git operations manually after the loop completes`
 
 ## Additional conventions
 
