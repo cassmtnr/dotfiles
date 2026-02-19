@@ -79,6 +79,11 @@ These rules apply directly to Claude Code and any AI agent in all contexts. **DO
 - NEVER run `npx <unknown-package>` without explicit user instruction
 - NEVER run `npm audit fix --force` (can introduce breaking changes)
 
+### Attribution — NEVER add Claude as author or co-author:
+- NEVER include `Co-Authored-By`, `Authored-By`, or any similar trailer referencing Claude, Anthropic, or any AI in commit messages, PR descriptions, or any other git metadata
+- NEVER set Claude as the git author or committer
+- All commits and contributions must be attributed solely to the human user
+
 ### What you SHOULD do instead:
 - Make changes to files directly
 - Run tests and linters
