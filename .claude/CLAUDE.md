@@ -30,6 +30,7 @@ These rules apply directly to Claude Code and any AI agent in all contexts. **DO
 - Any git command with `--no-verify` (skips safety hooks)
 
 ### Destructive system commands — NEVER run these:
+
 - `rm -rf` (especially with `/`, `~`, `.`, `*`)
 - `sudo` / `su` / `doas` / `pkexec` (elevated privileges)
 - `chmod -R` / `chown -R` on broad paths
@@ -40,6 +41,7 @@ These rules apply directly to Claude Code and any AI agent in all contexts. **DO
 - Fork bombs or recursive shell constructs
 
 ### Publishing and deployment — NEVER run these:
+
 - `npm publish` / `npm unpublish` / `npm deprecate`
 - `cargo publish` / `pip upload` / `twine upload` / `gem push` / `pod trunk push`
 - `vercel --prod` / `netlify deploy --prod` / `fly deploy` / `firebase deploy`
@@ -53,6 +55,7 @@ These rules apply directly to Claude Code and any AI agent in all contexts. **DO
 - `aws cloudformation delete-stack` / `gcloud projects delete` / `az group delete`
 
 ### Network and infrastructure — NEVER run these:
+
 - `curl -X POST/PUT/DELETE` to external APIs (unless explicitly required by the task)
 - `ssh` / `scp` / `rsync --delete` to remote hosts
 - `docker rm -f $(docker ps -aq)` / `docker system prune -a` / `docker volume prune`
@@ -61,6 +64,7 @@ These rules apply directly to Claude Code and any AI agent in all contexts. **DO
 - `ifconfig <iface> down` / `route del default` (kills network)
 
 ### Database — NEVER run unless explicitly required by the task:
+
 - `DROP DATABASE` / `DROP TABLE` / `TRUNCATE TABLE`
 - `DELETE FROM <table> WHERE 1=1` (mass deletion)
 - `redis-cli FLUSHALL` / `FLUSHDB`
@@ -69,22 +73,26 @@ These rules apply directly to Claude Code and any AI agent in all contexts. **DO
 - `mongosh "db.dropDatabase()"`
 
 ### Credentials — NEVER expose:
+
 - Do not print or log `.env`, `credentials.json`, `~/.ssh/`, `~/.aws/`
 - Do not expose API keys, tokens, or secrets in output
 - Do not run `env` / `printenv` / `history` (may contain secrets)
 - Do not run `security find-generic-password` / `gpg --export-secret-keys`
 
 ### Package installation safety:
+
 - NEVER run `curl <url> | sh` or `wget <url> | sh` (piped remote scripts)
 - NEVER run `npx <unknown-package>` without explicit user instruction
 - NEVER run `npm audit fix --force` (can introduce breaking changes)
 
 ### Attribution — NEVER add Claude as author or co-author:
+
 - NEVER include `Co-Authored-By`, `Authored-By`, or any similar trailer referencing Claude, Anthropic, or any AI in commit messages, PR descriptions, or any other git metadata
 - NEVER set Claude as the git author or committer
 - All commits and contributions must be attributed solely to the human user
 
 ### What you SHOULD do instead:
+
 - Make changes to files directly
 - Run tests and linters
 - Run local dev servers if needed for verification

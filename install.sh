@@ -6,6 +6,15 @@
 
 set -euo pipefail  # Exit on error, undefined variable, or pipe failure
 
+# OS detection
+IS_MACOS=false
+IS_LINUX=false
+if [[ "$OSTYPE" == "darwin"* ]]; then
+    IS_MACOS=true
+elif [[ "$OSTYPE" == "linux"* ]]; then
+    IS_LINUX=true
+fi
+
 # Show welcome message first
 echo "======================================"
 echo "     Dotfiles Installation Script     "
@@ -18,7 +27,9 @@ echo "  • Starship prompt"
 echo "  • Node.js environment via NVM"
 echo "  • Bun JavaScript runtime"
 echo "  • Essential development tools"
-echo "  • MacOS system optimizations"
+if $IS_MACOS; then
+    echo "  • MacOS system optimizations"
+fi
 echo "  • Configuration file symlinks"
 echo
 echo "Administrative privileges are required for system configuration."
@@ -53,7 +64,7 @@ This script will:
 - Install Homebrew and packages
 - Install Oh My Zsh
 - Create symbolic links for dotfiles
-- Configure MacOS defaults
+- Configure MacOS defaults (macOS only)
 
 Run without any arguments to start the installation.
 
@@ -83,9 +94,9 @@ parse_args() {
 check_prerequisites() {
     log "Checking prerequisites..."
 
-    # Check OS - MacOS only
-    if [[ "$OSTYPE" != "darwin"* ]]; then
-        error "This script is designed exclusively for MacOS systems."
+    # Check OS
+    if ! $IS_MACOS && ! $IS_LINUX; then
+        error "This script supports MacOS and Linux only."
         exit 1
     fi
 
@@ -119,6 +130,8 @@ install_homebrew() {
         eval "$(/opt/homebrew/bin/brew shellenv)"
     elif [[ -f "/usr/local/bin/brew" ]]; then
         eval "$(/usr/local/bin/brew shellenv)"
+    elif [[ -f "/home/linuxbrew/.linuxbrew/bin/brew" ]]; then
+        eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
     fi
 
     success "Homebrew installed"
@@ -216,7 +229,12 @@ install_packages() {
     log "Installing Homebrew packages..."
 
     if [[ -f "$DOTFILES_ROOT/.brewfile" ]]; then
-        brew bundle --file="$DOTFILES_ROOT/.brewfile"
+        if $IS_LINUX; then
+            # Filter out cask entries (macOS-only) for Linux
+            grep -v '^cask ' "$DOTFILES_ROOT/.brewfile" | brew bundle --file=-
+        else
+            brew bundle --file="$DOTFILES_ROOT/.brewfile"
+        fi
     else
         warning "Brewfile not found"
     fi
@@ -226,7 +244,7 @@ install_packages() {
 
 # Configure MacOS defaults
 configure_macos() {
-    if [[ "$OSTYPE" != "darwin"* ]]; then
+    if ! $IS_MACOS; then
         log "Skipping MacOS configuration (not on MacOS)"
         return
     fi
@@ -324,7 +342,9 @@ post_install() {
     echo "  ✓ Starship prompt for enhanced terminal"
     echo "  ✓ Node.js environment via NVM"
     echo "  ✓ Bun JavaScript runtime"
-    echo "  ✓ MacOS system optimizations"
+    if $IS_MACOS; then
+        echo "  ✓ MacOS system optimizations"
+    fi
     echo "  ✓ Claude Code configuration (CLAUDE.md, statusline, commands)"
     echo "  ✓ Symbolic links for all configurations"
     echo ""
