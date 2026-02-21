@@ -55,32 +55,4 @@ nvm alias default 22
 log "Node.js version: $(node --version)"
 log "NPM version: $(npm --version)"
 
-# Define global NPM packages to install
-npm_packages=(
-    npm
-    yarn
-    typescript
-    eslint
-    nodemon
-)
-
-# Install global NPM packages
-if [ ${#npm_packages[@]} -gt 0 ]; then
-    log "Installing global NPM packages..."
-    if npm install -g "${npm_packages[@]}"; then
-        success "Global NPM packages installed:"
-        npm list -g --depth=0
-
-        # Show Yarn version if installed
-        if command -v yarn &> /dev/null; then
-            log "Yarn version: $(yarn --version)"
-        fi
-    else
-        warning "Some NPM packages failed to install"
-        warning "You can retry manually with: npm install -g ${npm_packages[*]}"
-    fi
-else
-    log "No packages to install"
-fi
-
 success "Node.js setup complete!"

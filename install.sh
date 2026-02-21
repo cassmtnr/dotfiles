@@ -352,6 +352,25 @@ setup_bun() {
         fi
     else
         warning "Bun installation failed - you can install manually later with: curl -fsSL https://bun.sh/install | bash"
+        return 1
+    fi
+
+    # Install global packages
+    local packages=(
+        yarn
+        typescript
+        eslint
+        nodemon
+        @anthropic-ai/claude-code
+        @google/gemini-cli
+    )
+
+    log "Installing global packages via bun..."
+    if bun install -g "${packages[@]}"; then
+        success "Global packages installed"
+    else
+        warning "Some packages failed to install"
+        warning "You can retry manually with: bun install -g ${packages[*]}"
     fi
 }
 
@@ -401,8 +420,8 @@ main() {
     install_oh_my_zsh
     create_symlinks
     install_packages
-    setup_nodejs
     setup_bun
+    setup_nodejs
     configure_macos
 
     post_install
