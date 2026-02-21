@@ -113,6 +113,39 @@ check_prerequisites() {
 }
 
 
+# Install system dependencies
+install_deps() {
+    log "Checking system dependencies..."
+
+    local missing=()
+    for cmd in zsh git curl; do
+        if ! command -v "$cmd" &> /dev/null; then
+            missing+=("$cmd")
+        fi
+    done
+
+    if $IS_LINUX; then
+        if ! dpkg -s build-essential &> /dev/null; then
+            missing+=("build-essential")
+        fi
+    fi
+
+    if [[ ${#missing[@]} -eq 0 ]]; then
+        log "All system dependencies already installed"
+        return
+    fi
+
+    log "Installing: ${missing[*]}"
+    if $IS_MACOS; then
+        xcode-select --install 2>/dev/null || true
+    elif $IS_LINUX; then
+        sudo apt-get update
+        sudo apt-get install -y "${missing[@]}"
+    fi
+
+    success "System dependencies installed"
+}
+
 # Install Homebrew
 install_homebrew() {
     if command -v brew &> /dev/null; then
@@ -363,6 +396,7 @@ main() {
 
     # Run installation steps
     check_prerequisites || exit 1
+    install_deps
     install_homebrew
     install_oh_my_zsh
     create_symlinks
