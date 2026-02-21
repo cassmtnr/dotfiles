@@ -22,11 +22,13 @@ export PAGER="${PAGER:-less}"
 # Node.js memory optimization
 export NODE_OPTIONS="--max-old-space-size=8192"
 
-# Homebrew paths (for Apple Silicon and Intel Macs)
+# Homebrew paths (macOS and Linux)
 if [[ -f "/opt/homebrew/bin/brew" ]]; then
     export HOMEBREW_PREFIX="/opt/homebrew"
 elif [[ -f "/usr/local/bin/brew" ]]; then
     export HOMEBREW_PREFIX="/usr/local"
+elif [[ -f "/home/linuxbrew/.linuxbrew/bin/brew" ]]; then
+    export HOMEBREW_PREFIX="/home/linuxbrew/.linuxbrew"
 fi
 
 # Path construction

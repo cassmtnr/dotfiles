@@ -39,9 +39,13 @@ alias zshsource="source ~/.zshrc"
 alias gitconfig="vim ~/.gitconfig"
 
 # System utilities
-alias myip="ipconfig getifaddr en0"
-alias clean-cache="sudo dscacheutil -flushcache; sudo killall -HUP mDNSResponder"
-alias chromekill="ps ux | grep '[C]hrome Helper --type=renderer' | grep -v extension-process | tr -s ' ' | cut -d ' ' -f2 | xargs kill"
+if [[ "$OSTYPE" == "darwin"* ]]; then
+    alias myip="ipconfig getifaddr en0"
+    alias clean-cache="sudo dscacheutil -flushcache; sudo killall -HUP mDNSResponder"
+    alias chromekill="ps ux | grep '[C]hrome Helper --type=renderer' | grep -v extension-process | tr -s ' ' | cut -d ' ' -f2 | xargs kill"
+else
+    alias myip="hostname -I | awk '{print \$1}'"
+fi
 alias clear='clear && printf "\033[3J"'
 alias cls='clear && printf "\033[3J"'
 
@@ -69,9 +73,13 @@ alias fgrep="fgrep --color=auto"
 alias week="date +%V"
 
 # IP addresses
-alias localip="ipconfig getifaddr en0"
+if [[ "$OSTYPE" == "darwin"* ]]; then
+    alias localip="ipconfig getifaddr en0"
+fi
 alias publicip="curl -s https://api.ipify.org && echo"
 
-# Show/hide hidden files in Finder
-alias show="defaults write com.apple.finder AppleShowAllFiles -bool true && killall Finder"
-alias hide="defaults write com.apple.finder AppleShowAllFiles -bool false && killall Finder"
+# Show/hide hidden files in Finder (macOS only)
+if [[ "$OSTYPE" == "darwin"* ]]; then
+    alias show="defaults write com.apple.finder AppleShowAllFiles -bool true && killall Finder"
+    alias hide="defaults write com.apple.finder AppleShowAllFiles -bool false && killall Finder"
+fi

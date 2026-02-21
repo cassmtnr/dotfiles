@@ -195,6 +195,7 @@ create_symlinks() {
     mkdir -p "$HOME/.claude/commands"
     mkdir -p "$HOME/.config"
     mkdir -p "$HOME/.ssh"
+    mkdir -p "$HOME/.ssh/sockets"
 
     # Define symlinks as source:target pairs
     local symlink_pairs=(

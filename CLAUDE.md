@@ -1,6 +1,6 @@
 # Claude Code Configuration for Dotfiles
 
-MacOS dotfiles — development environment configuration. See `README.md` for full project documentation, structure, and setup instructions.
+Cross-platform dotfiles (macOS & Linux) — development environment configuration. See `README.md` for full project documentation, structure, and setup instructions.
 
 ## Commands to Run After Changes
 
@@ -26,7 +26,7 @@ brew bundle check --file=.brewfile  # Check Homebrew packages
 
 - **`install.sh`** - Main installation script
 - **`.zshrc`** - Primary shell configuration with modular loading
-- **`.functions`** - Custom shell functions including Claude Flow helper (`flow()`)
+- **`.functions`** - Custom shell functions (`mkd`, `killport`, `extract`)
 - **`.aliases`** - Shell aliases and shortcuts
 - **`.ssh-agent`** - SSH agent management and key loading
 - **`.completion`** - Zsh completion configurations

@@ -1,6 +1,6 @@
 # Dotfiles v2.2.0
 
-> **Modern, secure, and performance-optimized macOS development environment**
+> **Modern, secure, and performance-optimized development environment for macOS and Linux**
 
 ## What are Dotfiles?
 
@@ -8,7 +8,7 @@ Dotfiles are configuration files that customize your development environment and
 
 ## What This Repository Does
 
-This dotfiles repository will transform your macOS system into a comprehensive, secure, and performant development environment. It provides:
+This dotfiles repository will transform your macOS or Linux system into a comprehensive, secure, and performant development environment. It provides:
 
 - 🚀 **Performance Optimized**: Optimized shell startup with immediate Node.js/npm availability
 - 🔒 **Security First**: Secure SSH configuration templates and key management
@@ -16,7 +16,8 @@ This dotfiles repository will transform your macOS system into a comprehensive, 
 - 🛠️ **Modern Toolchain**: Starship prompt, Oh My Zsh, and contemporary CLI utilities
 - 👻 **Ghostty Terminal**: GPU-accelerated terminal with Nord theme and custom keybindings
 - 🔄 **Automated Setup**: One-command installation with comprehensive error handling
-- 🍎 **macOS Optimized**: System defaults and configurations designed specifically for macOS
+- 🐧 **Cross-Platform**: Supports both macOS and Linux with OS-specific adaptations
+- 🍎 **macOS Optimized**: System defaults and configurations (macOS only)
 
 ## Installation
 
@@ -39,7 +40,7 @@ This configuration includes a comprehensive set of productivity-enhancing aliase
 
 **Key productivity features:**
 
-- **40+ aliases** for navigation, git, and system utilities ([`.aliases`](.aliases))
+- **25+ aliases** for navigation, git, and system utilities ([`.aliases`](.aliases))
 - **Utility functions** including `mkd`, `killport`, `extract` ([`.functions`](.functions))
 - **Performance optimized** with immediate Node.js tool availability
 
@@ -71,8 +72,8 @@ dotfiles/
 ├── .brewfile                  # Package definitions (45+ packages)
 ├── .zshrc                     # Main shell configuration
 ├── .zshenv                    # Environment variables
-├── .functions                 # Custom functions (40+ utilities)
-├── .aliases                   # Shell aliases (40+ shortcuts)
+├── .functions                 # Custom functions (mkd, killport, extract)
+├── .aliases                   # Shell aliases (25+ shortcuts)
 ├── .ssh-agent                 # SSH agent management
 ├── .completion                # Shell completions
 ├── .starship                  # Starship prompt configuration
@@ -97,7 +98,7 @@ dotfiles/
 
 - **`install.sh`** - Comprehensive installation with error handling and progress feedback
 - **`.zshrc`** - Modular shell configuration with performance optimizations
-- **`.functions`** - Utility functions (`mkd`, `killport`, `extract`, `flow()`, etc.)
+- **`.functions`** - Utility functions (`mkd`, `killport`, `extract`)
 - **`.brewfile`** - Curated collection of 45+ essential development tools
 - **`.ghostty/config`** - Ghostty terminal with Nord theme, custom keybindings, and shell integration
 - **`.ssh/config`** - Security-focused SSH template with organized key management
@@ -133,7 +134,7 @@ Found a bug or have a suggestion? Please report it on the [GitHub Issues page](h
 
 When reporting issues, please include:
 
-- macOS version
+- OS version (macOS / Linux distribution)
 - Error messages (if any)
 - Steps to reproduce
 - Expected vs actual behavior

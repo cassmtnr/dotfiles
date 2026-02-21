@@ -67,6 +67,8 @@ fi
 export NVM_DIR="$HOME/.nvm"
 if [[ -s "/opt/homebrew/opt/nvm/nvm.sh" ]]; then
     source "/opt/homebrew/opt/nvm/nvm.sh"
+elif [[ -s "/home/linuxbrew/.linuxbrew/opt/nvm/nvm.sh" ]]; then
+    source "/home/linuxbrew/.linuxbrew/opt/nvm/nvm.sh"
 elif [[ -s "$NVM_DIR/nvm.sh" ]]; then
     source "$NVM_DIR/nvm.sh"
 fi
@@ -74,6 +76,8 @@ fi
 # Load NVM bash completion
 if [[ -s "/opt/homebrew/opt/nvm/etc/bash_completion.d/nvm" ]]; then
     source "/opt/homebrew/opt/nvm/etc/bash_completion.d/nvm"
+elif [[ -s "/home/linuxbrew/.linuxbrew/opt/nvm/etc/bash_completion.d/nvm" ]]; then
+    source "/home/linuxbrew/.linuxbrew/opt/nvm/etc/bash_completion.d/nvm"
 elif [[ -s "$NVM_DIR/bash_completion" ]]; then
     source "$NVM_DIR/bash_completion"
 fi
@@ -117,8 +121,6 @@ fi
 # zprof
 export PATH="/opt/homebrew/opt/python@3.14/libexec/bin:$PATH"
 
-# bun completions
-[ -s "/Users/cassiano.montanari/.bun/_bun" ] && source "/Users/cassiano.montanari/.bun/_bun"
 
 # Work tracker CLI
 export PATH="$HOME/.work-tracker:$PATH"

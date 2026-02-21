@@ -8,19 +8,7 @@ fpath=(
     $fpath
 )
 
-# Initialize completion system (only once)
-autoload -Uz compinit
-
-# Speed up compinit by checking cache once a day
-zcompdump="${ZDOTDIR:-$HOME}/.zcompdump"
-if [[ $zcompdump -nt /usr/share/zsh ]] && [[ ! $zcompdump.zwc -ot $zcompdump ]]; then
-    compinit -C
-else
-    compinit
-    [[ -f "$zcompdump" && ! -f "$zcompdump.zwc" ]] && zcompile "$zcompdump"
-fi
-
-# Completion options
+# Completion options (compinit is initialized in .zshrc)
 setopt COMPLETE_IN_WORD    # Complete from both ends of a word
 setopt ALWAYS_TO_END       # Move cursor to the end of a completed word
 setopt PATH_DIRS           # Perform path search even on command names with slashes
