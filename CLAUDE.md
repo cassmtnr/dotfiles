@@ -2,6 +2,17 @@
 
 Cross-platform dotfiles (macOS & Linux) — development environment configuration. See `README.md` for full project documentation, structure, and setup instructions.
 
+## Cross-Platform Rule
+
+This project supports **both macOS and Linux**. When making any changes:
+
+- All shell scripts, aliases, and functions must work on both platforms
+- Use OS detection (`$OSTYPE`, `$IS_MACOS`, `$IS_LINUX`) to gate platform-specific code
+- Homebrew paths differ: `/opt/homebrew` (macOS ARM), `/usr/local` (macOS Intel), `/home/linuxbrew/.linuxbrew` (Linux) — always check all three
+- Casks are macOS-only — never assume cask availability on Linux
+- Commands like `defaults`, `osascript`, `open`, `pbcopy`, `pbpaste` are macOS-only — wrap in OS checks or provide Linux alternatives
+- Test changes mentally against both platforms before committing
+
 ## Commands to Run After Changes
 
 ### Lint/Type Check

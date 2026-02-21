@@ -403,9 +403,9 @@ post_install() {
     echo ""
     echo
     echo "Optional next steps:"
+    echo "  • Log out and log back in to start using zsh"
     echo "  • Configure your SSH keys in ~/.ssh/"
     echo "  • Customize ~/.zshrc.local for machine-specific settings"
-    echo "  • Open a new terminal to see the full configuration"
     echo
     echo "For more information, see: $DOTFILES_ROOT/README.md"
 }
@@ -425,7 +425,26 @@ main() {
     setup_nodejs
     configure_macos
 
+    set_default_shell
     post_install
+}
+
+# Set zsh as default shell
+set_default_shell() {
+    local zsh_path
+    zsh_path="$(which zsh)"
+
+    if [[ "$SHELL" == "$zsh_path" ]]; then
+        log "Zsh is already the default shell"
+        return
+    fi
+
+    log "Setting zsh as default shell..."
+    if chsh -s "$zsh_path"; then
+        success "Default shell changed to zsh (takes effect on next login)"
+    else
+        warning "Failed to change default shell. Run manually: chsh -s $zsh_path"
+    fi
 }
 
 # Run main function
