@@ -308,23 +308,31 @@ configure_macos() {
 setup_nodejs() {
     log "Setting up Node.js environment..."
 
-    if [[ -f "$DOTFILES_ROOT/.node" ]]; then
-        log "Running Node.js setup script..."
-        # Execute the Node.js script and automatically handle the shell restart requirement
-        if bash "$DOTFILES_ROOT/.node"; then
-            success "Node.js setup complete"
-        else
-            log "NVM requires shell environment reload - executing source command..."
-            # Reload the shell environment to make NVM available
-            if [[ -f "$HOME/.zshrc" ]]; then
-                source "$HOME/.zshrc" 2>/dev/null || true
-            fi
-            # Try the Node.js setup again after reloading
-            bash "$DOTFILES_ROOT/.node" || warning "Node.js setup may require manual shell restart"
-        fi
-    else
-        log "Node.js setup script not found, skipping..."
+    # Source NVM in current shell so node/npm remain available for later steps
+    export NVM_DIR="$HOME/.nvm"
+    if [[ -s "/opt/homebrew/opt/nvm/nvm.sh" ]]; then
+        source "/opt/homebrew/opt/nvm/nvm.sh"
+    elif [[ -s "/home/linuxbrew/.linuxbrew/opt/nvm/nvm.sh" ]]; then
+        source "/home/linuxbrew/.linuxbrew/opt/nvm/nvm.sh"
+    elif [[ -s "$NVM_DIR/nvm.sh" ]]; then
+        source "$NVM_DIR/nvm.sh"
     fi
+
+    if ! command -v nvm &> /dev/null; then
+        warning "NVM not found — skipping Node.js setup"
+        warning "Install NVM first with: brew install nvm"
+        return 1
+    fi
+
+    # Install and activate Node.js
+    log "Installing Node.js v22..."
+    nvm install 22 || { warning "Failed to install Node.js v22"; return 1; }
+    nvm use 22
+    nvm alias default 22
+
+    log "Node.js version: $(node --version)"
+    log "NPM version: $(npm --version)"
+    success "Node.js setup complete"
 }
 
 
@@ -388,7 +396,9 @@ install_ai_tools() {
         log "Installing via npm (Linux)..."
         # Ensure NVM and npm are available in current session
         export NVM_DIR="$HOME/.nvm"
-        if [[ -s "$NVM_DIR/nvm.sh" ]]; then
+        if [[ -s "/home/linuxbrew/.linuxbrew/opt/nvm/nvm.sh" ]]; then
+            source "/home/linuxbrew/.linuxbrew/opt/nvm/nvm.sh"
+        elif [[ -s "$NVM_DIR/nvm.sh" ]]; then
             source "$NVM_DIR/nvm.sh"
         fi
 
