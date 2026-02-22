@@ -403,11 +403,16 @@ post_install() {
     echo ""
     echo
     echo "Optional next steps:"
-    echo "  • Log out and log back in to start using zsh"
     echo "  • Configure your SSH keys in ~/.ssh/"
     echo "  • Customize ~/.zshrc.local for machine-specific settings"
     echo
     echo "For more information, see: $DOTFILES_ROOT/README.md"
+
+    # Switch to zsh if not already running it
+    if [[ "$SHELL" != *"zsh"* ]] && command -v zsh &> /dev/null; then
+        log "Switching to zsh..."
+        exec zsh -l
+    fi
 }
 
 # Main installation flow
