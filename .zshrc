@@ -65,19 +65,15 @@ fi
 
 # Load NVM (Node Version Manager)
 export NVM_DIR="$HOME/.nvm"
-if [[ -s "/opt/homebrew/opt/nvm/nvm.sh" ]]; then
-    source "/opt/homebrew/opt/nvm/nvm.sh"
-elif [[ -s "/home/linuxbrew/.linuxbrew/opt/nvm/nvm.sh" ]]; then
-    source "/home/linuxbrew/.linuxbrew/opt/nvm/nvm.sh"
+if [[ -n "$HOMEBREW_PREFIX" && -s "$HOMEBREW_PREFIX/opt/nvm/nvm.sh" ]]; then
+    source "$HOMEBREW_PREFIX/opt/nvm/nvm.sh"
 elif [[ -s "$NVM_DIR/nvm.sh" ]]; then
     source "$NVM_DIR/nvm.sh"
 fi
 
 # Load NVM bash completion
-if [[ -s "/opt/homebrew/opt/nvm/etc/bash_completion.d/nvm" ]]; then
-    source "/opt/homebrew/opt/nvm/etc/bash_completion.d/nvm"
-elif [[ -s "/home/linuxbrew/.linuxbrew/opt/nvm/etc/bash_completion.d/nvm" ]]; then
-    source "/home/linuxbrew/.linuxbrew/opt/nvm/etc/bash_completion.d/nvm"
+if [[ -n "$HOMEBREW_PREFIX" && -s "$HOMEBREW_PREFIX/opt/nvm/etc/bash_completion.d/nvm" ]]; then
+    source "$HOMEBREW_PREFIX/opt/nvm/etc/bash_completion.d/nvm"
 elif [[ -s "$NVM_DIR/bash_completion" ]]; then
     source "$NVM_DIR/bash_completion"
 fi
@@ -119,8 +115,10 @@ fi
 
 # Performance profiling (uncomment to see results)
 # zprof
-export PATH="/opt/homebrew/opt/python@3.14/libexec/bin:$PATH"
+# Python (version matches .brewfile)
+if [[ -d "$HOMEBREW_PREFIX/opt/python@3.13/libexec/bin" ]]; then
+    export PATH="$HOMEBREW_PREFIX/opt/python@3.13/libexec/bin:$PATH"
+fi
 
-
-# Work tracker CLI
+# Work tracker CLI (used on secondary macOS machine)
 export PATH="$HOME/.work-tracker:$PATH"

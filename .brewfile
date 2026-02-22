@@ -60,7 +60,7 @@ cask "font-meslo-lg"
 # Applications
 cask "1password"
 cask "alfred"
-# cask "dbeaver-community"
+# cask "dbeaver-community"     # Disabled: not currently needed, re-enable if required
 cask "ghostty"
 cask "google-chrome"
 cask "spotify"

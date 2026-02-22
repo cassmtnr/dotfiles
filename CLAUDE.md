@@ -42,8 +42,7 @@ brew bundle check --file=.brewfile  # Check Homebrew packages
 - **`.ssh-agent`** - SSH agent management and key loading
 - **`.completion`** - Zsh completion configurations
 - **`.brewfile`** - Homebrew package definitions
-- **`.defaults`** - MacOS system preferences
-- **`.node`** - Node.js environment setup
+- **`.defaults`** - macOS system preferences
 - **`.bun`** - Bun JavaScript runtime configuration
 - **`.ghostty/config`** - Ghostty terminal configuration
 - **`.ssh/config`** - SSH configuration template

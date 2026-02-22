@@ -12,7 +12,7 @@ This dotfiles repository will transform your macOS or Linux system into a compre
 
 - 🚀 **Performance Optimized**: Optimized shell startup with immediate Node.js/npm availability
 - 🔒 **Security First**: Secure SSH configuration templates and key management
-- 📦 **Complete Package Management**: 45+ essential development tools and applications
+- 📦 **Complete Package Management**: 40+ essential development tools and applications
 - 🛠️ **Modern Toolchain**: Starship prompt, Oh My Zsh, and contemporary CLI utilities
 - 👻 **Ghostty Terminal**: GPU-accelerated terminal with Nord theme and custom keybindings
 - 🔄 **Automated Setup**: One-command installation with comprehensive error handling
@@ -56,7 +56,7 @@ The SSH config is automatically symlinked to `~/.ssh/config`. Customize it with 
 vim ~/dotfiles/.ssh/config
 ```
 
-Update with your actual SSH key paths and host configurations. Generate keys in organized folders (e.g., `~/.ssh/github/`, `~/.ssh/work/`).
+Update with your actual SSH key paths and host configurations. The 1Password SSH agent path is auto-configured for macOS. Generate keys in organized folders (e.g., `~/.ssh/github/`, `~/.ssh/work/`).
 
 ### 2. Update Key Configurations
 
@@ -78,7 +78,6 @@ dotfiles/
 ├── .completion                # Shell completions
 ├── .starship                  # Starship prompt configuration
 ├── .defaults                  # macOS system preferences
-├── .node                      # Node.js environment setup
 ├── .bun                       # Bun JavaScript runtime config
 ├── .ghostty/
 │   └── config                # Ghostty terminal configuration (Nord theme)
@@ -99,7 +98,7 @@ dotfiles/
 - **`install.sh`** - Comprehensive installation with error handling and progress feedback
 - **`.zshrc`** - Modular shell configuration with performance optimizations
 - **`.functions`** - Utility functions (`mkd`, `killport`, `extract`)
-- **`.brewfile`** - Curated collection of 45+ essential development tools
+- **`.brewfile`** - Curated collection of 40+ development tools
 - **`.ghostty/config`** - Ghostty terminal with Nord theme, custom keybindings, and shell integration
 - **`.ssh/config`** - Security-focused SSH template with organized key management
 - **`.claude/`** - Claude Code configuration (symlinked to `~/.claude/`)
