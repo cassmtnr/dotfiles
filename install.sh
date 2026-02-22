@@ -213,6 +213,7 @@ create_symlinks() {
     # Create conditional symlinks for private configs (only if they exist)
     local private_configs=(
         "$DOTFILES_ROOT/.zshrc.local:$HOME/.zshrc.local"
+        "$DOTFILES_ROOT/.ssh/config.local:$HOME/.ssh/config.local"
         "$DOTFILES_ROOT/.ssh/config.work:$HOME/.ssh/config.work"
     )
 
@@ -362,8 +363,6 @@ setup_bun() {
         typescript
         eslint
         nodemon
-        @anthropic-ai/claude-code
-        @google/gemini-cli
     )
 
     log "Installing global packages via bun..."
@@ -373,6 +372,39 @@ setup_bun() {
         warning "Some packages failed to install"
         warning "You can retry manually with: bun install -g ${packages[*]}"
     fi
+}
+
+# Install AI CLI tools (platform-specific)
+install_ai_tools() {
+    log "Installing AI CLI tools..."
+
+    if $IS_MACOS; then
+        log "Installing via Homebrew (macOS)..."
+        brew install claude-code gemini-cli 2>/dev/null || {
+            warning "Some AI CLI tools failed to install via Homebrew"
+            warning "You can retry manually with: brew install claude-code gemini-cli"
+        }
+    elif $IS_LINUX; then
+        log "Installing via npm (Linux)..."
+        # Ensure NVM and npm are available in current session
+        export NVM_DIR="$HOME/.nvm"
+        if [[ -s "$NVM_DIR/nvm.sh" ]]; then
+            source "$NVM_DIR/nvm.sh"
+        fi
+
+        if ! command -v npm &> /dev/null; then
+            warning "npm not found — skipping AI CLI tools installation"
+            warning "Install Node.js first, then run: npm install -g @anthropic-ai/claude-code @google/gemini-cli"
+            return 1
+        fi
+
+        npm install -g @anthropic-ai/claude-code @google/gemini-cli || {
+            warning "Some AI CLI tools failed to install via npm"
+            warning "You can retry manually with: npm install -g @anthropic-ai/claude-code @google/gemini-cli"
+        }
+    fi
+
+    success "AI CLI tools installed"
 }
 
 # Post-installation message
@@ -430,6 +462,7 @@ main() {
     setup_nodejs
     configure_macos
 
+    install_ai_tools
     set_default_shell
     post_install
 }
