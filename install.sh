@@ -477,6 +477,12 @@ set_default_shell() {
         return
     fi
 
+    # On Linux, ensure zsh is listed in /etc/shells (required by chsh)
+    if $IS_LINUX && ! grep -qx "$zsh_path" /etc/shells 2>/dev/null; then
+        log "Adding $zsh_path to /etc/shells..."
+        echo "$zsh_path" | sudo tee -a /etc/shells > /dev/null
+    fi
+
     log "Setting zsh as default shell..."
     if chsh -s "$zsh_path"; then
         success "Default shell changed to zsh (takes effect on next login)"
