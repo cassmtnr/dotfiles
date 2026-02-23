@@ -64,7 +64,7 @@ fi
 
 
 # Load NVM (Node Version Manager)
-export NVM_DIR="$HOME/.nvm"
+export NVM_DIR="${NVM_DIR:-$HOME/.nvm}"
 if [[ -n "$HOMEBREW_PREFIX" && -s "$HOMEBREW_PREFIX/opt/nvm/nvm.sh" ]]; then
     source "$HOMEBREW_PREFIX/opt/nvm/nvm.sh"
 elif [[ -s "$NVM_DIR/nvm.sh" ]]; then

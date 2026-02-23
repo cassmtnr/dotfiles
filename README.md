@@ -86,7 +86,7 @@ dotfiles/
 ├── .claude/
 │   ├── CLAUDE.md             # Global Claude Code instructions
 │   ├── settings.json         # Claude Code settings
-│   ├── statusline-command.ts # Custom statusline (Bun/TypeScript)
+│   ├── statusline-command.sh # Custom statusline (Bash)
 │   └── commands/
 │       └── ralph-prompt.md   # /ralph-prompt slash command
 └── .alfred/

@@ -12,6 +12,10 @@
 *.zip
 
 .history/
+node_modules/
+bun.lock
+package.json
+tsconfig.json
 
 # Personal files #
 ##################

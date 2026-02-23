@@ -206,7 +206,7 @@ create_symlinks() {
         "$DOTFILES_ROOT/.ghostty:$HOME/.config/ghostty"
         "$DOTFILES_ROOT/.claude/CLAUDE.md:$HOME/.claude/CLAUDE.md"
         "$DOTFILES_ROOT/.claude/settings.json:$HOME/.claude/settings.json"
-        "$DOTFILES_ROOT/.claude/statusline-command.ts:$HOME/.claude/statusline-command.ts"
+        "$DOTFILES_ROOT/.claude/statusline-command.sh:$HOME/.claude/statusline-command.sh"
         "$DOTFILES_ROOT/.claude/commands:$HOME/.claude/commands"
     )
 

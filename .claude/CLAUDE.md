@@ -91,6 +91,15 @@ These rules apply directly to Claude Code and any AI agent in all contexts. **DO
 - NEVER set Claude as the git author or committer
 - All commits and contributions must be attributed solely to the human user
 
+## Refactoring Discipline
+
+When renaming, moving, or deleting any file, function, variable, path, or config key:
+
+1. **Search for all references before changing** — grep the entire project for the old name/path (filenames, string literals, symlink definitions, config files, scripts, documentation)
+2. **Update every reference** — install scripts, symlink arrays, config entries, imports, documentation, READMEs, and comments must all reflect the new name/path
+3. **Check for stale artifacts** — if a file was renamed/deleted, verify no orphaned symlinks, build outputs, or cached references to the old name remain
+4. **Verify end-to-end** — after the change, confirm the renamed/moved thing actually works from the consumer's perspective (e.g., run the command, check the symlink resolves, test the import)
+
 ### What you SHOULD do instead:
 
 - Make changes to files directly
