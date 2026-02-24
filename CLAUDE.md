@@ -28,6 +28,7 @@ shellcheck .functions .aliases .ssh-agent  # Shell script linting (if available)
 ### Test
 
 ```bash
+./update.sh                    # Test lightweight update (symlinks only)
 ./install.sh                   # Test complete installation
 time zsh -lic exit             # Measure shell startup time (should be <1 second)
 brew bundle check --file=.brewfile  # Check Homebrew packages
@@ -36,6 +37,8 @@ brew bundle check --file=.brewfile  # Check Homebrew packages
 ## Essential Files
 
 - **`install.sh`** - Main installation script
+- **`update.sh`** - Lightweight update script (symlinks + optional packages/defaults)
+- **`.utils.sh`** - Shared utilities sourced by both install.sh and update.sh
 - **`.zshrc`** - Primary shell configuration with modular loading
 - **`.functions`** - Custom shell functions (`mkd`, `killport`, `extract`)
 - **`.aliases`** - Shell aliases and shortcuts

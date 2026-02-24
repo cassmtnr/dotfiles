@@ -9,12 +9,28 @@ killport() {
         echo "Usage: killport <port>"
         return 1
     fi
-    lsof -t -i tcp:"$1" | xargs kill 2>/dev/null || echo "No process found on port $1"
+    if command -v lsof &> /dev/null; then
+        lsof -t -i tcp:"$1" | xargs kill 2>/dev/null || echo "No process found on port $1"
+    elif command -v ss &> /dev/null; then
+        local pid=$(ss -tlnp "sport = :$1" | grep -oP 'pid=\K[0-9]+' | head -1)
+        if [[ -n "$pid" ]]; then
+            kill "$pid" && echo "Killed process $pid on port $1"
+        else
+            echo "No process found on port $1"
+        fi
+    else
+        echo "Error: requires lsof (macOS) or ss (Linux)"
+        return 1
+    fi
 }
 
 # Get weather for a location
 weather() {
-    curl -s "wttr.in/${1}"
+    if [[ -z "$1" ]]; then
+        echo "Usage: weather <location>"
+        return 1
+    fi
+    curl -s "wttr.in/${1}" || echo "Error: could not fetch weather (check your connection)"
 }
 
 # Extract various archive formats
@@ -46,5 +62,12 @@ playwright-install() {
         echo "Usage: playwright-install <proxy-url>"
         return 1
     fi
-    HTTPS_PROXY="http://$1" npx playwright install
+    if command -v bunx &> /dev/null; then
+        HTTPS_PROXY="http://$1" bunx playwright install
+    elif command -v npx &> /dev/null; then
+        HTTPS_PROXY="http://$1" npx playwright install
+    else
+        echo "Error: requires bunx or npx"
+        return 1
+    fi
 }

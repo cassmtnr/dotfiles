@@ -34,6 +34,17 @@ cd ~/dotfiles
 
 The installation script automatically sets up your complete development environment with error handling and progress feedback. It's idempotent, so you can run it multiple times safely.
 
+### Updating After Changes
+
+After editing dotfiles, use the lightweight update script instead of re-running the full installer:
+
+```bash
+./update.sh              # Just refresh symlinks (fast)
+./update.sh -p           # Also update Homebrew packages
+./update.sh -d           # Also re-apply macOS defaults
+./update.sh -a           # All of the above
+```
+
 ## Available Aliases & Functions
 
 This configuration includes a comprehensive set of productivity-enhancing aliases and functions.
@@ -69,6 +80,8 @@ Update with your actual SSH key paths and host configurations. The 1Password SSH
 ```
 dotfiles/
 ├── install.sh                 # Main installation script
+├── update.sh                  # Lightweight update (symlinks + optional packages/defaults)
+├── .utils.sh                  # Shared utilities (OS detection, logging, symlinks, packages)
 ├── .brewfile                  # Package definitions (45+ packages)
 ├── .zshrc                     # Main shell configuration
 ├── .zshenv                    # Environment variables
@@ -86,22 +99,23 @@ dotfiles/
 ├── .claude/
 │   ├── CLAUDE.md             # Global Claude Code instructions
 │   ├── settings.json         # Claude Code settings
-│   ├── statusline-command.sh # Custom statusline (Bash)
-│   └── commands/
-│       └── ralph-prompt.md   # /ralph-prompt slash command
+│   └── statusline-command.sh # Custom statusline (Bash)
 └── .alfred/
-    └── Alfred.alfredpreferences/ # Alfred workflows and settings
+    └── Alfred.alfredpreferences/ # Alfred workflows and settings (macOS only)
 ```
 
 ### Core Components
 
 - **`install.sh`** - Comprehensive installation with error handling and progress feedback
+- **`update.sh`** - Lightweight update script (symlinks + optional packages/defaults)
+- **`.utils.sh`** - Shared utilities sourced by both install.sh and update.sh
 - **`.zshrc`** - Modular shell configuration with performance optimizations
 - **`.functions`** - Utility functions (`mkd`, `killport`, `extract`)
 - **`.brewfile`** - Curated collection of 40+ development tools
 - **`.ghostty/config`** - Ghostty terminal with Nord theme, custom keybindings, and shell integration
 - **`.ssh/config`** - Security-focused SSH template with organized key management
 - **`.claude/`** - Claude Code configuration (symlinked to `~/.claude/`)
+- **`.alfred/`** - Alfred workflows and preferences (macOS only, symlinked via Alfred's sync feature)
 
 ## Additional Customization
 

@@ -71,13 +71,6 @@ elif [[ -s "$NVM_DIR/nvm.sh" ]]; then
     source "$NVM_DIR/nvm.sh"
 fi
 
-# Load NVM bash completion
-if [[ -n "$HOMEBREW_PREFIX" && -s "$HOMEBREW_PREFIX/opt/nvm/etc/bash_completion.d/nvm" ]]; then
-    source "$HOMEBREW_PREFIX/opt/nvm/etc/bash_completion.d/nvm"
-elif [[ -s "$NVM_DIR/bash_completion" ]]; then
-    source "$NVM_DIR/bash_completion"
-fi
-
 # Load local/private configuration (not tracked in git)
 [[ -f "$HOME/.zshrc.local" ]] && source "$HOME/.zshrc.local"
 
@@ -116,9 +109,9 @@ fi
 # Performance profiling (uncomment to see results)
 # zprof
 # Python (version matches .brewfile)
-if [[ -d "$HOMEBREW_PREFIX/opt/python@3.13/libexec/bin" ]]; then
+if [[ -n "$HOMEBREW_PREFIX" && -d "$HOMEBREW_PREFIX/opt/python@3.13/libexec/bin" ]]; then
     export PATH="$HOMEBREW_PREFIX/opt/python@3.13/libexec/bin:$PATH"
 fi
 
-# Work tracker CLI (used on secondary macOS machine)
-export PATH="$HOME/.work-tracker:$PATH"
+# Deduplicate PATH entries
+typeset -U path

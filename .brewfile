@@ -31,7 +31,6 @@ brew "nvm"
 brew "python@3.13"
 brew "poetry"
 brew "pipx"
-brew "yarn"
 brew "pnpm"
 
 # Container and orchestration

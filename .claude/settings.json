@@ -1,7 +1,8 @@
 {
-  "skipDangerousModePermissionPrompt": true,
   "statusLine": {
     "type": "command",
     "command": "bash ~/.claude/statusline-command.sh"
-  }
+  },
+  "enabledPlugins": {},
+  "skipDangerousModePermissionPrompt": true
 }
