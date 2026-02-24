@@ -52,7 +52,7 @@ This configuration includes a comprehensive set of productivity-enhancing aliase
 **Key productivity features:**
 
 - **25+ aliases** for navigation, git, and system utilities ([`.aliases`](.aliases))
-- **Utility functions** including `mkd`, `killport`, `extract` ([`.functions`](.functions))
+- **Utility functions** including `mkd`, `killport`, `extract`, `weather` ([`.functions`](.functions))
 - **Performance optimized** with immediate Node.js tool availability
 
 ## Required Customizations
@@ -110,7 +110,7 @@ dotfiles/
 - **`update.sh`** - Lightweight update script (symlinks + optional packages/defaults)
 - **`.utils.sh`** - Shared utilities sourced by both install.sh and update.sh
 - **`.zshrc`** - Modular shell configuration with performance optimizations
-- **`.functions`** - Utility functions (`mkd`, `killport`, `extract`)
+- **`.functions`** - Utility functions (`mkd`, `killport`, `extract`, `weather`, `playwright-install`)
 - **`.brewfile`** - Curated collection of 40+ development tools
 - **`.ghostty/config`** - Ghostty terminal with Nord theme, custom keybindings, and shell integration
 - **`.ssh/config`** - Security-focused SSH template with organized key management

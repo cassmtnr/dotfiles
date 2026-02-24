@@ -19,9 +19,16 @@ This project supports **both macOS and Linux**. When making any changes:
 
 ```bash
 zsh -n .zshrc                   # Syntax check primary Zsh config
+zsh -n .zshenv                  # Check environment variables
 zsh -n .functions               # Check custom functions
 zsh -n .aliases                 # Check aliases
 zsh -n .ssh-agent               # Check SSH agent setup
+zsh -n .completion              # Check completions
+zsh -n .bun                     # Check Bun config
+bash -n .utils.sh               # Check shared utilities
+bash -n install.sh              # Check install script
+bash -n update.sh               # Check update script
+bash -n .defaults               # Check macOS defaults
 shellcheck .functions .aliases .ssh-agent  # Shell script linting (if available)
 ```
 
@@ -40,7 +47,7 @@ brew bundle check --file=.brewfile  # Check Homebrew packages
 - **`update.sh`** - Lightweight update script (symlinks + optional packages/defaults)
 - **`.utils.sh`** - Shared utilities sourced by both install.sh and update.sh
 - **`.zshrc`** - Primary shell configuration with modular loading
-- **`.functions`** - Custom shell functions (`mkd`, `killport`, `extract`)
+- **`.functions`** - Custom shell functions (`mkd`, `killport`, `extract`, `weather`, `playwright-install`)
 - **`.aliases`** - Shell aliases and shortcuts
 - **`.ssh-agent`** - SSH agent management and key loading
 - **`.completion`** - Zsh completion configurations

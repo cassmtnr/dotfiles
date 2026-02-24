@@ -139,6 +139,13 @@ macos-option-as-alt = true
 # quick-terminal-animation-duration = 0.2
 
 # -----------------------------------------------------------------------------
+# TERMINAL TYPE
+# -----------------------------------------------------------------------------
+# Use xterm-256color for compatibility — xterm-ghostty terminfo is often
+# missing on remote Linux hosts, causing display issues over SSH.
+term = xterm-256color
+
+# -----------------------------------------------------------------------------
 # MISCELLANEOUS
 # -----------------------------------------------------------------------------
 # Confirm before closing terminal with running processes
