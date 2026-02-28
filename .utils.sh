@@ -39,6 +39,18 @@ create_symlinks() {
     mkdir -p "$HOME/.ssh"
     mkdir -p "$HOME/.ssh/sockets"
 
+    # Protect critical SSH files that must never be overwritten
+    local protected_ssh_files=(
+        "$HOME/.ssh/authorized_keys"
+        "$HOME/.ssh/authorized_keys2"
+    )
+    for protected in "${protected_ssh_files[@]}"; do
+        if [[ -f "$protected" ]]; then
+            chmod 600 "$protected"
+            log "Protected SSH file preserved: $protected"
+        fi
+    done
+
     # Define symlinks as source:target pairs
     local symlink_pairs=(
         "$DOTFILES_ROOT/.zshrc:$HOME/.zshrc"
@@ -46,7 +58,6 @@ create_symlinks() {
         "$DOTFILES_ROOT/.starship:$HOME/.config/starship.toml"
         "$DOTFILES_ROOT/.ssh/config:$HOME/.ssh/config"
         "$DOTFILES_ROOT/.ghostty:$HOME/.config/ghostty"
-        "$DOTFILES_ROOT/.claude/CLAUDE.md:$HOME/.claude/CLAUDE.md"
         "$DOTFILES_ROOT/.claude/settings.json:$HOME/.claude/settings.json"
         "$DOTFILES_ROOT/.claude/statusline-command.sh:$HOME/.claude/statusline-command.sh"
         # "$DOTFILES_ROOT/.claude/commands:$HOME/.claude/commands"
@@ -91,12 +102,36 @@ create_symlinks() {
         # Remove existing target if it's a symlink
         if [[ -L "$target" ]]; then
             rm "$target"
+        elif [[ -e "$target" && "$target" == *"/.ssh/"* ]]; then
+            warning "Refusing to overwrite non-symlink SSH file: $target"
+            continue
         fi
 
         # Create symlink
         ln -sf "$source" "$target"
         log "Created symlink: $target -> $source"
     done
+
+    # Build CLAUDE.md by concatenating dotfiles base + local private config
+    local claude_md="$HOME/.claude/CLAUDE.md"
+    if [[ -f "$DOTFILES_ROOT/.claude/CLAUDE.md" ]]; then
+        # Remove existing symlink if present
+        [[ -L "$claude_md" ]] && rm "$claude_md"
+        cp "$DOTFILES_ROOT/.claude/CLAUDE.md" "$claude_md"
+        if [[ -f "$HOME/.claude/CLAUDE.local.md" ]]; then
+            printf '\n' >> "$claude_md"
+            cat "$HOME/.claude/CLAUDE.local.md" >> "$claude_md"
+            log "Built CLAUDE.md from dotfiles + local config"
+        else
+            log "Built CLAUDE.md from dotfiles (no CLAUDE.local.md found)"
+        fi
+    fi
+
+    # Warn if authorized_keys is missing (SSH login will fail)
+    if [[ ! -f "$HOME/.ssh/authorized_keys" ]]; then
+        warning "~/.ssh/authorized_keys does not exist — SSH key login will not work!"
+        warning "Add your public key: cat your_key.pub >> ~/.ssh/authorized_keys && chmod 600 ~/.ssh/authorized_keys"
+    fi
 
     success "Symbolic links created"
 }
