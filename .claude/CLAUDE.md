@@ -106,3 +106,4 @@ When renaming, moving, or deleting any file, function, variable, path, or config
 - Run tests and linters
 - Run local dev servers if needed for verification
 - The user will review and handle git operations manually
+

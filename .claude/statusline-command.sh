@@ -3,14 +3,14 @@
 
 set -euo pipefail
 
-# Colors
-RST='\033[0m'
-CYAN='\033[36m'
-MAGENTA='\033[35m'
-BLUE='\033[34m'
-GREEN='\033[32m'
-YELLOW='\033[33m'
-RED='\033[31m'
+# Colors (using $'...' so escapes resolve at assignment, not at output time)
+RST=$'\033[0m'
+CYAN=$'\033[36m'
+MAGENTA=$'\033[35m'
+BLUE=$'\033[34m'
+GREEN=$'\033[32m'
+YELLOW=$'\033[33m'
+RED=$'\033[31m'
 
 # Read JSON from stdin (Claude Code pipes session data)
 INPUT="$(cat)"
@@ -63,5 +63,5 @@ if [[ -n "$MODEL" ]]; then
     PARTS+="[${CYAN}${MODEL}${RST}]"
 fi
 
-printf '%b\n' "$LINE1"
-printf '%b' "$PARTS"
+echo "$LINE1"
+echo "$PARTS"
