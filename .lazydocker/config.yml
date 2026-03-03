@@ -1,0 +1,16 @@
+# lazydocker configuration
+# Docs: https://github.com/jesseduffield/lazydocker/blob/master/docs/Config.md
+
+gui:
+  scrollHeight: 2
+  language: "auto"
+  theme:
+    activeBorderColor:
+      - green
+      - bold
+    inactiveBorderColor:
+      - white
+    selectedLineBgColor:
+      - default
+
+reporting: "off"

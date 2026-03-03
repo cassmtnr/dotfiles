@@ -1,0 +1,12 @@
+#!/bin/bash
+
+/usr/bin/figlet "$(hostname)" | /usr/games/lolcat -f
+
+# random motivational quote
+QUOTE_JSON=$(curl -sf --max-time 3 https://dummyjson.com/quotes/random)
+if [ -n "$QUOTE_JSON" ]; then
+    QUOTE=$(echo "$QUOTE_JSON" | sed -n 's/.*"quote":"\([^"]*\)".*/\1/p')
+    AUTHOR=$(echo "$QUOTE_JSON" | sed -n 's/.*"author":"\([^"]*\)".*/\1/p')
+    echo -e "  \e[2m\"${QUOTE}\"\e[0m"
+    echo -e "  \e[2m— ${AUTHOR}\e[0m"
+fi
