@@ -242,37 +242,32 @@ setup_bun() {
     fi
 }
 
-# Install AI CLI tools (platform-specific)
+# Install AI CLI tools (Linux only — macOS handled via .brewfile)
 install_ai_tools() {
-    log "Installing AI CLI tools..."
-
-    if $IS_MACOS; then
-        log "Installing via Homebrew (macOS)..."
-        brew install claude-code gemini-cli 2>/dev/null || {
-            warning "Some AI CLI tools failed to install via Homebrew"
-            warning "You can retry manually with: brew install claude-code gemini-cli"
-        }
-    elif $IS_LINUX; then
-        log "Installing via npm (Linux)..."
-        # Ensure NVM and npm are available in current session
-        export NVM_DIR="$HOME/.nvm"
-        if [[ -s "/home/linuxbrew/.linuxbrew/opt/nvm/nvm.sh" ]]; then
-            source "/home/linuxbrew/.linuxbrew/opt/nvm/nvm.sh"
-        elif [[ -s "$NVM_DIR/nvm.sh" ]]; then
-            source "$NVM_DIR/nvm.sh"
-        fi
-
-        if ! command -v npm &> /dev/null; then
-            warning "npm not found — skipping AI CLI tools installation"
-            warning "Install Node.js first, then run: npm install -g @anthropic-ai/claude-code @google/gemini-cli"
-            return 1
-        fi
-
-        npm install -g @anthropic-ai/claude-code @google/gemini-cli || {
-            warning "Some AI CLI tools failed to install via npm"
-            warning "You can retry manually with: npm install -g @anthropic-ai/claude-code @google/gemini-cli"
-        }
+    if ! $IS_LINUX; then
+        return
     fi
+
+    log "Installing AI CLI tools via npm (Linux)..."
+
+    # Ensure NVM and npm are available in current session
+    export NVM_DIR="$HOME/.nvm"
+    if [[ -s "/home/linuxbrew/.linuxbrew/opt/nvm/nvm.sh" ]]; then
+        source "/home/linuxbrew/.linuxbrew/opt/nvm/nvm.sh"
+    elif [[ -s "$NVM_DIR/nvm.sh" ]]; then
+        source "$NVM_DIR/nvm.sh"
+    fi
+
+    if ! command -v npm &> /dev/null; then
+        warning "npm not found — skipping AI CLI tools installation"
+        warning "Install Node.js first, then run: npm install -g @anthropic-ai/claude-code @google/gemini-cli"
+        return 1
+    fi
+
+    npm install -g @anthropic-ai/claude-code @google/gemini-cli || {
+        warning "Some AI CLI tools failed to install via npm"
+        warning "You can retry manually with: npm install -g @anthropic-ai/claude-code @google/gemini-cli"
+    }
 
     success "AI CLI tools installed"
 }

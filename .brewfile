@@ -57,6 +57,11 @@ cask "font-hack-nerd-font"
 cask "font-meslo-for-powerline"
 cask "font-meslo-lg"
 
+# AI CLI tools
+brew "claude-code"
+brew "gemini-cli"
+brew "ollama"
+
 # Applications
 cask "1password"
 cask "alfred"
