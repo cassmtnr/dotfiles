@@ -36,6 +36,7 @@ brew "pnpm"
 # Container and orchestration
 brew "docker"
 brew "docker-compose"
+brew "lazydocker"
 brew "kubectl"
 brew "helm"
 
