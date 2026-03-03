@@ -42,7 +42,6 @@ create_symlinks() {
     # Protect critical SSH files that must never be overwritten
     local protected_ssh_files=(
         "$HOME/.ssh/authorized_keys"
-        "$HOME/.ssh/authorized_keys2"
     )
     for protected in "${protected_ssh_files[@]}"; do
         if [[ -f "$protected" ]]; then
