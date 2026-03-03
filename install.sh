@@ -331,6 +331,7 @@ main() {
     setup_bun
     setup_nodejs
     configure_macos
+    install_motd
 
     install_ai_tools
     set_default_shell

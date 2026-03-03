@@ -57,6 +57,7 @@ create_symlinks() {
         "$DOTFILES_ROOT/.starship:$HOME/.config/starship.toml"
         "$DOTFILES_ROOT/.ssh/config:$HOME/.ssh/config"
         "$DOTFILES_ROOT/.ghostty:$HOME/.config/ghostty"
+        "$DOTFILES_ROOT/.lazydocker:$HOME/.config/lazydocker"
         "$DOTFILES_ROOT/.claude/settings.json:$HOME/.claude/settings.json"
         "$DOTFILES_ROOT/.claude/statusline-command.sh:$HOME/.claude/statusline-command.sh"
         # "$DOTFILES_ROOT/.claude/commands:$HOME/.claude/commands"
@@ -178,4 +179,47 @@ configure_macos() {
     fi
 
     success "MacOS configured"
+}
+
+# Install custom MOTD scripts (Linux only, requires sudo)
+install_motd() {
+    if ! $IS_LINUX; then
+        return
+    fi
+
+    local motd_dir="$DOTFILES_ROOT/.motd"
+    if [[ ! -d "$motd_dir" ]]; then
+        warning "MOTD directory not found: $motd_dir"
+        return
+    fi
+
+    echo
+    log "Custom MOTD scripts found in dotfiles."
+    log "This will copy them to /etc/update-motd.d/ (requires sudo)."
+    printf "${BLUE}[INFO]${NC} Install custom MOTD scripts? [y/N] "
+    read -r response
+    if [[ ! "$response" =~ ^[Yy]$ ]]; then
+        log "Skipping MOTD installation"
+        return
+    fi
+
+    # Disable default Ubuntu MOTD scripts that conflict with custom ones
+    local disable_scripts=("00-header" "10-help-text" "50-landscape-sysinfo" "50-motd-news")
+    for script in "${disable_scripts[@]}"; do
+        if [[ -x "/etc/update-motd.d/$script" ]]; then
+            sudo chmod -x "/etc/update-motd.d/$script"
+            log "Disabled default MOTD script: $script"
+        fi
+    done
+
+    # Copy custom MOTD scripts
+    for script in "$motd_dir"/*; do
+        local name="$(basename "$script")"
+        sudo cp "$script" "/etc/update-motd.d/$name"
+        sudo chmod 750 "/etc/update-motd.d/$name"
+        sudo chown root:root "/etc/update-motd.d/$name"
+        log "Installed MOTD script: $name"
+    done
+
+    success "Custom MOTD scripts installed"
 }
