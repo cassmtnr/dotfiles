@@ -83,3 +83,6 @@ if [[ "$OSTYPE" == "darwin"* ]]; then
     alias show="defaults write com.apple.finder AppleShowAllFiles -bool true && killall Finder"
     alias hide="defaults write com.apple.finder AppleShowAllFiles -bool false && killall Finder"
 fi
+
+# Claude shortcuts
+alias cc="claude --dangerously-skip-permissions"

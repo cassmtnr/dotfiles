@@ -3,6 +3,8 @@
     "type": "command",
     "command": "bash ~/.claude/statusline-command.sh"
   },
-  "enabledPlugins": {},
+  "enabledPlugins": {
+    "swift-lsp@claude-plugins-official": true
+  },
   "skipDangerousModePermissionPrompt": true
 }
