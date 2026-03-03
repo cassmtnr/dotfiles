@@ -107,3 +107,7 @@ When renaming, moving, or deleting any file, function, variable, path, or config
 - Run local dev servers if needed for verification
 - The user will review and handle git operations manually
 
+## Deployment Reference
+
+When working on deployment configuration, Docker setup, CI/CD pipelines, Nginx Proxy Manager, or configuring new apps for the VPS, **read `~/docs/DEPLOYMENT_INSTRUCTIONS.md` first**. It documents the standard patterns (Docker Compose, Dockerfile, deploy scripts, GitHub Actions workflows, port registry, NPM proxy setup) derived from the find-my-plus project.
+
