@@ -5,6 +5,34 @@ All notable changes to this dotfiles project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.3.0] - 2026-03-10
+
+### 🤖 Claude Code Safety Hooks
+
+- **PreToolUse Hook System**: Added `.claude/hooks/block-dangerous-commands.js` — a comprehensive safety hook that blocks dangerous Bash commands before execution
+  - Three safety levels: `critical`, `high`, `strict` (defaults to `high`)
+  - Blocks 80+ dangerous patterns across categories: git write ops, filesystem destruction, elevated privileges, publishing/deployment, database, network, credentials exposure
+  - Logged to `~/.claude/hooks-logs/` for audit trail
+- **Migrated CLAUDE.md safety rules**: Moved all command-specific safety rules from `.claude/CLAUDE.md` into the hook for programmatic enforcement, keeping only non-automatable rules in CLAUDE.md
+
+### 📁 Claude Code Configuration Restructure
+
+- **Reorganized `.claude/` directory**:
+  - Moved `statusline-command.sh` → `.claude/config/statusline-command.sh`
+  - Added `.claude/hooks/` directory for PreToolUse hooks
+- **Updated symlinks**: Fixed `create_symlinks` in `.utils.sh` to match new `.claude/` layout
+  - Added `~/.claude/config/` and `~/.claude/hooks/` directory creation
+  - Added symlinks for `statusline-command.sh` and `block-dangerous-commands.js`
+  - Added stale symlink cleanup for old `.claude/statusline-command.sh` path
+
+### 📚 Documentation
+
+- **Updated README.md**: Added Claude Code safety hooks section, `.editorconfig`, `.lazydocker/`, `.motd/`, GitHub Pages files to project structure
+- **Updated CLAUDE.md** (project-level): Added hooks and config references to essential files
+- **Updated CHANGELOG.md**: Added v2.3.0 entry
+
+---
+
 ## [2.2.0] - 2024-12-03
 
 ### 👻 Terminal Migration: Kitty → Ghostty

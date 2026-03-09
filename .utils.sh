@@ -35,6 +35,8 @@ create_symlinks() {
 
     # Ensure target directories exist before symlinking
     mkdir -p "$HOME/.claude/commands"
+    mkdir -p "$HOME/.claude/config"
+    mkdir -p "$HOME/.claude/hooks"
     mkdir -p "$HOME/.config"
     mkdir -p "$HOME/.ssh"
     mkdir -p "$HOME/.ssh/sockets"
@@ -59,7 +61,8 @@ create_symlinks() {
         "$DOTFILES_ROOT/.ghostty:$HOME/.config/ghostty"
         "$DOTFILES_ROOT/.lazydocker:$HOME/.config/lazydocker"
         "$DOTFILES_ROOT/.claude/settings.json:$HOME/.claude/settings.json"
-        "$DOTFILES_ROOT/.claude/statusline-command.sh:$HOME/.claude/statusline-command.sh"
+        "$DOTFILES_ROOT/.claude/config/statusline-command.sh:$HOME/.claude/config/statusline-command.sh"
+        "$DOTFILES_ROOT/.claude/hooks/block-dangerous-commands.js:$HOME/.claude/hooks/block-dangerous-commands.js"
         # "$DOTFILES_ROOT/.claude/commands:$HOME/.claude/commands"
     )
 
@@ -81,6 +84,17 @@ create_symlinks() {
             [[ -e "$target" || -L "$target" ]] && rm -f "$target"
             # Create symlink
             ln -sf "$source" "$target"
+        fi
+    done
+
+    # Remove stale symlinks from previous layouts
+    local stale_symlinks=(
+        "$HOME/.claude/statusline-command.sh"
+    )
+    for stale in "${stale_symlinks[@]}"; do
+        if [[ -L "$stale" && ! -e "$stale" ]]; then
+            rm "$stale"
+            log "Removed stale symlink: $stale"
         fi
     done
 
