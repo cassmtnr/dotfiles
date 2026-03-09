@@ -1,4 +1,4 @@
-# Dotfiles v2.2.0
+# Dotfiles v2.3.0
 
 > **Modern, secure, and performance-optimized development environment for macOS and Linux**
 
@@ -12,6 +12,7 @@ This dotfiles repository will transform your macOS or Linux system into a compre
 
 - 🚀 **Performance Optimized**: Optimized shell startup with immediate Node.js/npm availability
 - 🔒 **Security First**: Secure SSH configuration templates and key management
+- 🤖 **Claude Code Safety Hooks**: PreToolUse hooks that block dangerous commands before execution
 - 📦 **Complete Package Management**: 40+ essential development tools and applications
 - 🛠️ **Modern Toolchain**: Starship prompt, Oh My Zsh, and contemporary CLI utilities
 - 👻 **Ghostty Terminal**: GPU-accelerated terminal with Nord theme and custom keybindings
@@ -83,6 +84,7 @@ dotfiles/
 ├── update.sh                  # Lightweight update (symlinks + optional packages/defaults)
 ├── .utils.sh                  # Shared utilities (OS detection, logging, symlinks, packages)
 ├── .brewfile                  # Package definitions (45+ packages)
+├── .editorconfig              # Cross-editor coding style consistency
 ├── .zshrc                     # Main shell configuration
 ├── .zshenv                    # Environment variables
 ├── .functions                 # Custom functions (mkd, killport, extract)
@@ -93,15 +95,30 @@ dotfiles/
 ├── .defaults                  # macOS system preferences
 ├── .bun                       # Bun JavaScript runtime config
 ├── .ghostty/
-│   └── config                # Ghostty terminal configuration (Nord theme)
+│   ├── config                 # Ghostty terminal configuration (Nord theme)
+│   └── icon.icns              # Custom Ghostty application icon
 ├── .ssh/
-│   └── config                # SSH configuration template
+│   └── config                 # SSH configuration template
 ├── .claude/
-│   ├── CLAUDE.md             # Global Claude Code instructions
-│   ├── settings.json         # Claude Code settings
-│   └── statusline-command.sh # Custom statusline (Bash)
-└── .alfred/
-    └── Alfred.alfredpreferences/ # Alfred workflows and settings (macOS only)
+│   ├── CLAUDE.md              # Global Claude Code safety rules & instructions
+│   ├── settings.json          # Settings (hooks, permissions, statusline)
+│   ├── config/
+│   │   └── statusline-command.sh  # Custom statusline (project, branch, context %)
+│   └── hooks/
+│       └── block-dangerous-commands.js  # PreToolUse safety hook
+├── .lazydocker/
+│   └── config.yml             # LazyDocker terminal UI configuration
+├── .motd/                     # Message of the Day scripts (Linux/VPS)
+│   ├── 10-hostname-color      # Hostname display with figlet + lolcat
+│   ├── 20-sysinfo             # System info (load, memory)
+│   ├── 35-diskspace           # Disk space display
+│   ├── 40-services            # System services status
+│   ├── 50-fail2ban            # Fail2ban status
+│   └── 60-docker              # Docker information
+├── .alfred/
+│   └── Alfred.alfredpreferences/  # Alfred workflows and settings (macOS only)
+├── index.html                 # GitHub Pages landing page
+└── .nojekyll                  # Disables Jekyll on GitHub Pages
 ```
 
 ### Core Components
@@ -112,10 +129,26 @@ dotfiles/
 - **`.zshrc`** - Modular shell configuration with performance optimizations
 - **`.functions`** - Utility functions (`mkd`, `killport`, `extract`, `weather`, `playwright-install`)
 - **`.brewfile`** - Curated collection of 40+ development tools
+- **`.editorconfig`** - Cross-editor coding standards (charset, indentation, line endings)
 - **`.ghostty/config`** - Ghostty terminal with Nord theme, custom keybindings, and shell integration
 - **`.ssh/config`** - Security-focused SSH template with organized key management
-- **`.claude/`** - Claude Code configuration (symlinked to `~/.claude/`)
+- **`.claude/`** - Claude Code configuration with safety hooks (symlinked to `~/.claude/`)
+- **`.lazydocker/`** - LazyDocker terminal UI for Docker management
+- **`.motd/`** - Message of the Day scripts for Linux/VPS servers
 - **`.alfred/`** - Alfred workflows and preferences (macOS only, symlinked via Alfred's sync feature)
+
+### Claude Code Safety Hooks
+
+The `.claude/hooks/` directory contains PreToolUse hooks that run before Claude Code executes tool calls:
+
+- **`block-dangerous-commands.js`** - Blocks dangerous Bash commands at three safety levels:
+  - **Critical**: filesystem destruction (`rm -rf ~/`), disk operations (`dd`, `mkfs`), fork bombs, git history rewriting
+  - **High**: all git write operations, elevated privileges (`sudo`), secrets exposure, publishing/deployment commands, database operations, network/infrastructure changes
+  - **Strict**: cautionary patterns like `git checkout .`, `docker prune`
+
+  Safety level is set to `high` by default. Patterns are enforced via regex matching and blocked commands are logged to `~/.claude/hooks-logs/`.
+
+- **Custom statusline** (`.claude/config/statusline-command.sh`) displays project name, git branch, session ID, context window %, and model name.
 
 ## Additional Customization
 
