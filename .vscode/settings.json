@@ -1,0 +1,15 @@
+{
+  "files.associations": {
+    ".brewfile": "ruby",
+    ".aliases": "shellscript",
+    ".bun": "shellscript",
+    ".completion": "shellscript",
+    ".defaults": "shellscript",
+    ".functions": "shellscript",
+    ".ssh-agent": "shellscript",
+    ".motd": "plaintext",
+    ".starship": "toml",
+    ".zshrc.local": "shellscript",
+    ".gitconfig.local": "ini"
+  }
+}
