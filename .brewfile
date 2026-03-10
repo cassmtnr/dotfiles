@@ -63,6 +63,7 @@ brew "gemini-cli"
 brew "ollama"
 
 # Applications
+brew "notion"
 cask "1password"
 cask "alfred"
 # cask "dbeaver-community"     # Disabled: not currently needed, re-enable if required
