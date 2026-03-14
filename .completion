@@ -1,14 +1,7 @@
 # Completion system configuration
+# Note: fpath entries are set up in .zshrc BEFORE Oh My Zsh's compinit
 
-# Add custom completion paths
-fpath=(
-    $HOME/.zsh/completions(N)
-    $HOMEBREW_PREFIX/share/zsh/site-functions(N)
-    $HOMEBREW_PREFIX/share/zsh-completions(N)
-    $fpath
-)
-
-# Completion options (compinit is initialized in .zshrc)
+# Completion options
 setopt COMPLETE_IN_WORD    # Complete from both ends of a word
 setopt ALWAYS_TO_END       # Move cursor to the end of a completed word
 setopt PATH_DIRS           # Perform path search even on command names with slashes
@@ -23,11 +16,6 @@ zstyle ':completion:*' menu select
 zstyle ':completion:*' matcher-list 'm:{a-zA-Z}={A-Za-z}' 'r:|=*' 'l:|=* r:|=*'
 zstyle ':completion:*' list-colors ''
 zstyle ':completion:*:*:kill:*:processes' list-colors '=(#b) #([0-9]#) ([0-9a-z-]#)*=01;34=0=01'
-
-# Docker completion (if available)
-if [[ -d "$HOME/.docker/completions" ]]; then
-    fpath=($HOME/.docker/completions $fpath)
-fi
 
 # Load bash completions (for tools that only provide bash completions)
 autoload -U +X bashcompinit && bashcompinit

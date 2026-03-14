@@ -6,7 +6,7 @@
 # zmodload zsh/zprof
 
 # Oh My Zsh configuration (must come before sourcing oh-my-zsh)
-ZSH_THEME="robbyrussell"
+ZSH_THEME=""  # Disabled — Starship handles the prompt
 ZSH_DISABLE_COMPFIX="true"
 UPDATE_ZSH_DAYS=30
 DISABLE_AUTO_UPDATE="true"
@@ -21,20 +21,26 @@ plugins=(
     kubectl
 )
 
-# Completion optimization
-autoload -Uz compinit
-# Check for new completions once per day
-if [[ -n ${ZDOTDIR}/.zcompdump(#qN.mh+24) ]]; then
-    compinit
-else
-    compinit -C
-fi
-
-# Source Oh My Zsh
-[[ -f "$ZSH/oh-my-zsh.sh" ]] && source "$ZSH/oh-my-zsh.sh"
-
 # Source modular configuration files
 DOTFILES_ROOT="${DOTFILES_ROOT:-$HOME/dotfiles}"
+
+# Set up completion paths BEFORE Oh My Zsh (which calls compinit internally).
+# fpath entries must be in place before compinit scans them.
+fpath=(
+    $HOME/.zsh/completions(N)
+    $HOME/.docker/completions(N)
+    $fpath
+)
+if [[ -n "$HOMEBREW_PREFIX" ]]; then
+    fpath=(
+        $HOMEBREW_PREFIX/share/zsh/site-functions(N)
+        $HOMEBREW_PREFIX/share/zsh-completions(N)
+        $fpath
+    )
+fi
+
+# Source Oh My Zsh (handles compinit with all fpath entries above)
+[[ -f "$ZSH/oh-my-zsh.sh" ]] && source "$ZSH/oh-my-zsh.sh"
 
 # Load configuration modules
 [[ -f "$DOTFILES_ROOT/.completion" ]] && source "$DOTFILES_ROOT/.completion"
@@ -45,23 +51,19 @@ DOTFILES_ROOT="${DOTFILES_ROOT:-$HOME/dotfiles}"
 
 # Load Homebrew shell integrations
 if [[ -n "$HOMEBREW_PREFIX" ]]; then
-    # Zsh completions
-    [[ -f "$HOMEBREW_PREFIX/share/zsh-completions" ]] && fpath=($HOMEBREW_PREFIX/share/zsh-completions $fpath)
-
     # Zsh autosuggestions
     [[ -f "$HOMEBREW_PREFIX/share/zsh-autosuggestions/zsh-autosuggestions.zsh" ]] && \
         source "$HOMEBREW_PREFIX/share/zsh-autosuggestions/zsh-autosuggestions.zsh"
 
-    # Zsh syntax highlighting (load last)
+    # Zsh syntax highlighting (load last among plugins)
     [[ -f "$HOMEBREW_PREFIX/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh" ]] && \
         source "$HOMEBREW_PREFIX/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh"
 fi
 
-# Starship prompt (if installed, replaces Oh My Zsh theme)
+# Starship prompt (if installed)
 if command -v starship &> /dev/null; then
     eval "$(starship init zsh)"
 fi
-
 
 # Load NVM (Node Version Manager)
 export NVM_DIR="${NVM_DIR:-$HOME/.nvm}"
@@ -106,8 +108,6 @@ else
     unset zle_bracketed_paste
 fi
 
-# Performance profiling (uncomment to see results)
-# zprof
 # Python (version matches .brewfile)
 if [[ -n "$HOMEBREW_PREFIX" && -d "$HOMEBREW_PREFIX/opt/python@3.13/libexec/bin" ]]; then
     export PATH="$HOMEBREW_PREFIX/opt/python@3.13/libexec/bin:$PATH"
@@ -115,3 +115,6 @@ fi
 
 # Deduplicate PATH entries
 typeset -U path
+
+# Performance profiling (uncomment to see results)
+zprof

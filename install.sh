@@ -9,27 +9,6 @@ set -euo pipefail  # Exit on error, undefined variable, or pipe failure
 # Load shared utilities (OS detection, logging, symlinks, packages, defaults)
 source "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/.utils.sh"
 
-# Show welcome message first
-echo "======================================"
-echo "     Dotfiles Installation Script     "
-echo "======================================"
-echo
-echo "This script will install and configure:"
-echo "  • Homebrew package manager"
-echo "  • Oh My Zsh shell framework"
-echo "  • Starship prompt"
-echo "  • Node.js environment via NVM"
-echo "  • Bun JavaScript runtime"
-echo "  • Essential development tools"
-if $IS_MACOS; then
-    echo "  • MacOS system optimizations"
-fi
-echo "  • Configuration file symlinks"
-echo
-echo "Administrative privileges are required for system configuration."
-echo "Please enter your password to continue:"
-sudo -v
-
 # Help function
 show_help() {
     cat << EOF
@@ -65,6 +44,29 @@ parse_args() {
         esac
         shift
     done
+}
+
+# Show welcome message (after arg parsing so --help doesn't trigger sudo)
+show_welcome() {
+    echo "======================================"
+    echo "     Dotfiles Installation Script     "
+    echo "======================================"
+    echo
+    echo "This script will install and configure:"
+    echo "  • Homebrew package manager"
+    echo "  • Oh My Zsh shell framework"
+    echo "  • Starship prompt"
+    echo "  • Node.js environment via NVM"
+    echo "  • Bun JavaScript runtime"
+    echo "  • Essential development tools"
+    if $IS_MACOS; then
+        echo "  • MacOS system optimizations"
+    fi
+    echo "  • Configuration file symlinks"
+    echo
+    echo "Administrative privileges are required for system configuration."
+    echo "Please enter your password to continue:"
+    sudo -v
 }
 
 # Check prerequisites
@@ -170,10 +172,8 @@ setup_nodejs() {
 
     # Source NVM in current shell so node/npm remain available for later steps
     export NVM_DIR="$HOME/.nvm"
-    if [[ -s "/opt/homebrew/opt/nvm/nvm.sh" ]]; then
-        source "/opt/homebrew/opt/nvm/nvm.sh"
-    elif [[ -s "/home/linuxbrew/.linuxbrew/opt/nvm/nvm.sh" ]]; then
-        source "/home/linuxbrew/.linuxbrew/opt/nvm/nvm.sh"
+    if [[ -n "$HOMEBREW_PREFIX" && -s "$HOMEBREW_PREFIX/opt/nvm/nvm.sh" ]]; then
+        source "$HOMEBREW_PREFIX/opt/nvm/nvm.sh"
     elif [[ -s "$NVM_DIR/nvm.sh" ]]; then
         source "$NVM_DIR/nvm.sh"
     fi
@@ -315,6 +315,7 @@ post_install() {
 # Main installation flow
 main() {
     parse_args "$@"
+    show_welcome
 
     # Run installation steps
     check_prerequisites || exit 1

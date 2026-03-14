@@ -66,16 +66,13 @@ alias mkdir="mkdir -pv"
 
 # Colorize grep output
 alias grep="grep --color=auto"
-alias egrep="egrep --color=auto"
-alias fgrep="fgrep --color=auto"
+alias egrep="grep -E --color=auto"
+alias fgrep="grep -F --color=auto"
 
 # Get week number
 alias week="date +%V"
 
 # IP addresses
-if [[ "$OSTYPE" == "darwin"* ]]; then
-    alias localip="ipconfig getifaddr en0"
-fi
 alias publicip="curl -s https://api.ipify.org && echo"
 
 # Show/hide hidden files in Finder (macOS only)
