@@ -1,6 +1,6 @@
 # Create a directory and cd into it
 mkd() {
-    mkdir -p "$@" && cd "$@"
+    mkdir -p "$@" && cd "${@: -1}"
 }
 
 # Kill process running on specified port

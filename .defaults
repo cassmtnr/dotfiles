@@ -17,9 +17,6 @@ fi
 
 echo "Setup started... Hold on..."
 
-sudo chown root ~/Library/Preferences
-sudo chmod 777 ~/Library/Preferences
-
 ###############################################################################
 # General UI/UX                                                               #
 ###############################################################################

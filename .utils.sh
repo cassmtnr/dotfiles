@@ -63,7 +63,6 @@ create_symlinks() {
         "$DOTFILES_ROOT/.claude/settings.json:$HOME/.claude/settings.json"
         "$DOTFILES_ROOT/.claude/config/statusline-command.sh:$HOME/.claude/config/statusline-command.sh"
         "$DOTFILES_ROOT/.claude/hooks/block-dangerous-commands.js:$HOME/.claude/hooks/block-dangerous-commands.js"
-        "$DOTFILES_ROOT/.claude/hooks/setup-worktree.js:$HOME/.claude/hooks/setup-worktree.js"
         # "$DOTFILES_ROOT/.claude/commands:$HOME/.claude/commands"
     )
 

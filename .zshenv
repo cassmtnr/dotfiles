@@ -38,7 +38,6 @@ path=(
     $HOMEBREW_PREFIX/bin(N)
     $HOMEBREW_PREFIX/sbin(N)
     $HOME/.local/bin(N)
-    $HOME/.config/yarn/global/node_modules/.bin(N)
     $path
 )
 

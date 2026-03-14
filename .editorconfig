@@ -11,12 +11,8 @@ trim_trailing_whitespace = true
 indent_style = space
 indent_size = 2
 
-[*.{js,jsx,ts,tsx,json,css,scss,yml,yaml}]
-indent_size = 2
-
 [*.py]
 indent_size = 4
-
 
 [*.md]
 trim_trailing_whitespace = false
@@ -27,12 +23,6 @@ indent_style = tab
 
 [*.{bash,sh,zsh}]
 indent_size = 4
-
-[*.{vim,nvim}]
-indent_size = 2
-
-[{package.json,*.yml,*.yaml}]
-indent_size = 2
 
 [*.git*]
 indent_size = 4
