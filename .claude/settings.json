@@ -1,7 +1,6 @@
 {
-  "effortLevel": "high",
-  "enabledPlugins": {
-    "swift-lsp@claude-plugins-official": true
+  "permissions": {
+    "defaultMode": "default"
   },
   "hooks": {
     "PreToolUse": [
@@ -14,24 +13,16 @@
           }
         ]
       }
-    ],
-    "WorktreeCreate": [
-      {
-        "hooks": [
-          {
-            "type": "command",
-            "command": "node ~/.claude/hooks/setup-worktree.js"
-          }
-        ]
-      }
     ]
   },
-  "permissions": {
-    "defaultMode": "default"
-  },
-  "skipDangerousModePermissionPrompt": true,
   "statusLine": {
     "type": "command",
     "command": "bash ~/.claude/config/statusline-command.sh"
-  }
+  },
+  "enabledPlugins": {
+    "swift-lsp@claude-plugins-official": true
+  },
+  "effortLevel": "high",
+  "voiceEnabled": true,
+  "skipDangerousModePermissionPrompt": true
 }
