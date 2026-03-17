@@ -62,6 +62,7 @@ create_symlinks() {
         "$DOTFILES_ROOT/.lazydocker:$HOME/.config/lazydocker"
         "$DOTFILES_ROOT/.claude/settings.json:$HOME/.claude/settings.json"
         "$DOTFILES_ROOT/.claude/config/statusline-command.sh:$HOME/.claude/config/statusline-command.sh"
+        "$DOTFILES_ROOT/.claude/CLAUDE.md:$HOME/.claude/CLAUDE.md"
         "$DOTFILES_ROOT/.claude/hooks/block-dangerous-commands.js:$HOME/.claude/hooks/block-dangerous-commands.js"
         # "$DOTFILES_ROOT/.claude/commands:$HOME/.claude/commands"
     )
@@ -126,20 +127,6 @@ create_symlinks() {
         log "Created symlink: $target -> $source"
     done
 
-    # Build CLAUDE.md by concatenating dotfiles base + local private config
-    local claude_md="$HOME/.claude/CLAUDE.md"
-    if [[ -f "$DOTFILES_ROOT/.claude/CLAUDE.md" ]]; then
-        # Remove existing symlink if present
-        [[ -L "$claude_md" ]] && rm "$claude_md"
-        cp "$DOTFILES_ROOT/.claude/CLAUDE.md" "$claude_md"
-        if [[ -f "$HOME/.claude/CLAUDE.local.md" ]]; then
-            printf '\n' >> "$claude_md"
-            cat "$HOME/.claude/CLAUDE.local.md" >> "$claude_md"
-            log "Built CLAUDE.md from dotfiles + local config"
-        else
-            log "Built CLAUDE.md from dotfiles (no CLAUDE.local.md found)"
-        fi
-    fi
 
     # Warn if authorized_keys is missing (SSH login will fail)
     if [[ ! -f "$HOME/.ssh/authorized_keys" ]]; then

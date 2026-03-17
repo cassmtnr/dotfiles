@@ -117,4 +117,4 @@ fi
 typeset -U path
 
 # Performance profiling (uncomment to see results)
-zprof
+# zprof
