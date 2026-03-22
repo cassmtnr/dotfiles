@@ -1,4 +1,4 @@
-# Dotfiles v2.3.0
+# Dotfiles v2.4.0
 
 > **Modern, secure, and performance-optimized development environment for macOS and Linux**
 
@@ -13,6 +13,7 @@ This dotfiles repository will transform your macOS or Linux system into a compre
 - 🚀 **Performance Optimized**: Optimized shell startup with immediate Node.js/npm availability
 - 🔒 **Security First**: Secure SSH configuration templates and key management
 - 🤖 **Claude Code Safety Hooks**: PreToolUse hooks that block dangerous commands before execution
+- 🧠 **Claude Code Skills & Commands**: Reusable skills (code review, spec writing) and workflow commands (CRAFT)
 - 📦 **Complete Package Management**: 40+ essential development tools and applications
 - 🛠️ **Modern Toolchain**: Starship prompt, Oh My Zsh, and contemporary CLI utilities
 - 👻 **Ghostty Terminal**: GPU-accelerated terminal with Nord theme and custom keybindings
@@ -102,6 +103,11 @@ dotfiles/
 ├── .claude/
 │   ├── CLAUDE.md              # Global Claude Code safety rules & instructions
 │   ├── settings.json          # Settings (hooks, permissions, statusline)
+│   ├── commands/
+│   │   └── craft.md           # CRAFT workflow command (Code, Review, Audit, Fix, Test)
+│   ├── skills/
+│   │   ├── code-review.md     # Critical code review & fix skill
+│   │   └── spec-writing.md    # Implementation spec writing skill
 │   ├── config/
 │   │   └── statusline-command.sh  # Custom statusline (project, branch, context %)
 │   └── hooks/
@@ -132,7 +138,7 @@ dotfiles/
 - **`.editorconfig`** - Cross-editor coding standards (charset, indentation, line endings)
 - **`.ghostty/config`** - Ghostty terminal with Nord theme, custom keybindings, and shell integration
 - **`.ssh/config`** - Security-focused SSH template with organized key management
-- **`.claude/`** - Claude Code configuration with safety hooks (symlinked to `~/.claude/`)
+- **`.claude/`** - Claude Code configuration with safety hooks, skills, and commands (symlinked to `~/.claude/`)
 - **`.lazydocker/`** - LazyDocker terminal UI for Docker management
 - **`.motd/`** - Message of the Day scripts for Linux/VPS servers
 - **`.alfred/`** - Alfred workflows and preferences (macOS only, symlinked via Alfred's sync feature)
@@ -149,6 +155,17 @@ The `.claude/hooks/` directory contains PreToolUse hooks that run before Claude 
   Safety level is set to `high` by default. Patterns are enforced via regex matching and blocked commands are logged to `~/.claude/hooks-logs/`.
 
 - **Custom statusline** (`.claude/config/statusline-command.sh`) displays project name, git branch, session ID, context window %, and model name.
+
+### Claude Code Skills & Commands
+
+The `.claude/skills/` and `.claude/commands/` directories provide reusable AI workflows:
+
+- **Skills** (contextual capabilities automatically loaded when relevant):
+  - **`code-review`** — Critical code review across 8 dimensions (correctness, security, concurrency, error handling, performance, API contracts, code quality, test quality). Reviews all changed code, reports findings by severity, fixes everything, and verifies with linter + tests.
+  - **`spec-writing`** — Write implementation-ready specs following proven patterns: phase/epic headers, task templates, quality checklists, and anti-patterns to avoid.
+
+- **Commands** (invoked explicitly via `/command-name`):
+  - **`/craft`** — CRAFT workflow (Code, Review, Audit, Fix, Test): implements a task from the project spec, then refines it through 3 rounds of expert code review with fixes between rounds. Ships artisan-quality code.
 
 ## Additional Customization
 
