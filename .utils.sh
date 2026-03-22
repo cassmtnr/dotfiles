@@ -34,9 +34,6 @@ create_symlinks() {
     log "Creating symbolic links..."
 
     # Ensure target directories exist before symlinking
-    mkdir -p "$HOME/.claude/commands"
-    mkdir -p "$HOME/.claude/config"
-    mkdir -p "$HOME/.claude/hooks"
     mkdir -p "$HOME/.config"
     mkdir -p "$HOME/.ssh"
     mkdir -p "$HOME/.ssh/sockets"
@@ -61,10 +58,11 @@ create_symlinks() {
         "$DOTFILES_ROOT/.ghostty:$HOME/.config/ghostty"
         "$DOTFILES_ROOT/.lazydocker:$HOME/.config/lazydocker"
         "$DOTFILES_ROOT/.claude/settings.json:$HOME/.claude/settings.json"
-        "$DOTFILES_ROOT/.claude/config/statusline-command.sh:$HOME/.claude/config/statusline-command.sh"
         "$DOTFILES_ROOT/.claude/CLAUDE.md:$HOME/.claude/CLAUDE.md"
-        "$DOTFILES_ROOT/.claude/hooks/block-dangerous-commands.js:$HOME/.claude/hooks/block-dangerous-commands.js"
-        # "$DOTFILES_ROOT/.claude/commands:$HOME/.claude/commands"
+        "$DOTFILES_ROOT/.claude/commands:$HOME/.claude/commands"
+        "$DOTFILES_ROOT/.claude/skills:$HOME/.claude/skills"
+        "$DOTFILES_ROOT/.claude/config:$HOME/.claude/config"
+        "$DOTFILES_ROOT/.claude/hooks:$HOME/.claude/hooks"
     )
 
     # Create conditional symlinks for private configs (only if they exist)
@@ -88,10 +86,19 @@ create_symlinks() {
         fi
     done
 
-    # Remove stale symlinks from previous layouts
+    # Remove stale symlinks/dirs from previous layouts
+    # config and hooks were previously real dirs with individual file symlinks;
+    # now they are directory symlinks like commands and skills
     local stale_symlinks=(
         "$HOME/.claude/statusline-command.sh"
     )
+    # Remove old individual-file-symlink dirs so directory symlinks can replace them
+    for old_dir in "$HOME/.claude/config" "$HOME/.claude/hooks"; do
+        if [[ -d "$old_dir" && ! -L "$old_dir" ]]; then
+            rm -rf "$old_dir"
+            log "Removed old directory (now a directory symlink): $old_dir"
+        fi
+    done
     for stale in "${stale_symlinks[@]}"; do
         if [[ -L "$stale" && ! -e "$stale" ]]; then
             rm "$stale"
