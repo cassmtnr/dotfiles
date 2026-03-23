@@ -5,6 +5,38 @@ All notable changes to this dotfiles project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.4.0] - 2026-03-23
+
+### 🧠 Claude Code Skills & Commands
+
+- **Code Review Skill** (`code-review.md`): Critical code review that examines changed code across 8 dimensions — correctness/logic, security, concurrency/state, error handling/resilience, performance/resource leaks, API contracts, code quality, and test quality. Reports findings by severity (critical/high/medium/low), fixes all issues, then verifies with linter and tests.
+- **Spec Writing Skill** (`spec-writing.md`): Implementation-ready spec templates following proven patterns — phase/epic headers, task templates for planned and completed work, quality checklists, decision tables, and anti-patterns to avoid.
+- **CRAFT Command** (`craft.md`): Full implementation workflow — Code, Review, Audit, Fix, Test. Implements a spec task then refines through 3 rounds of expert code review with all findings fixed between rounds.
+
+### 🔧 Shell Improvements
+
+- **Cross-platform IP alias**: Replaced macOS-only `localip` with cross-platform `myip` (uses `ipconfig getifaddr` on macOS, `hostname -I` on Linux)
+- **Grep alias cleanup**: Changed deprecated `egrep`/`fgrep` aliases to use `grep -E`/`grep -F`
+- **`mkd()` fix**: Fixed to correctly `cd` into the last argument when multiple directories are created
+- **Completion loading**: Moved `fpath` setup before Oh My Zsh for correct completion discovery
+- **NVM sourcing**: Refactored to use `$HOMEBREW_PREFIX` variable for cross-platform compatibility
+
+### 📁 Symlink System
+
+- **Directory symlinks for `.claude/`**: Changed from individual file symlinks to directory symlinks for `commands/`, `skills/`, `config/`, `hooks/` — new files in these directories are automatically available without updating symlink pairs
+
+### 🗑️ Removed
+
+- **Notion integration**: Removed Notion-related configuration
+- **Worktree settings**: Removed worktree hook settings from Claude Code config
+
+### 📚 Documentation
+
+- **Updated README.md**: Added skills and commands documentation, updated project structure tree, bumped to v2.4.0
+- **Updated CHANGELOG.md**: Added v2.4.0 entry
+
+---
+
 ## [2.3.0] - 2026-03-10
 
 ### 🤖 Claude Code Safety Hooks
