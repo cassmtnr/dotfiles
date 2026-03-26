@@ -38,6 +38,13 @@ create_symlinks() {
     mkdir -p "$HOME/.ssh"
     mkdir -p "$HOME/.ssh/sockets"
 
+    # Ensure VSCodium config directory exists before symlinking
+    if $IS_MACOS; then
+        mkdir -p "$HOME/Library/Application Support/VSCodium/User"
+    elif $IS_LINUX; then
+        mkdir -p "$HOME/.config/VSCodium/User"
+    fi
+
     # Protect critical SSH files that must never be overwritten
     local protected_ssh_files=(
         "$HOME/.ssh/authorized_keys"
@@ -64,6 +71,19 @@ create_symlinks() {
         "$DOTFILES_ROOT/.claude/config:$HOME/.claude/config"
         "$DOTFILES_ROOT/.claude/hooks:$HOME/.claude/hooks"
     )
+
+    # Platform-specific symlinks
+    if $IS_MACOS; then
+        symlink_pairs+=(
+            "$DOTFILES_ROOT/.vscodium/settings.json:$HOME/Library/Application Support/VSCodium/User/settings.json"
+            "$DOTFILES_ROOT/.vscodium/keybindings.json:$HOME/Library/Application Support/VSCodium/User/keybindings.json"
+        )
+    elif $IS_LINUX; then
+        symlink_pairs+=(
+            "$DOTFILES_ROOT/.vscodium/settings.json:$HOME/.config/VSCodium/User/settings.json"
+            "$DOTFILES_ROOT/.vscodium/keybindings.json:$HOME/.config/VSCodium/User/keybindings.json"
+        )
+    fi
 
     # Create conditional symlinks for private configs (only if they exist)
     local private_configs=(
@@ -230,4 +250,33 @@ install_motd() {
     done
 
     success "Custom MOTD scripts installed"
+}
+
+# Install Claude Code plugins listed in settings.json
+install_claude_plugins() {
+    if ! command -v claude &> /dev/null; then
+        warning "Claude Code not found — skipping plugin installation"
+        return
+    fi
+
+    log "Installing Claude Code plugins..."
+
+    local plugins=(
+        "swift-lsp"
+        "code-simplifier"
+        "frontend-design"
+        "superpowers"
+        "code-review"
+        "feature-dev"
+        "playwright"
+        "sentry"
+        "pyright-lsp"
+    )
+
+    for plugin in "${plugins[@]}"; do
+        log "Installing plugin: $plugin"
+        claude plugin install "$plugin" || warning "Failed to install plugin: $plugin"
+    done
+
+    success "Claude Code plugins installed"
 }

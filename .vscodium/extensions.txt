@@ -1,0 +1,10 @@
+csstools.postcss
+dbaeumer.vscode-eslint
+dracula-theme.theme-dracula
+eamodio.gitlens
+esbenp.prettier-vscode
+naumovs.color-highlight
+pkief.material-icon-theme
+shd101wyy.markdown-preview-enhanced
+vue.volar
+yoavbls.pretty-ts-errors

@@ -70,6 +70,10 @@ cask "ghostty"
 cask "google-chrome"
 cask "spotify"
 cask "the-unarchiver"
-cask "visual-studio-code"
+cask "visual-studio-code"   # TODO: remove after VSCodium migration verified
 cask "vlc"
+cask "vscodium"
+
+# Utilities
+brew "fileicon"              # CLI tool for managing custom macOS app icons
 

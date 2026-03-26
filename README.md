@@ -66,7 +66,7 @@ After installation, you'll need to configure these components for your specific 
 The SSH config is automatically symlinked to `~/.ssh/config`. Customize it with your actual settings:
 
 ```bash
-vim ~/dotfiles/.ssh/config
+code ~/dotfiles/.ssh/config
 ```
 
 Update with your actual SSH key paths and host configurations. The 1Password SSH agent path is auto-configured for macOS. Generate keys in organized folders (e.g., `~/.ssh/github/`, `~/.ssh/work/`).

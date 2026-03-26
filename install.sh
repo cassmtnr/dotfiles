@@ -330,6 +330,7 @@ main() {
     install_motd
 
     install_ai_tools
+    install_claude_plugins
     set_default_shell
     post_install
 }
