@@ -66,7 +66,7 @@ After installation, you'll need to configure these components for your specific 
 The SSH config is automatically symlinked to `~/.ssh/config`. Customize it with your actual settings:
 
 ```bash
-code ~/dotfiles/.ssh/config
+codium ~/dotfiles/.ssh/config   # or: code ~/dotfiles/.ssh/config
 ```
 
 Update with your actual SSH key paths and host configurations. The 1Password SSH agent path is auto-configured for macOS. Generate keys in organized folders (e.g., `~/.ssh/github/`, `~/.ssh/work/`).
@@ -112,6 +112,11 @@ dotfiles/
 │   │   └── statusline-command.sh  # Custom statusline (project, branch, context %)
 │   └── hooks/
 │       └── block-dangerous-commands.js  # PreToolUse safety hook
+├── .vscodium/
+│   ├── settings.json          # Cleaned user settings (no Copilot/sync entries)
+│   ├── keybindings.json       # Custom keybindings
+│   ├── extensions.txt         # Extension IDs for Open VSX (one per line)
+│   └── icon.icns              # Custom macOS app icon (added manually)
 ├── .lazydocker/
 │   └── config.yml             # LazyDocker terminal UI configuration
 ├── .motd/                     # Message of the Day scripts (Linux/VPS)
@@ -139,6 +144,7 @@ dotfiles/
 - **`.ghostty/config`** - Ghostty terminal with Nord theme, custom keybindings, and shell integration
 - **`.ssh/config`** - Security-focused SSH template with organized key management
 - **`.claude/`** - Claude Code configuration with safety hooks, skills, and commands (symlinked to `~/.claude/`)
+- **`.vscodium/`** - VSCodium editor configuration (settings, keybindings, extensions list, custom icon)
 - **`.lazydocker/`** - LazyDocker terminal UI for Docker management
 - **`.motd/`** - Message of the Day scripts for Linux/VPS servers
 - **`.alfred/`** - Alfred workflows and preferences (macOS only, symlinked via Alfred's sync feature)
@@ -166,6 +172,18 @@ The `.claude/skills/` and `.claude/commands/` directories provide reusable AI wo
 
 - **Commands** (invoked explicitly via `/command-name`):
   - **`/craft`** — CRAFT workflow (Code, Review, Audit, Fix, Test): implements a task from the project spec, then refines it through 3 rounds of expert code review with fixes between rounds. Ships artisan-quality code.
+
+## VSCodium
+
+This repo uses [VSCodium](https://vscodium.com/) (the open-source VS Code build without Microsoft telemetry). Settings, keybindings, extensions, and a custom icon are version-controlled in `.vscodium/` and managed automatically:
+
+- **`install.sh`** installs VSCodium via Brewfile, creates config symlinks, installs extensions, and applies the custom icon
+- **`update.sh`** re-syncs symlinks, re-applies the icon, and syncs the extension list back to `extensions.txt`
+- **`update.sh -p`** also runs package updates and installs any new extensions
+- **`brew()` wrapper** in `.functions` automatically re-applies the custom icon after `brew upgrade` or `brew reinstall`
+- **`alias code="codium"`** in `.aliases` lets existing aliases (`dot`, `meow`, `zrc`) work transparently
+
+To customize the icon, save a `.icns` file to `~/dotfiles/.vscodium/icon.icns` — it will be applied automatically on the next `./update.sh` run.
 
 ## Additional Customization
 

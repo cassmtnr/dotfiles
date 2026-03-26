@@ -18,24 +18,32 @@ polish until it shines. No task ships until it's craftsmanship-quality.
    test cases, verification steps
 3. Check dependencies — confirm prerequisite tasks are complete
 4. Read relevant documentation and architecture files for current context
-5. Summarize the implementation plan to the user before starting
 
-## Step 2: Code
+## Step 2: Explore & Design
 
-1. Follow the spec exactly
+1. Spawn the `feature-dev:code-explorer` agent to trace relevant existing code —
+   execution paths, patterns, abstractions, and dependencies that the new code
+   must integrate with
+2. Spawn the `feature-dev:code-architect` agent to design the implementation —
+   files to create/modify, component responsibilities, data flow, and build order
+3. Summarize the implementation plan to the user before starting
+
+## Step 3: Code
+
+1. Follow the spec and the architecture design from Step 2
 2. Use the `spec-writing` skill patterns if the spec needs interpretation
 3. Create/modify files as specified
 4. Write all test cases listed in the spec
 5. Add any obvious tests the spec missed
 6. Follow all project conventions from CLAUDE.md (style, patterns, conventions)
 
-## Step 3: Initial Verification
+## Step 4: Initial Verification
 
 1. Run the project's linter — fix any errors
 2. Run the project's test suite — all tests must pass (new AND existing)
 3. If any failures, fix them before proceeding to Round 1
 
-## Step 4: Round 1 — Review (Structural)
+## Step 5: Round 1 — Review (Structural)
 
 Spawn the `code-reviewer` agent to perform a deep review. Focus areas:
 
@@ -46,11 +54,12 @@ Spawn the `code-reviewer` agent to perform a deep review. Focus areas:
 - **Tests:** Do tests actually test the right thing? Any false positives?
 
 Fix ALL findings. Then:
+
 1. Run linter
 2. Run tests
 3. Report: "Round 1 complete — N findings refined"
 
-## Step 5: Round 2 — Audit (Regression & Consistency)
+## Step 6: Round 2 — Audit (Regression & Consistency)
 
 Spawn a SECOND `code-reviewer` agent (fresh context). Focus areas:
 
@@ -61,11 +70,12 @@ Spawn a SECOND `code-reviewer` agent (fresh context). Focus areas:
 - **Test quality:** Are mocks realistic? Do assertions check the right values?
 
 Fix ALL findings. Then:
+
 1. Run linter
 2. Run tests
 3. Report: "Round 2 complete — N findings refined"
 
-## Step 6: Round 3 — Fix & Polish (Final Pass)
+## Step 7: Round 3 — Fix & Polish (Final Pass)
 
 Spawn a THIRD `code-reviewer` agent (fresh context). Focus areas:
 
@@ -77,11 +87,25 @@ Spawn a THIRD `code-reviewer` agent (fresh context). Focus areas:
   without tests?
 
 Fix any remaining findings. Then:
+
 1. Run linter
 2. Run tests
 3. Report: "Round 3 complete — N findings refined (expected: 0-2)"
 
-## Step 7: Test, Document & Ship
+## Step 8: Simplify
+
+Spawn the `code-simplifier` agent on all files changed during this task.
+It will refine the code for clarity, consistency, and maintainability while
+preserving exact functionality — eliminating unnecessary complexity, redundancy,
+and overly nested structures.
+
+After simplification:
+
+1. Run linter
+2. Run tests
+3. Report: "Simplification complete — N refinements applied"
+
+## Step 9: Test, Document & Ship
 
 1. Update changelog with what was built (date, files, summary)
 2. Update architecture docs if new services, methods, or schemas were added
@@ -96,9 +120,11 @@ Fix any remaining findings. Then:
 **Tests added:** <count>
 **Total test count:** <count>
 
+**Explore & Design:** codebase traced, architecture designed
 **Round 1 (Review):**  <N> findings → all refined
 **Round 2 (Audit):**   <N> findings → all refined
 **Round 3 (Polish):**  <N> findings → all refined
+**Simplification:**    <N> refinements applied
 
 **Status:** Artisan quality. Ready for next task.
 ```

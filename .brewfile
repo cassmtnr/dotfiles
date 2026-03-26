@@ -58,7 +58,7 @@ cask "font-meslo-for-powerline"
 cask "font-meslo-lg"
 
 # AI CLI tools
-brew "claude-code"
+cask "claude-code"
 brew "gemini-cli"
 brew "ollama"
 
@@ -70,7 +70,6 @@ cask "ghostty"
 cask "google-chrome"
 cask "spotify"
 cask "the-unarchiver"
-cask "visual-studio-code"   # TODO: remove after VSCodium migration verified
 cask "vlc"
 cask "vscodium"
 

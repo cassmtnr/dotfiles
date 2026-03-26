@@ -171,9 +171,9 @@ install_packages() {
     if [[ -f "$DOTFILES_ROOT/.brewfile" ]]; then
         if $IS_LINUX; then
             # Filter out cask entries (macOS-only) for Linux
-            grep -v '^cask[[:space:]]' "$DOTFILES_ROOT/.brewfile" | brew bundle --file=-
+            grep -v '^cask[[:space:]]' "$DOTFILES_ROOT/.brewfile" | brew bundle --file=- || warning "Some Homebrew packages failed to install"
         else
-            brew bundle --file="$DOTFILES_ROOT/.brewfile"
+            brew bundle --file="$DOTFILES_ROOT/.brewfile" || warning "Some Homebrew packages failed to install"
         fi
     else
         warning "Brewfile not found"
@@ -250,6 +250,95 @@ install_motd() {
     done
 
     success "Custom MOTD scripts installed"
+}
+
+# Install VSCodium extensions from extensions.txt
+install_vscodium_extensions() {
+    local extensions_file="$DOTFILES_ROOT/.vscodium/extensions.txt"
+
+    if [[ ! -f "$extensions_file" ]]; then
+        warning "VSCodium extensions file not found: $extensions_file"
+        return
+    fi
+
+    if ! command -v codium &> /dev/null; then
+        warning "VSCodium not installed — skipping extension installation"
+        return
+    fi
+
+    log "Installing VSCodium extensions..."
+
+    local installed=0
+    local failed=0
+    while IFS= read -r ext || [[ -n "$ext" ]]; do
+        # Skip empty lines and comments
+        [[ -z "$ext" || "$ext" == \#* ]] && continue
+        # Trim leading/trailing whitespace
+        ext="${ext#"${ext%%[![:space:]]*}"}"
+        ext="${ext%"${ext##*[![:space:]]}"}"
+        [[ -z "$ext" ]] && continue
+
+        if codium --install-extension "$ext" --force; then
+            installed=$((installed + 1))
+        else
+            warning "Failed to install extension: $ext"
+            failed=$((failed + 1))
+        fi
+    done < "$extensions_file"
+
+    if [[ $failed -eq 0 ]]; then
+        success "All $installed VSCodium extensions installed"
+    else
+        warning "$installed extensions installed, $failed failed"
+    fi
+}
+
+# Sync currently installed VSCodium extensions back to extensions.txt
+sync_vscodium_extensions() {
+    local extensions_file="$DOTFILES_ROOT/.vscodium/extensions.txt"
+
+    if ! command -v codium &> /dev/null; then
+        warning "VSCodium not installed — skipping extension sync"
+        return
+    fi
+
+    log "Syncing VSCodium extensions to extensions.txt..."
+
+    codium --list-extensions | sort > "$extensions_file"
+
+    success "VSCodium extensions synced ($(wc -l < "$extensions_file" | tr -d ' ') extensions)"
+}
+
+# Apply custom macOS application icons (must run after brew installs/upgrades)
+apply_custom_icons() {
+    if ! $IS_MACOS; then
+        return
+    fi
+
+    if ! command -v fileicon &> /dev/null; then
+        warning "fileicon not installed — skipping custom icon application"
+        warning "Install with: brew install fileicon"
+        return
+    fi
+
+    # Map: app path -> icon file in dotfiles
+    local icon_pairs=(
+        "/Applications/VSCodium.app:$DOTFILES_ROOT/.vscodium/icon.icns"
+        # Add more apps here as needed
+    )
+
+    for pair in "${icon_pairs[@]}"; do
+        local app="${pair%:*}"
+        local icon="${pair#*:}"
+
+        if [[ -d "$app" && -f "$icon" ]]; then
+            if fileicon set "$app" "$icon" 2>/dev/null; then
+                log "Applied custom icon to $(basename "$app")"
+            else
+                warning "Failed to apply custom icon to $(basename "$app")"
+            fi
+        fi
+    done
 }
 
 # Install Claude Code plugins listed in settings.json
