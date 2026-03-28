@@ -114,7 +114,6 @@ dotfiles/
 │       └── block-dangerous-commands.js  # PreToolUse safety hook
 ├── .vscodium/
 │   ├── settings.json          # Cleaned user settings (no Copilot/sync entries)
-│   ├── keybindings.json       # Custom keybindings
 │   ├── extensions.txt         # Extension IDs for Open VSX (one per line)
 │   └── icon.icns              # Custom macOS app icon (added manually)
 ├── .lazydocker/

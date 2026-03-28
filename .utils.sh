@@ -76,12 +76,10 @@ create_symlinks() {
     if $IS_MACOS; then
         symlink_pairs+=(
             "$DOTFILES_ROOT/.vscodium/settings.json:$HOME/Library/Application Support/VSCodium/User/settings.json"
-            "$DOTFILES_ROOT/.vscodium/keybindings.json:$HOME/Library/Application Support/VSCodium/User/keybindings.json"
         )
     elif $IS_LINUX; then
         symlink_pairs+=(
             "$DOTFILES_ROOT/.vscodium/settings.json:$HOME/.config/VSCodium/User/settings.json"
-            "$DOTFILES_ROOT/.vscodium/keybindings.json:$HOME/.config/VSCodium/User/keybindings.json"
         )
     fi
 

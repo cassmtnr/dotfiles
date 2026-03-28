@@ -17,7 +17,6 @@ alias work="cd ~/Work"
 alias dev="cd ~/Dev"
 alias dot="cd ~/dotfiles && code ."
 alias dotfiles="cd ~/dotfiles"
-alias meow="cd ~/.config/ghostty && code ."
 
 # Git aliases
 alias g="git"

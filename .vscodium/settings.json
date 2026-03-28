@@ -6,7 +6,7 @@
   // Perform specific code actions when saving a file
   "editor.codeActionsOnSave": {
     // Auto-fix ESLint issues on save
-    "source.fixAll.eslint": "always",
+    "source.fixAll.eslint": "always"
   },
   // Detect indentation style from file contents
   "editor.detectIndentation": true,
@@ -44,7 +44,7 @@
   "editor.quickSuggestions": {
     "comments": "on",
     "other": "on",
-    "strings": "on",
+    "strings": "on"
   },
   // Draw vertical rulers at 80 and 120 character columns
   "editor.rulers": [80, 120],
@@ -66,7 +66,7 @@
     ".zlogin*": "shellscript",
     ".zlogout*": "shellscript",
     "zshrc*": "shellscript",
-    "*.zsh": "shellscript",
+    "*.zsh": "shellscript"
   },
   // Expand Emmet abbreviations with Tab key
   "emmet.triggerExpansionOnTab": true,
@@ -92,10 +92,10 @@
   "git.openRepositoryInParentFolders": "never",
   // Use Prettier for JSON and JSONC formatting
   "[json]": {
-    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
   },
   "[jsonc]": {
-    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
   },
   // Use single quotes by default in Prettier
   "prettier.singleQuote": true,
@@ -110,8 +110,8 @@
   // Define zsh profile explicitly
   "terminal.integrated.profiles.osx": {
     "zsh": {
-      "path": "zsh",
-    },
+      "path": "zsh"
+    }
   },
   // Insert a space after anonymous `function` keyword in TS
   "typescript.format.insertSpaceAfterFunctionKeywordForAnonymousFunctions": true,
@@ -141,7 +141,7 @@
     "fileHistory": false,
     "repositories": true,
     "searchAndCompare": false,
-    "launchpad": false,
+    "launchpad": false
   },
   // Define nested file patterns in Explorer for better organization
   "explorer.fileNesting.patterns": {
@@ -156,26 +156,26 @@
     "*.sqlite3": "${capture}.${extname}-*",
     "*.db3": "${capture}.${extname}-*",
     "*.sdb": "${capture}.${extname}-*",
-    "*.s3db": "${capture}.${extname}-*",
+    "*.s3db": "${capture}.${extname}-*"
   },
   // Enable type checking for Python (standard level)
   "python.analysis.typeCheckingMode": "standard",
   "[typescript]": {
-    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
   },
   "[typescriptreact]": {
-    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
   },
   "[python]": {
     "editor.defaultColorDecorators": "never",
     "gitlens.codeLens.symbolScopes": ["!Module"],
     "editor.wordBasedSuggestions": "off",
     "editor.defaultFormatter": "charliermarsh.ruff",
-    "editor.formatOnType": false,
+    "editor.formatOnType": false
   },
   "workbench.navigationControl.enabled": false,
   "[html]": {
-    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
   },
   "editor.unicodeHighlight.ambiguousCharacters": false,
   "workbench.iconTheme": "material-icon-theme",
@@ -190,7 +190,7 @@
     "https://www.schemastore.org/": true,
     "https://json.schemastore.org/": true,
     "https://json-schema.org/": true,
-    "https://biomejs.dev": true,
+    "https://biomejs.dev": true
   },
   "security.promptForRemoteFileProtocolHandling": false,
   "terminal.integrated.fontSize": 14,
@@ -200,14 +200,14 @@
     "**/.git/objects/**": true,
     "**/node_modules/**": true,
     "**/dist/**": true,
-    "**/build/**": true,
+    "**/build/**": true
   },
   // Exclude heavy directories from search results
   "search.exclude": {
     "**/node_modules": true,
     "**/dist": true,
     "**/build": true,
-    "**/.git": true,
+    "**/.git": true
   },
   // Ensure files end with a newline (POSIX standard, cleaner diffs)
   "files.insertFinalNewline": true,
