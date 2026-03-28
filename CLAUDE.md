@@ -56,9 +56,9 @@ brew bundle check --file=.brewfile  # Check Homebrew packages
 - **`.bun`** - Bun JavaScript runtime configuration
 - **`.ghostty/config`** - Ghostty terminal configuration
 - **`.ssh/config`** - SSH configuration template
-- **`.claude/`** - Claude Code global config (symlinked to `~/.claude/`)
-- **`.claude/hooks/block-dangerous-commands.js`** - PreToolUse safety hook (blocks dangerous Bash commands)
-- **`.claude/config/statusline-command.sh`** - Custom Claude Code statusline
+- **`.ai/`** - AI CLI global config (shared by Claude Code and Codex CLI, symlinked to `~/.claude/` and `~/.codex/`)
+- **`.ai/hooks/block-dangerous-commands.js`** - PreToolUse safety hook (blocks dangerous Bash commands)
+- **`.ai/claude/config/statusline-command.sh`** - Custom Claude Code statusline
 
 ## Before Committing
 

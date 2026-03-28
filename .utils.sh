@@ -37,6 +37,8 @@ create_symlinks() {
     mkdir -p "$HOME/.config"
     mkdir -p "$HOME/.ssh"
     mkdir -p "$HOME/.ssh/sockets"
+    mkdir -p "$HOME/.claude"
+    mkdir -p "$HOME/.codex"
 
     # Ensure VSCodium config directory exists before symlinking
     if $IS_MACOS; then
@@ -64,12 +66,19 @@ create_symlinks() {
         "$DOTFILES_ROOT/.ssh/config:$HOME/.ssh/config"
         "$DOTFILES_ROOT/.ghostty:$HOME/.config/ghostty"
         "$DOTFILES_ROOT/.lazydocker:$HOME/.config/lazydocker"
-        "$DOTFILES_ROOT/.claude/settings.json:$HOME/.claude/settings.json"
-        "$DOTFILES_ROOT/.claude/CLAUDE.md:$HOME/.claude/CLAUDE.md"
-        "$DOTFILES_ROOT/.claude/commands:$HOME/.claude/commands"
-        "$DOTFILES_ROOT/.claude/skills:$HOME/.claude/skills"
-        "$DOTFILES_ROOT/.claude/config:$HOME/.claude/config"
-        "$DOTFILES_ROOT/.claude/hooks:$HOME/.claude/hooks"
+        # AI CLI — shared content (Claude Code + Codex CLI)
+        "$DOTFILES_ROOT/.ai/instructions.md:$HOME/.claude/CLAUDE.md"
+        "$DOTFILES_ROOT/.ai/commands:$HOME/.claude/commands"
+        "$DOTFILES_ROOT/.ai/skills:$HOME/.claude/skills"
+        "$DOTFILES_ROOT/.ai/hooks:$HOME/.claude/hooks"
+        "$DOTFILES_ROOT/.ai/commands:$HOME/.codex/prompts"
+        "$DOTFILES_ROOT/.ai/skills:$HOME/.codex/skills"
+        "$DOTFILES_ROOT/.ai/hooks:$HOME/.codex/hooks"
+        # AI CLI — tool-specific config
+        "$DOTFILES_ROOT/.ai/claude/settings.json:$HOME/.claude/settings.json"
+        "$DOTFILES_ROOT/.ai/claude/config:$HOME/.claude/config"
+        "$DOTFILES_ROOT/.ai/codex/config.toml:$HOME/.codex/config.toml"
+        "$DOTFILES_ROOT/.ai/codex/hooks.json:$HOME/.codex/hooks.json"
     )
 
     # Platform-specific symlinks
@@ -104,23 +113,21 @@ create_symlinks() {
         fi
     done
 
-    # Remove stale symlinks/dirs from previous layouts
-    # config and hooks were previously real dirs with individual file symlinks;
-    # now they are directory symlinks like commands and skills
-    local stale_symlinks=(
-        "$HOME/.claude/statusline-command.sh"
-    )
-    # Remove old individual-file-symlink dirs so directory symlinks can replace them
-    for old_dir in "$HOME/.claude/config" "$HOME/.claude/hooks"; do
-        if [[ -d "$old_dir" && ! -L "$old_dir" ]]; then
-            rm -rf "$old_dir"
-            log "Removed old directory (now a directory symlink): $old_dir"
-        fi
-    done
-    for stale in "${stale_symlinks[@]}"; do
-        if [[ -L "$stale" && ! -e "$stale" ]]; then
-            rm "$stale"
-            log "Removed stale symlink: $stale"
+    # Remove stale symlinks from previous .claude/ layout
+    # (sources moved from dotfiles/.claude/ to dotfiles/.ai/)
+    for old_link in "$HOME/.claude/CLAUDE.md" "$HOME/.claude/commands" "$HOME/.claude/skills" \
+                    "$HOME/.claude/hooks" "$HOME/.claude/settings.json" "$HOME/.claude/config" \
+                    "$HOME/.claude/statusline-command.sh"; do
+        if [[ -L "$old_link" ]]; then
+            local target
+            target="$(readlink "$old_link")"
+            if [[ "$target" == *"/dotfiles/.claude/"* || ! -e "$old_link" ]]; then
+                rm "$old_link"
+                log "Removed stale symlink (old .claude/ layout): $old_link"
+            fi
+        elif [[ -d "$old_link" && ! -L "$old_link" ]]; then
+            rm -rf "$old_link"
+            log "Removed old directory (now a directory symlink): $old_link"
         fi
     done
 

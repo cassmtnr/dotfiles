@@ -12,8 +12,8 @@ This dotfiles repository will transform your macOS or Linux system into a compre
 
 - 🚀 **Performance Optimized**: Optimized shell startup with immediate Node.js/npm availability
 - 🔒 **Security First**: Secure SSH configuration templates and key management
-- 🤖 **Claude Code Safety Hooks**: PreToolUse hooks that block dangerous commands before execution
-- 🧠 **Claude Code Skills & Commands**: Reusable skills (code review, spec writing) and workflow commands (CRAFT)
+- 🤖 **AI CLI Safety Hooks**: PreToolUse hooks that block dangerous commands (shared by Claude Code & Codex CLI)
+- 🧠 **AI CLI Skills & Commands**: Reusable skills (code review, spec writing) and workflow commands (CRAFT)
 - 📦 **Complete Package Management**: 40+ essential development tools and applications
 - 🛠️ **Modern Toolchain**: Starship prompt, Oh My Zsh, and contemporary CLI utilities
 - 👻 **Ghostty Terminal**: GPU-accelerated terminal with Nord theme and custom keybindings
@@ -100,18 +100,22 @@ dotfiles/
 │   └── icon.icns              # Custom Ghostty application icon
 ├── .ssh/
 │   └── config                 # SSH configuration template
-├── .claude/
-│   ├── CLAUDE.md              # Global Claude Code safety rules & instructions
-│   ├── settings.json          # Settings (hooks, permissions, statusline)
+├── .ai/                           # AI CLI config (shared by Claude Code & Codex CLI)
+│   ├── instructions.md        # Shared global AI instructions (→ ~/.claude/CLAUDE.md)
 │   ├── commands/
-│   │   └── craft.md           # CRAFT workflow command (Code, Review, Audit, Fix, Test)
+│   │   └── craft.md           # CRAFT workflow command (→ ~/.claude/commands/ & ~/.codex/prompts/)
 │   ├── skills/
 │   │   ├── code-review.md     # Critical code review & fix skill
 │   │   └── spec-writing.md    # Implementation spec writing skill
-│   ├── config/
-│   │   └── statusline-command.sh  # Custom statusline (project, branch, context %)
-│   └── hooks/
-│       └── block-dangerous-commands.js  # PreToolUse safety hook
+│   ├── hooks/
+│   │   └── block-dangerous-commands.js  # PreToolUse safety hook
+│   ├── claude/                # Claude Code specific
+│   │   ├── settings.json      # Settings (hooks, permissions, statusline, plugins)
+│   │   └── config/
+│   │       └── statusline-command.sh  # Custom statusline (project, branch, context %)
+│   └── codex/                 # Codex CLI specific
+│       ├── config.toml        # Codex CLI configuration
+│       └── hooks.json         # Codex CLI hooks (references shared hook scripts)
 ├── .vscodium/
 │   ├── settings.json          # Cleaned user settings (no Copilot/sync entries)
 │   ├── extensions.txt         # Extension IDs for Open VSX (one per line)
@@ -142,15 +146,15 @@ dotfiles/
 - **`.editorconfig`** - Cross-editor coding standards (charset, indentation, line endings)
 - **`.ghostty/config`** - Ghostty terminal with Nord theme, custom keybindings, and shell integration
 - **`.ssh/config`** - Security-focused SSH template with organized key management
-- **`.claude/`** - Claude Code configuration with safety hooks, skills, and commands (symlinked to `~/.claude/`)
+- **`.ai/`** - AI CLI configuration with safety hooks, skills, and commands (shared by Claude Code & Codex CLI, symlinked to `~/.claude/` & `~/.codex/`)
 - **`.vscodium/`** - VSCodium editor configuration (settings, keybindings, extensions list, custom icon)
 - **`.lazydocker/`** - LazyDocker terminal UI for Docker management
 - **`.motd/`** - Message of the Day scripts for Linux/VPS servers
 - **`.alfred/`** - Alfred workflows and preferences (macOS only, symlinked via Alfred's sync feature)
 
-### Claude Code Safety Hooks
+### AI CLI Safety Hooks
 
-The `.claude/hooks/` directory contains PreToolUse hooks that run before Claude Code executes tool calls:
+The `.ai/hooks/` directory contains PreToolUse hooks shared by Claude Code and Codex CLI:
 
 - **`block-dangerous-commands.js`** - Blocks dangerous Bash commands at three safety levels:
   - **Critical**: filesystem destruction (`rm -rf ~/`), disk operations (`dd`, `mkfs`), fork bombs, git history rewriting
@@ -159,11 +163,11 @@ The `.claude/hooks/` directory contains PreToolUse hooks that run before Claude 
 
   Safety level is set to `high` by default. Patterns are enforced via regex matching and blocked commands are logged to `~/.claude/hooks-logs/`.
 
-- **Custom statusline** (`.claude/config/statusline-command.sh`) displays project name, git branch, session ID, context window %, and model name.
+- **Custom statusline** (`.ai/claude/config/statusline-command.sh`) displays project name, git branch, session ID, context window %, and model name.
 
-### Claude Code Skills & Commands
+### AI CLI Skills & Commands
 
-The `.claude/skills/` and `.claude/commands/` directories provide reusable AI workflows:
+The `.ai/skills/` and `.ai/commands/` directories provide reusable AI workflows (shared by Claude Code and Codex CLI):
 
 - **Skills** (contextual capabilities automatically loaded when relevant):
   - **`code-review`** — Critical code review across 8 dimensions (correctness, security, concurrency, error handling, performance, API contracts, code quality, test quality). Reviews all changed code, reports findings by severity, fixes everything, and verifies with linter + tests.

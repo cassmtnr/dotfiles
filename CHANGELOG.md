@@ -5,7 +5,26 @@ All notable changes to this dotfiles project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased] — VSCodium Migration
+## [Unreleased]
+
+### Changed — AI CLI Directory Refactor
+
+- **Refactored `.claude/` → `.ai/`**: Restructured AI CLI configuration from Claude-specific `.claude/` to a generic `.ai/` layout supporting multiple AI CLI tools
+  - Shared content (`instructions.md`, `commands/`, `skills/`, `hooks/`) lives at `.ai/` root
+  - Claude-specific files (`settings.json`, `config/`) moved to `.ai/claude/`
+  - New Codex CLI configuration (`config.toml`, `hooks.json`) at `.ai/codex/`
+- **Updated symlink system**: `create_symlinks()` now creates symlinks for both `~/.claude/` and `~/.codex/`, all sourced from `.ai/`
+- **Renamed `CLAUDE.md` → `instructions.md`**: Global instructions file renamed to tool-agnostic name; symlinked as `~/.claude/CLAUDE.md` for Claude Code compatibility
+
+### Added — Codex CLI Support
+
+- **Codex CLI symlinks**: `~/.codex/prompts/` → `.ai/commands/`, `~/.codex/skills/` → `.ai/skills/`, `~/.codex/hooks/` → `.ai/hooks/`
+- **`.ai/codex/config.toml`**: Initial Codex CLI configuration
+- **`.ai/codex/hooks.json`**: Codex CLI hooks referencing shared safety hook script
+
+---
+
+## [2.5.0] — VSCodium Migration
 
 ### Added
 

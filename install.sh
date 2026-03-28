@@ -296,7 +296,7 @@ post_install() {
         echo "  ✓ MacOS system optimizations"
     fi
     echo "  ✓ VSCodium editor with extensions and custom icon"
-    echo "  ✓ Claude Code configuration (CLAUDE.md, statusline, commands)"
+    echo "  ✓ AI CLI configuration (Claude Code + Codex CLI — instructions, commands, hooks)"
     echo "  ✓ Symbolic links for all configurations"
     echo ""
     echo
