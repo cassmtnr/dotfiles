@@ -1,0 +1,11 @@
+adpyke.codesnap
+csstools.postcss
+dbaeumer.vscode-eslint
+dracula-theme.theme-dracula
+eamodio.gitlens
+esbenp.prettier-vscode
+jeanp413.open-remote-ssh
+naumovs.color-highlight
+pkief.material-icon-theme
+shd101wyy.markdown-preview-enhanced
+yoavbls.pretty-ts-errors

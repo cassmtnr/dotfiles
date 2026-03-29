@@ -37,6 +37,15 @@ create_symlinks() {
     mkdir -p "$HOME/.config"
     mkdir -p "$HOME/.ssh"
     mkdir -p "$HOME/.ssh/sockets"
+    mkdir -p "$HOME/.claude"
+    mkdir -p "$HOME/.codex"
+
+    # Ensure VSCodium config directory exists before symlinking
+    if $IS_MACOS; then
+        mkdir -p "$HOME/Library/Application Support/VSCodium/User"
+    elif $IS_LINUX; then
+        mkdir -p "$HOME/.config/VSCodium/User"
+    fi
 
     # Protect critical SSH files that must never be overwritten
     local protected_ssh_files=(
@@ -57,13 +66,31 @@ create_symlinks() {
         "$DOTFILES_ROOT/.ssh/config:$HOME/.ssh/config"
         "$DOTFILES_ROOT/.ghostty:$HOME/.config/ghostty"
         "$DOTFILES_ROOT/.lazydocker:$HOME/.config/lazydocker"
-        "$DOTFILES_ROOT/.claude/settings.json:$HOME/.claude/settings.json"
-        "$DOTFILES_ROOT/.claude/CLAUDE.md:$HOME/.claude/CLAUDE.md"
-        "$DOTFILES_ROOT/.claude/commands:$HOME/.claude/commands"
-        "$DOTFILES_ROOT/.claude/skills:$HOME/.claude/skills"
-        "$DOTFILES_ROOT/.claude/config:$HOME/.claude/config"
-        "$DOTFILES_ROOT/.claude/hooks:$HOME/.claude/hooks"
+        # AI CLI — shared content (Claude Code + Codex CLI)
+        "$DOTFILES_ROOT/.ai/instructions.md:$HOME/.claude/CLAUDE.md"
+        "$DOTFILES_ROOT/.ai/commands:$HOME/.claude/commands"
+        "$DOTFILES_ROOT/.ai/skills:$HOME/.claude/skills"
+        "$DOTFILES_ROOT/.ai/hooks:$HOME/.claude/hooks"
+        "$DOTFILES_ROOT/.ai/commands:$HOME/.codex/prompts"
+        "$DOTFILES_ROOT/.ai/skills:$HOME/.codex/skills"
+        "$DOTFILES_ROOT/.ai/hooks:$HOME/.codex/hooks"
+        # AI CLI — tool-specific config
+        "$DOTFILES_ROOT/.ai/claude/settings.json:$HOME/.claude/settings.json"
+        "$DOTFILES_ROOT/.ai/claude/config:$HOME/.claude/config"
+        "$DOTFILES_ROOT/.ai/codex/config.toml:$HOME/.codex/config.toml"
+        "$DOTFILES_ROOT/.ai/codex/hooks.json:$HOME/.codex/hooks.json"
     )
+
+    # Platform-specific symlinks
+    if $IS_MACOS; then
+        symlink_pairs+=(
+            "$DOTFILES_ROOT/.vscodium/settings.json:$HOME/Library/Application Support/VSCodium/User/settings.json"
+        )
+    elif $IS_LINUX; then
+        symlink_pairs+=(
+            "$DOTFILES_ROOT/.vscodium/settings.json:$HOME/.config/VSCodium/User/settings.json"
+        )
+    fi
 
     # Create conditional symlinks for private configs (only if they exist)
     local private_configs=(
@@ -86,23 +113,21 @@ create_symlinks() {
         fi
     done
 
-    # Remove stale symlinks/dirs from previous layouts
-    # config and hooks were previously real dirs with individual file symlinks;
-    # now they are directory symlinks like commands and skills
-    local stale_symlinks=(
-        "$HOME/.claude/statusline-command.sh"
-    )
-    # Remove old individual-file-symlink dirs so directory symlinks can replace them
-    for old_dir in "$HOME/.claude/config" "$HOME/.claude/hooks"; do
-        if [[ -d "$old_dir" && ! -L "$old_dir" ]]; then
-            rm -rf "$old_dir"
-            log "Removed old directory (now a directory symlink): $old_dir"
-        fi
-    done
-    for stale in "${stale_symlinks[@]}"; do
-        if [[ -L "$stale" && ! -e "$stale" ]]; then
-            rm "$stale"
-            log "Removed stale symlink: $stale"
+    # Remove stale symlinks from previous .claude/ layout
+    # (sources moved from dotfiles/.claude/ to dotfiles/.ai/)
+    for old_link in "$HOME/.claude/CLAUDE.md" "$HOME/.claude/commands" "$HOME/.claude/skills" \
+                    "$HOME/.claude/hooks" "$HOME/.claude/settings.json" "$HOME/.claude/config" \
+                    "$HOME/.claude/statusline-command.sh"; do
+        if [[ -L "$old_link" ]]; then
+            local target
+            target="$(readlink "$old_link")"
+            if [[ "$target" == *"/dotfiles/.claude/"* || ! -e "$old_link" ]]; then
+                rm "$old_link"
+                log "Removed stale symlink (old .claude/ layout): $old_link"
+            fi
+        elif [[ -d "$old_link" && ! -L "$old_link" ]]; then
+            rm -rf "$old_link"
+            log "Removed old directory (now a directory symlink): $old_link"
         fi
     done
 
@@ -151,9 +176,9 @@ install_packages() {
     if [[ -f "$DOTFILES_ROOT/.brewfile" ]]; then
         if $IS_LINUX; then
             # Filter out cask entries (macOS-only) for Linux
-            grep -v '^cask[[:space:]]' "$DOTFILES_ROOT/.brewfile" | brew bundle --file=-
+            grep -v '^cask[[:space:]]' "$DOTFILES_ROOT/.brewfile" | brew bundle --file=- || warning "Some Homebrew packages failed to install"
         else
-            brew bundle --file="$DOTFILES_ROOT/.brewfile"
+            brew bundle --file="$DOTFILES_ROOT/.brewfile" || warning "Some Homebrew packages failed to install"
         fi
     else
         warning "Brewfile not found"
@@ -230,4 +255,122 @@ install_motd() {
     done
 
     success "Custom MOTD scripts installed"
+}
+
+# Install VSCodium extensions from extensions.txt
+install_vscodium_extensions() {
+    local extensions_file="$DOTFILES_ROOT/.vscodium/extensions.txt"
+
+    if [[ ! -f "$extensions_file" ]]; then
+        warning "VSCodium extensions file not found: $extensions_file"
+        return
+    fi
+
+    if ! command -v codium &> /dev/null; then
+        warning "VSCodium not installed — skipping extension installation"
+        return
+    fi
+
+    log "Installing VSCodium extensions..."
+
+    local installed=0
+    local failed=0
+    while IFS= read -r ext || [[ -n "$ext" ]]; do
+        # Skip empty lines and comments
+        [[ -z "$ext" || "$ext" == \#* ]] && continue
+        # Trim leading/trailing whitespace
+        ext="${ext#"${ext%%[![:space:]]*}"}"
+        ext="${ext%"${ext##*[![:space:]]}"}"
+        [[ -z "$ext" ]] && continue
+
+        if codium --install-extension "$ext" --force; then
+            installed=$((installed + 1))
+        else
+            warning "Failed to install extension: $ext"
+            failed=$((failed + 1))
+        fi
+    done < "$extensions_file"
+
+    if [[ $failed -eq 0 ]]; then
+        success "All $installed VSCodium extensions installed"
+    else
+        warning "$installed extensions installed, $failed failed"
+    fi
+}
+
+# Sync currently installed VSCodium extensions back to extensions.txt
+sync_vscodium_extensions() {
+    local extensions_file="$DOTFILES_ROOT/.vscodium/extensions.txt"
+
+    if ! command -v codium &> /dev/null; then
+        warning "VSCodium not installed — skipping extension sync"
+        return
+    fi
+
+    log "Syncing VSCodium extensions to extensions.txt..."
+
+    codium --list-extensions | sort > "$extensions_file"
+
+    success "VSCodium extensions synced ($(wc -l < "$extensions_file" | tr -d ' ') extensions)"
+}
+
+# Apply custom macOS application icons (must run after brew installs/upgrades)
+apply_custom_icons() {
+    if ! $IS_MACOS; then
+        return
+    fi
+
+    if ! command -v fileicon &> /dev/null; then
+        warning "fileicon not installed — skipping custom icon application"
+        warning "Install with: brew install fileicon"
+        return
+    fi
+
+    # Map: app path -> icon file in dotfiles
+    local icon_pairs=(
+        "/Applications/VSCodium.app:$DOTFILES_ROOT/.vscodium/icon.icns"
+        # Add more apps here as needed
+    )
+
+    for pair in "${icon_pairs[@]}"; do
+        local app="${pair%:*}"
+        local icon="${pair#*:}"
+
+        if [[ -d "$app" && -f "$icon" ]]; then
+            if fileicon set "$app" "$icon" 2>/dev/null; then
+                log "Applied custom icon to $(basename "$app")"
+            else
+                warning "Failed to apply custom icon to $(basename "$app")"
+            fi
+        fi
+    done
+}
+
+# Install Claude Code plugins listed in settings.json
+install_claude_plugins() {
+    if ! command -v claude &> /dev/null; then
+        warning "Claude Code not found — skipping plugin installation"
+        return
+    fi
+
+    log "Installing Claude Code plugins..."
+
+    local plugins=(
+        "swift-lsp"
+        "code-simplifier"
+        "frontend-design"
+        "superpowers"
+        "code-review"
+        "feature-dev"
+        "playwright"
+        "sentry"
+        "pyright-lsp"
+    )
+
+    for plugin in "${plugins[@]}"; do
+        log "Installing plugin: $plugin"
+        claude plugin install "$plugin" || warning "Failed to install plugin: $plugin"
+    done
+
+    success "Claude Code plugins installed"
 }

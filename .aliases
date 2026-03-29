@@ -1,3 +1,8 @@
+# Editor (VSCodium instead of VS Code)
+if command -v codium &> /dev/null; then
+    alias code="codium"
+fi
+
 # Navigation aliases
 alias ..="cd .."
 alias ...="cd ../.."
@@ -12,7 +17,6 @@ alias work="cd ~/Work"
 alias dev="cd ~/Dev"
 alias dot="cd ~/dotfiles && code ."
 alias dotfiles="cd ~/dotfiles"
-alias meow="cd ~/.config/ghostty && code ."
 
 # Git aliases
 alias g="git"
@@ -36,7 +40,7 @@ alias wth="git rev-parse HEAD"
 # Config file shortcuts
 alias zrc="code ~/dotfiles/.zshrc"
 alias zshsource="source ~/.zshrc"
-alias gitconfig="vim ~/.gitconfig"
+alias gitconfig="nano ~/.gitconfig"
 
 # System utilities
 if [[ "$OSTYPE" == "darwin"* ]]; then

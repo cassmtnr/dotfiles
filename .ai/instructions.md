@@ -2,7 +2,7 @@
 
 ## Critical Safety Rules
 
-These rules apply directly to Claude Code and any AI agent in all contexts. Dangerous command patterns (git write ops, destructive system commands, publishing, deployment, network, database, credentials exposure) are enforced by `.claude/hooks/block-dangerous-commands.js`. The rules below cover what the hook cannot enforce programmatically.
+These rules apply directly to Claude Code and any AI agent in all contexts. Dangerous command patterns (git write ops, destructive system commands, publishing, deployment, network, database, credentials exposure) are enforced by `.ai/hooks/block-dangerous-commands.js`. The rules below cover what the hook cannot enforce programmatically.
 
 ### Git — User handles ALL git operations manually
 
@@ -86,22 +86,26 @@ After completing any implementation task, update all relevant documentation:
 - Roadmap (mark completed items)
 - Module docstrings and HOW TO MODIFY blocks
 
-## Claude Code Configuration — Dotfiles Convention
+## AI CLI Configuration — Dotfiles Convention
 
-All Claude Code global configuration lives in `~/dotfiles/.claude/` (version-controlled)
-and is symlinked to `~/.claude/`. When adding, modifying, or removing any Claude Code
-settings, commands, skills, hooks, or config files:
+All AI CLI global configuration lives in `~/dotfiles/.ai/` (version-controlled)
+and is symlinked to `~/.claude/` and `~/.codex/`. When adding, modifying, or removing
+any AI CLI settings, commands, skills, hooks, or config files:
 
-1. **Always edit in `~/dotfiles/.claude/`** — never edit directly in `~/.claude/`
-2. **Symlink to `~/.claude/`** if the symlink doesn't already exist:
-   `ln -s ~/dotfiles/.claude/<path> ~/.claude/<path>`
+1. **Always edit in `~/dotfiles/.ai/`** — never edit directly in `~/.claude/` or `~/.codex/`
+2. **Run `./update.sh`** to refresh symlinks after any structural changes
 3. **Current symlink structure:**
-   - `~/.claude/CLAUDE.md` → `~/dotfiles/.claude/CLAUDE.md`
-   - `~/.claude/settings.json` → `~/dotfiles/.claude/settings.json`
-   - `~/.claude/commands/` → `~/dotfiles/.claude/commands/`
-   - `~/.claude/skills/` → `~/dotfiles/.claude/skills/`
-   - `~/.claude/config/` → `~/dotfiles/.claude/config/`
-   - `~/.claude/hooks/` → `~/dotfiles/.claude/hooks/`
+   - `~/.claude/CLAUDE.md` → `~/dotfiles/.ai/instructions.md`
+   - `~/.claude/settings.json` → `~/dotfiles/.ai/claude/settings.json`
+   - `~/.claude/commands/` → `~/dotfiles/.ai/commands/`
+   - `~/.claude/skills/` → `~/dotfiles/.ai/skills/`
+   - `~/.claude/config/` → `~/dotfiles/.ai/claude/config/`
+   - `~/.claude/hooks/` → `~/dotfiles/.ai/hooks/`
+   - `~/.codex/prompts/` → `~/dotfiles/.ai/commands/`
+   - `~/.codex/skills/` → `~/dotfiles/.ai/skills/`
+   - `~/.codex/hooks/` → `~/dotfiles/.ai/hooks/`
+   - `~/.codex/config.toml` → `~/dotfiles/.ai/codex/config.toml`
+   - `~/.codex/hooks.json` → `~/dotfiles/.ai/codex/hooks.json`
 
 This ensures all customizations are version-controlled and portable across machines.
 

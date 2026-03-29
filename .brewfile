@@ -58,7 +58,7 @@ cask "font-meslo-for-powerline"
 cask "font-meslo-lg"
 
 # AI CLI tools
-brew "claude-code"
+cask "claude-code"
 brew "gemini-cli"
 brew "ollama"
 
@@ -70,6 +70,9 @@ cask "ghostty"
 cask "google-chrome"
 cask "spotify"
 cask "the-unarchiver"
-cask "visual-studio-code"
 cask "vlc"
+cask "vscodium"
+
+# Utilities
+brew "fileicon"              # CLI tool for managing custom macOS app icons
 

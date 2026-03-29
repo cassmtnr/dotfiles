@@ -56,6 +56,23 @@ extract() {
 }
 
 
+# Wrap brew to re-apply custom icons after upgrade/reinstall
+brew() {
+    command brew "$@"
+    local exit_code=$?
+
+    if [[ $exit_code -eq 0 && ("$1" == "upgrade" || "$1" == "reinstall") ]]; then
+        if command -v fileicon &> /dev/null && [[ -f "$DOTFILES_ROOT/.vscodium/icon.icns" ]]; then
+            if [[ -d "/Applications/VSCodium.app" ]]; then
+                fileicon set /Applications/VSCodium.app "$DOTFILES_ROOT/.vscodium/icon.icns" 2>/dev/null
+                echo "Re-applied custom VSCodium icon."
+            fi
+        fi
+    fi
+
+    return $exit_code
+}
+
 # Playwright install helper (for work environments with proxy)
 playwright-install() {
     if [[ -z "$1" ]]; then

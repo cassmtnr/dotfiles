@@ -1,0 +1,16 @@
+{
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "^Bash$",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node ~/.codex/hooks/block-dangerous-commands.js",
+            "timeout": 600
+          }
+        ]
+      }
+    ]
+  }
+}

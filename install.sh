@@ -295,7 +295,8 @@ post_install() {
     if $IS_MACOS; then
         echo "  ✓ MacOS system optimizations"
     fi
-    echo "  ✓ Claude Code configuration (CLAUDE.md, statusline, commands)"
+    echo "  ✓ VSCodium editor with extensions and custom icon"
+    echo "  ✓ AI CLI configuration (Claude Code + Codex CLI — instructions, commands, hooks)"
     echo "  ✓ Symbolic links for all configurations"
     echo ""
     echo
@@ -324,12 +325,15 @@ main() {
     install_oh_my_zsh
     create_symlinks
     install_packages
+    hash -r  # Refresh PATH so newly installed binaries (codium, fileicon) are found
+    apply_custom_icons
     setup_bun
     setup_nodejs
+    install_vscodium_extensions
     configure_macos
     install_motd
-
     install_ai_tools
+    install_claude_plugins
     set_default_shell
     post_install
 }

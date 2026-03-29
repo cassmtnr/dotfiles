@@ -15,8 +15,8 @@ export ZSH="$HOME/.oh-my-zsh"
 export NVM_DIR="${NVM_DIR:-$HOME/.nvm}"
 
 # Default programs
-export EDITOR="${EDITOR:-vim}"
-export VISUAL="${VISUAL:-code}"
+export EDITOR="${EDITOR:-nano}"
+export VISUAL="${VISUAL:-codium}"
 export PAGER="${PAGER:-less}"
 
 # Node.js memory optimization

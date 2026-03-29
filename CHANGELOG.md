@@ -5,6 +5,54 @@ All notable changes to this dotfiles project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Changed — AI CLI Directory Refactor
+
+- **Refactored `.claude/` → `.ai/`**: Restructured AI CLI configuration from Claude-specific `.claude/` to a generic `.ai/` layout supporting multiple AI CLI tools
+  - Shared content (`instructions.md`, `commands/`, `skills/`, `hooks/`) lives at `.ai/` root
+  - Claude-specific files (`settings.json`, `config/`) moved to `.ai/claude/`
+  - New Codex CLI configuration (`config.toml`, `hooks.json`) at `.ai/codex/`
+- **Updated symlink system**: `create_symlinks()` now creates symlinks for both `~/.claude/` and `~/.codex/`, all sourced from `.ai/`
+- **Renamed `CLAUDE.md` → `instructions.md`**: Global instructions file renamed to tool-agnostic name; symlinked as `~/.claude/CLAUDE.md` for Claude Code compatibility
+
+### Added — Codex CLI Support
+
+- **Codex CLI symlinks**: `~/.codex/prompts/` → `.ai/commands/`, `~/.codex/skills/` → `.ai/skills/`, `~/.codex/hooks/` → `.ai/hooks/`
+- **`.ai/codex/config.toml`**: Initial Codex CLI configuration
+- **`.ai/codex/hooks.json`**: Codex CLI hooks referencing shared safety hook script
+
+---
+
+## [2.5.0] — VSCodium Migration
+
+### Added
+
+- **VSCodium editor configuration** (`.vscodium/`): Version-controlled settings, keybindings, extension list, and custom icon — cleaned from VS Code config with Copilot, Settings Sync, and work-specific entries removed
+- **`install_vscodium_extensions()`** in `.utils.sh`: Reads `.vscodium/extensions.txt` and installs each extension via `codium` CLI, with `set -euo pipefail`-safe counters and whitespace trimming
+- **`sync_vscodium_extensions()`** in `.utils.sh`: Syncs currently installed extensions back to `extensions.txt` on every `update.sh` run
+- **`apply_custom_icons()`** in `.utils.sh`: Applies custom macOS app icons via `fileicon`, with safe error handling under `set -e`
+- **`brew()` wrapper** in `.functions`: Automatically re-applies custom icons after `brew upgrade` or `brew reinstall`
+- **VSCodium + fileicon** added to `.brewfile`
+- **Platform-specific symlinks** in `.utils.sh`: Conditional macOS/Linux symlink pairs for VSCodium config directory
+- **`alias code="codium"`** in `.aliases`: Conditional alias (only when codium is installed) so existing `dot`, `meow`, `zrc` aliases work transparently
+
+### Changed
+
+- **`.utils.sh` `create_symlinks()`**: Added `mkdir -p` for VSCodium config directory and conditional symlink pairs for settings/keybindings
+- **`.utils.sh` `install_packages()`**: `brew bundle` failures no longer abort the entire install script
+- **`install.sh` `main()`**: Added `hash -r`, `apply_custom_icons`, and `install_vscodium_extensions`; post-install message now lists VSCodium
+- **`update.sh` `main()`**: Added `apply_custom_icons`, `sync_vscodium_extensions`, and conditional `install_vscodium_extensions` with `-p` flag
+- **`.zshenv`**: `EDITOR` default changed from `vim` to `nano`; `VISUAL` conditionally set to `codium` (falls back to `code`)
+- **`.brewfile`**: Fixed `claude-code` from `brew` to `cask`
+- **README.md**: Added VSCodium section, updated project structure
+
+### Removed
+
+- **VS Code** removed from `.brewfile` — migration complete
+
+---
+
 ## [2.4.0] - 2026-03-23
 
 ### 🧠 Claude Code Skills & Commands

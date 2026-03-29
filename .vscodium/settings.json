@@ -1,0 +1,222 @@
+{
+  // Show whitespace differences in the diff editor
+  "diffEditor.ignoreTrimWhitespace": false,
+  // Show visual indent guides connecting bracket pairs
+  "editor.guides.bracketPairs": true,
+  // Perform specific code actions when saving a file
+  "editor.codeActionsOnSave": {
+    // Auto-fix ESLint issues on save
+    "source.fixAll.eslint": "always"
+  },
+  // Detect indentation style from file contents
+  "editor.detectIndentation": true,
+  // Allow folding regions in the code editor
+  "editor.folding": true,
+  // Use Fira Code as the editor font
+  "editor.fontFamily": "Fira Code",
+  // Enable font ligatures (e.g., in Fira Code)
+  "editor.fontLigatures": true,
+  // Set editor font size
+  "editor.fontSize": 14,
+  // Disable formatting code when pasting
+  "editor.formatOnPaste": false,
+  // Format code automatically on save
+  "editor.formatOnSave": true,
+  // Disable format while typing
+  "editor.formatOnType": false,
+  // Hide the left margin used for breakpoints and glyphs
+  "editor.glyphMargin": false,
+  // Open directly to a definition when there are multiple matches
+  "editor.gotoLocation.multipleDefinitions": "goto",
+  // Delay (in ms) before showing hover tooltips
+  "editor.hover.delay": 600,
+  // Delay (in ms) before hiding hover tooltips
+  "editor.hover.hidingDelay": 600,
+  // Enable inline code suggestions (used by non-AI autocomplete)
+  "editor.inlineSuggest.enabled": true,
+  // Use tab characters instead of spaces for indentation
+  "editor.insertSpaces": false,
+  // Enable simultaneous editing of matching HTML/XML tags
+  "editor.linkedEditing": true,
+  // Disable the mini-map overview on the right
+  "editor.minimap.enabled": false,
+  // Show code suggestions while typing in comments, strings, etc.
+  "editor.quickSuggestions": {
+    "comments": "on",
+    "other": "on",
+    "strings": "on"
+  },
+  // Draw vertical rulers at 80 and 120 character columns
+  "editor.rulers": [80, 120],
+  // Show code snippets at the top of suggestion lists
+  "editor.snippetSuggestions": "top",
+  // Disable sticky header scroll behavior in the editor
+  "editor.stickyScroll.enabled": false,
+  // Set tab character width to 4 spaces
+  "editor.tabSize": 4,
+  // Remove trailing whitespace automatically
+  "editor.trimAutoWhitespace": true,
+  // Enable automatic line wrapping
+  "editor.wordWrap": "on",
+  // File associations for syntax highlighting
+  "files.associations": {
+    ".zshrc*": "shellscript",
+    ".zshenv*": "shellscript",
+    ".zprofile*": "shellscript",
+    ".zlogin*": "shellscript",
+    ".zlogout*": "shellscript",
+    "zshrc*": "shellscript",
+    "*.zsh": "shellscript"
+  },
+  // Expand Emmet abbreviations with Tab key
+  "emmet.triggerExpansionOnTab": true,
+  // Show full folder hierarchy in the Explorer (no compact mode)
+  "explorer.compactFolders": false,
+  // Skip confirmation when deleting files
+  "explorer.confirmDelete": false,
+  // Skip confirmation when dragging and dropping files
+  "explorer.confirmDragAndDrop": false,
+  // Do not show extension recommendations
+  "extensions.ignoreRecommendations": true,
+  // Automatically trim trailing whitespace on save
+  "files.trimTrailingWhitespace": true,
+  // Automatically fetch Git repos in the background
+  "git.autofetch": true,
+  // Do not prompt for confirmation when syncing changes
+  "git.confirmSync": false,
+  // Commit all changes even if nothing is staged
+  "git.enableSmartCommit": true,
+  // Suppress warnings when rebasing
+  "git.ignoreRebaseWarning": true,
+  // Prevent VSCodium from opening parent Git repos
+  "git.openRepositoryInParentFolders": "never",
+  // Use Prettier for JSON and JSONC formatting
+  "[json]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "[jsonc]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  // Use single quotes by default in Prettier
+  "prettier.singleQuote": true,
+  // Open untrusted workspaces in restricted mode without asking
+  "security.workspace.trust.untrustedFiles": "open",
+  // Use Ghostty as the external terminal on macOS
+  "terminal.external.osxExec": "Ghostty.app",
+  // Open the integrated terminal inside the editor
+  "terminal.integrated.defaultLocation": "editor",
+  // Set zsh as the default shell on macOS
+  "terminal.integrated.defaultProfile.osx": "zsh",
+  // Define zsh profile explicitly
+  "terminal.integrated.profiles.osx": {
+    "zsh": {
+      "path": "zsh"
+    }
+  },
+  // Insert a space after anonymous `function` keyword in TS
+  "typescript.format.insertSpaceAfterFunctionKeywordForAnonymousFunctions": true,
+  // Do not add space inside non-empty brackets in TS
+  "typescript.format.insertSpaceAfterOpeningAndBeforeClosingNonemptyBrackets": false,
+  // Always update import paths when TS files are renamed or moved
+  "typescript.updateImportsOnFileMove.enabled": "always",
+  // Set the overall theme to Dracula
+  "workbench.colorTheme": "Dracula Theme",
+  // Disable sticky scroll behavior in the tree views
+  "workbench.tree.enableStickyScroll": false,
+  // Replace tags when doing a git pull (like `--tags`)
+  "git.replaceTagsWhenPull": true,
+  // Always update import paths when JS files are moved
+  "javascript.updateImportsOnFileMove.enabled": "always",
+  // Use a tree layout to show changed files in GitLens commit details
+  "gitlens.views.commitDetails.files.layout": "tree",
+  // Customize which GitLens views are shown or grouped
+  "gitlens.views.scm.grouped.views": {
+    "commits": true,
+    "branches": true,
+    "remotes": true,
+    "stashes": false,
+    "tags": true,
+    "worktrees": true,
+    "contributors": true,
+    "fileHistory": false,
+    "repositories": true,
+    "searchAndCompare": false,
+    "launchpad": false
+  },
+  // Define nested file patterns in Explorer for better organization
+  "explorer.fileNesting.patterns": {
+    "*.ts": "${capture}.js",
+    "*.js": "${capture}.js.map, ${capture}.min.js, ${capture}.d.ts",
+    "*.jsx": "${capture}.js",
+    "*.tsx": "${capture}.ts",
+    "tsconfig.json": "tsconfig.*.json",
+    "package.json": "package-lock.json, yarn.lock, pnpm-lock.yaml, bun.lockb, bun.lock",
+    "*.sqlite": "${capture}.${extname}-*",
+    "*.db": "${capture}.${extname}-*",
+    "*.sqlite3": "${capture}.${extname}-*",
+    "*.db3": "${capture}.${extname}-*",
+    "*.sdb": "${capture}.${extname}-*",
+    "*.s3db": "${capture}.${extname}-*"
+  },
+  // Enable type checking for Python (standard level)
+  "python.analysis.typeCheckingMode": "standard",
+  "[typescript]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "[typescriptreact]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "[python]": {
+    "editor.defaultColorDecorators": "never",
+    "gitlens.codeLens.symbolScopes": ["!Module"],
+    "editor.wordBasedSuggestions": "off",
+    "editor.defaultFormatter": "charliermarsh.ruff",
+    "editor.formatOnType": false
+  },
+  "workbench.navigationControl.enabled": false,
+  "[html]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "editor.unicodeHighlight.ambiguousCharacters": false,
+  "workbench.iconTheme": "material-icon-theme",
+  "markdown-preview-enhanced.enablePreviewZenMode": true,
+  "markdown-preview-enhanced.previewTheme": "atom-dark.css",
+  "claudeCode.preferredLocation": "panel",
+  "update.mode": "none",
+  "gitlens.statusBar.enabled": false,
+  "json.schemaDownload.trustedDomains": {
+    "https://schemastore.azurewebsites.net/": true,
+    "https://raw.githubusercontent.com/": true,
+    "https://www.schemastore.org/": true,
+    "https://json.schemastore.org/": true,
+    "https://json-schema.org/": true,
+    "https://biomejs.dev": true
+  },
+  "security.promptForRemoteFileProtocolHandling": false,
+  "terminal.integrated.fontSize": 14,
+  "diffEditor.maxComputationTime": 0,
+  // Exclude heavy directories from file watching to reduce CPU/memory
+  "files.watcherExclude": {
+    "**/.git/objects/**": true,
+    "**/node_modules/**": true,
+    "**/dist/**": true,
+    "**/build/**": true
+  },
+  // Exclude heavy directories from search results
+  "search.exclude": {
+    "**/node_modules": true,
+    "**/dist": true,
+    "**/build": true,
+    "**/.git": true
+  },
+  // Ensure files end with a newline (POSIX standard, cleaner diffs)
+  "files.insertFinalNewline": true,
+  // Smooth scroll animation in the editor
+  "editor.smoothScrolling": true,
+  // Smooth scroll animation in the integrated terminal
+  "terminal.integrated.smoothScrolling": true,
+  // Smooth cursor movement animation
+  "editor.cursorSmoothCaretAnimation": "on",
+  "workbench.startupEditor": "none",
+  "update.enableWindowsBackgroundUpdates": false
+}

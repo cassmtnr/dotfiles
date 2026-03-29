@@ -71,12 +71,17 @@ main() {
     echo "======================================"
     echo
 
-    # Always update symlinks
+    # Always update symlinks and sync extension list
     create_symlinks
+    apply_custom_icons
+    sync_vscodium_extensions
 
-    # Conditionally update packages
+    # Conditionally update packages and extensions
     if $UPDATE_PACKAGES; then
         install_packages
+        hash -r  # Refresh PATH so newly installed binaries are found
+        apply_custom_icons
+        install_vscodium_extensions
     fi
 
     # Conditionally apply macOS defaults
