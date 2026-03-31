@@ -59,8 +59,6 @@ cask "font-meslo-lg"
 
 # AI CLI tools
 cask "claude-code"
-brew "gemini-cli"
-brew "ollama"
 
 # Applications
 cask "1password"

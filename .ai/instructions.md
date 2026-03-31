@@ -92,7 +92,7 @@ All AI CLI global configuration lives in `~/dotfiles/.ai/` (version-controlled)
 and is symlinked to `~/.claude/` and `~/.codex/`. When adding, modifying, or removing
 any AI CLI settings, commands, skills, hooks, or config files:
 
-1. **Always edit in `~/dotfiles/.ai/`** — never edit directly in `~/.claude/` or `~/.codex/`
+1. **Always edit in `~/dotfiles/.ai/`** — never edit the global `~/.claude/` or `~/.codex/` directories directly (project-level `.claude/` directories in other repos are fine)
 2. **Run `./update.sh`** to refresh symlinks after any structural changes
 3. **Current symlink structure:**
    - `~/.claude/CLAUDE.md` → `~/dotfiles/.ai/instructions.md`

@@ -48,4 +48,7 @@ tsconfig.json
 .Trashes
 ehthumbs.db
 Thumbs.db
-CLAUDE.local.md
+
+# AI files #
+############
+# .claude/
