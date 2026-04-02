@@ -21,6 +21,8 @@ PROJECT="$(basename "$CWD")"
 SESSION_ID="$(echo "$INPUT" | jq -r '.session_id // empty')"
 SESSION_NAME="$(echo "$INPUT" | jq -r '.session_name // empty')"
 REMAINING="$(echo "$INPUT" | jq -r '.context_window.remaining_percentage // empty')"
+SESSION_LIMIT="$(echo "$INPUT" | jq -r '.rate_limits.five_hour.used_percentage // empty')"
+SEVEN_DAY_LIMIT="$(echo "$INPUT" | jq -r '.rate_limits.seven_day.used_percentage // empty')"
 MODEL="$(echo "$INPUT" | jq -r '.model.display_name // empty')"
 
 # Line 1: [user] project [on branch]
@@ -56,6 +58,28 @@ if [[ -n "$REMAINING" ]]; then
     fi
     [[ -n "$PARTS" ]] && PARTS+=" "
     PARTS+="${CTX_COLOR}[ctx: ${RND}%]${RST}"
+fi
+
+usage_color() {
+    local pct="${1%%.*}"
+    if (( pct >= 80 )); then echo "$RED"
+    elif (( pct >= 50 )); then echo "$YELLOW"
+    else echo "$GREEN"
+    fi
+}
+
+if [[ -n "$SESSION_LIMIT" ]]; then
+    COLOR="$(usage_color "$SESSION_LIMIT")"
+    RND="${SESSION_LIMIT%%.*}"
+    [[ -n "$PARTS" ]] && PARTS+=" "
+    PARTS+="${COLOR}[5h: ${RND}%]${RST}"
+fi
+
+if [[ -n "$SEVEN_DAY_LIMIT" ]]; then
+    COLOR="$(usage_color "$SEVEN_DAY_LIMIT")"
+    RND="${SEVEN_DAY_LIMIT%%.*}"
+    [[ -n "$PARTS" ]] && PARTS+=" "
+    PARTS+="${COLOR}[7d: ${RND}%]${RST}"
 fi
 
 if [[ -n "$MODEL" ]]; then
