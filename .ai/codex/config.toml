@@ -1,11 +1,9 @@
 # Codex CLI configuration
 # Symlinked to ~/.codex/config.toml
 
-[model]
-name = "o4-mini"
+model = "o4-mini"
 
-[approval]
 # "suggest" = ask before running commands
 # "auto-edit" = auto-approve file edits, ask for commands
 # "full-auto" = auto-approve everything
-mode = "suggest"
+approval_policy = "suggest"
