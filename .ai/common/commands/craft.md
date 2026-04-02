@@ -29,7 +29,7 @@ Summarize the plan to the user before coding.
 ## Step 3: Code
 
 1. Implement per the spec
-2. Follow CLAUDE.md conventions
+2. Follow repository instructions (`AGENTS.md` and shared AI instructions)
 3. Write tests if the spec requires them
 
 ## Step 4: Verify
@@ -42,8 +42,8 @@ Summarize the plan to the user before coding.
 
 **Mechanical changes:** No review agent. Ruff + tests are sufficient.
 
-**Moderate changes:** ONE review — spawn the `code-reviewer` agent.
-Fix findings, re-run tests. Done.
+**Moderate changes:** ONE review pass — use the current CLI's review capability.
+If a dedicated review agent or review command is available, use it. Otherwise do a self-review, fix findings, and re-run tests.
 
 **Complex changes:** Up to 3 rounds if needed:
 - Round 1: Structural review (correctness, architecture)

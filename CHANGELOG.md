@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed — Codex Status Line Persistence
+
+- **Persisted Codex status line across sessions**: Replaced the short default `tui.status_line` list in `.ai/codex/config.toml` with the full confirmed item set so new Codex sessions keep the same footer layout
+- **Removed machine-specific Codex trust entries from repo config**: Dropped hardcoded `projects.<path>.trust_level` blocks from `.ai/codex/config.toml` so trust stays local to each machine as documented
+- **Updated AI CLI docs**: Clarified in `README.md` that Codex status-line persistence comes from the versioned `[tui]` config in `.ai/codex/config.toml`
+
 ### Changed — AI CLI Directory Refactor
 
 - **Refactored `.claude/` → `.ai/`**: Restructured AI CLI configuration from Claude-specific `.claude/` to a generic `.ai/` layout supporting multiple AI CLI tools

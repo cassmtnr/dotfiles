@@ -67,6 +67,7 @@ create_symlinks() {
         "$DOTFILES_ROOT/.ghostty:$HOME/.config/ghostty"
         "$DOTFILES_ROOT/.lazydocker:$HOME/.config/lazydocker"
         # AI CLI — shared content (Claude Code + Codex CLI)
+        # Only put files in .ai/common when both CLIs support them.
         "$DOTFILES_ROOT/.ai/common/instructions.md:$HOME/.claude/CLAUDE.md"
         "$DOTFILES_ROOT/.ai/common/instructions.md:$HOME/.codex/instructions.md"
         "$DOTFILES_ROOT/.ai/common/commands:$HOME/.claude/commands"
@@ -359,19 +360,27 @@ install_claude_plugins() {
         return
     fi
 
+    if ! command -v jq &> /dev/null; then
+        warning "jq not found — skipping Claude Code plugin installation"
+        return
+    fi
+
     log "Installing Claude Code plugins..."
 
-    local plugins=(
-        "swift-lsp"
-        "code-simplifier"
-        "frontend-design"
-        "superpowers"
-        "code-review"
-        "feature-dev"
-        "playwright"
-        "sentry"
-        "pyright-lsp"
-    )
+    local settings_file="$DOTFILES_ROOT/.ai/claude/settings.json"
+    local plugins=()
+
+    mapfile -t plugins < <(jq -r '
+        .enabledPlugins // {}
+        | to_entries[]
+        | select(.value == true)
+        | .key
+    ' "$settings_file")
+
+    if [[ ${#plugins[@]} -eq 0 ]]; then
+        log "No enabled Claude Code plugins found in settings.json"
+        return
+    fi
 
     for plugin in "${plugins[@]}"; do
         log "Installing plugin: $plugin"

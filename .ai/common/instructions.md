@@ -67,7 +67,7 @@ After completing any code change, before presenting results:
 
 1. Run the project's linter (e.g. `ruff check .`)
 2. Run the project's test suite (e.g. `pytest tests/ -q`)
-3. **MANDATORY: Run a code review pass** immediately after tests pass. In Claude Code, spawn the `code-reviewer` agent (run_in_background=true). In Codex CLI, perform a self-review of all changed files. Do NOT skip this step. Do NOT wait for the user to ask.
+3. **MANDATORY: Run a code review pass** immediately after tests pass. Use the current CLI's review capability when available (for example, a dedicated review agent, a built-in `/review` flow, or an explicit self-review pass). Do NOT skip this step. Do NOT wait for the user to ask.
 4. When the review completes, fix ALL findings before presenting results
 5. If fixes required code changes, re-run tests to confirm nothing broke
 

@@ -74,6 +74,14 @@ dotfiles/
 
 Shared configuration for [Claude Code](https://claude.com/claude-code) and [Codex CLI](https://github.com/openai/codex), symlinked to `~/.claude/` and `~/.codex/`.
 
+- `.ai/common/` contains only assets that are intended to work for both CLIs
+- `.ai/claude/` contains Claude-only settings
+- `.ai/codex/` contains Codex-only settings
+- `~/.codex/instructions.md` is loaded by Codex via `model_instructions_file` in `.ai/codex/config.toml`
+- Codex hooks are enabled explicitly in `.ai/codex/config.toml` because `hooks.json` is ignored unless the `codex_hooks` feature is on
+- Codex TUI status line and terminal title are versioned in `.ai/codex/config.toml` via the built-in `[tui]` settings; keeping the full `status_line` list there makes it persist across new Codex sessions
+- Codex project trust is intentionally not hardcoded in the repo because `projects.<path>.trust_level` is machine-specific
+
 **Safety hooks** — `block-dangerous-commands.js` blocks dangerous Bash commands via PreToolUse hooks at three levels:
 - **Critical**: filesystem destruction, disk operations, fork bombs, git history rewriting
 - **High** (default): git write ops, elevated privileges, secrets exposure, publishing/deployment, database ops
@@ -81,7 +89,7 @@ Shared configuration for [Claude Code](https://claude.com/claude-code) and [Code
 
 **Commands** — `/craft` (Code, Review, Audit, Fix, Test) implements a task from a project spec with complexity-scaled review rounds.
 
-**Plugins** (Claude Code only) — `superpowers`, `code-simplifier`, `frontend-design`, `playwright`, `sentry`, `swift-lsp`, `pyright-lsp`.
+**Plugins** (Claude Code only) — installed from enabled entries in `.ai/claude/settings.json` (currently `superpowers`, `code-simplifier`, `frontend-design`, `sentry`, `swift-lsp`, `pyright-lsp`).
 
 ## VSCodium
 

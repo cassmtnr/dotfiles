@@ -1,14 +1,16 @@
 #!/usr/bin/env node
 /**
  * Block Dangerous Commands - PreToolUse Hook for Bash
- * Blocks dangerous patterns before execution. Logs to: ~/.claude/hooks-logs/
+ * Blocks dangerous patterns before execution.
+ * Logs to ~/.claude/hooks-logs/, ~/.codex/hooks-logs/, or ~/.ai/hooks-logs/
+ * depending on which CLI invoked the hook.
  *
  * SAFETY_LEVEL: 'critical' | 'high' | 'strict'
  *   critical - Only catastrophic: rm -rf ~, dd to disk, fork bombs
  *   high     - + risky: force push main, secrets exposure, git reset --hard
  *   strict   - + cautionary: any force push, sudo rm, docker prune
  *
- * Setup in .claude/settings.json:
+ * Setup in Claude or Codex hook configuration:
  * {
  *   "hooks": {
  *     "PreToolUse": [{
@@ -159,7 +161,22 @@ const PATTERNS = [
 
 const LEVELS = { critical: 1, high: 2, strict: 3 };
 const EMOJIS = { critical: '🚨', high: '⛔', strict: '⚠️' };
-const LOG_DIR = path.join(process.env.HOME, '.claude', 'hooks-logs');
+function getLogDir() {
+  const home = process.env.HOME || '';
+  const invokedPath = process.argv[1] || '';
+
+  if (home && invokedPath.includes(`${path.sep}.claude${path.sep}`)) {
+    return path.join(home, '.claude', 'hooks-logs');
+  }
+
+  if (home && invokedPath.includes(`${path.sep}.codex${path.sep}`)) {
+    return path.join(home, '.codex', 'hooks-logs');
+  }
+
+  return home ? path.join(home, '.ai', 'hooks-logs') : path.join('.ai', 'hooks-logs');
+}
+
+const LOG_DIR = getLogDir();
 
 function log(data) {
   try {

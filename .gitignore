@@ -52,3 +52,4 @@ Thumbs.db
 # AI files #
 ############
 # .claude/
+.ai/common/skills/.system/
