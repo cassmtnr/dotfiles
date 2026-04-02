@@ -22,7 +22,9 @@ SESSION_ID="$(echo "$INPUT" | jq -r '.session_id // empty')"
 SESSION_NAME="$(echo "$INPUT" | jq -r '.session_name // empty')"
 REMAINING="$(echo "$INPUT" | jq -r '.context_window.remaining_percentage // empty')"
 SESSION_LIMIT="$(echo "$INPUT" | jq -r '.rate_limits.five_hour.used_percentage // empty')"
+SESSION_RESETS_AT="$(echo "$INPUT" | jq -r '.rate_limits.five_hour.resets_at // empty')"
 SEVEN_DAY_LIMIT="$(echo "$INPUT" | jq -r '.rate_limits.seven_day.used_percentage // empty')"
+SEVEN_DAY_RESETS_AT="$(echo "$INPUT" | jq -r '.rate_limits.seven_day.resets_at // empty')"
 MODEL="$(echo "$INPUT" | jq -r '.model.display_name // empty')"
 
 # Line 1: [user] project [on branch]
@@ -72,14 +74,46 @@ if [[ -n "$SESSION_LIMIT" ]]; then
     COLOR="$(usage_color "$SESSION_LIMIT")"
     RND="${SESSION_LIMIT%%.*}"
     [[ -n "$PARTS" ]] && PARTS+=" "
-    PARTS+="${COLOR}[5h: ${RND}%]${RST}"
+    RESET_LABEL=""
+    if [[ -n "$SESSION_RESETS_AT" ]]; then
+        NOW="$(date +%s)"
+        SECS_LEFT=$(( SESSION_RESETS_AT - NOW ))
+        if (( SECS_LEFT > 0 )); then
+            HRS=$(( SECS_LEFT / 3600 ))
+            MINS=$(( (SECS_LEFT % 3600) / 60 ))
+            if (( HRS > 0 )); then
+                RESET_LABEL=" | ${HRS}h${MINS}m"
+            else
+                RESET_LABEL=" | ${MINS}m"
+            fi
+        else
+            RESET_LABEL=" | resetting"
+        fi
+    fi
+    PARTS+="${COLOR}[5h: ${RND}%${RESET_LABEL}]${RST}"
 fi
 
 if [[ -n "$SEVEN_DAY_LIMIT" ]]; then
     COLOR="$(usage_color "$SEVEN_DAY_LIMIT")"
     RND="${SEVEN_DAY_LIMIT%%.*}"
     [[ -n "$PARTS" ]] && PARTS+=" "
-    PARTS+="${COLOR}[7d: ${RND}%]${RST}"
+    RESET_LABEL_7D=""
+    if [[ -n "$SEVEN_DAY_RESETS_AT" ]]; then
+        NOW="$(date +%s)"
+        SECS_LEFT=$(( SEVEN_DAY_RESETS_AT - NOW ))
+        if (( SECS_LEFT > 0 )); then
+            DAYS=$(( SECS_LEFT / 86400 ))
+            HRS=$(( (SECS_LEFT % 86400) / 3600 ))
+            if (( DAYS > 0 )); then
+                RESET_LABEL_7D=" | ${DAYS}d${HRS}h"
+            else
+                RESET_LABEL_7D=" | ${HRS}h"
+            fi
+        else
+            RESET_LABEL_7D=" | resetting"
+        fi
+    fi
+    PARTS+="${COLOR}[7d: ${RND}%${RESET_LABEL_7D}]${RST}"
 fi
 
 if [[ -n "$MODEL" ]]; then
