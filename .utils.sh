@@ -167,6 +167,12 @@ create_symlinks() {
     done
 
 
+    # Fix SSH file permissions (SSH refuses files with group/world access)
+    for ssh_file in "$DOTFILES_ROOT/.ssh/config" "$DOTFILES_ROOT/.ssh/config.local" "$DOTFILES_ROOT/.ssh/config.work"; do
+        [[ -f "$ssh_file" ]] && chmod 600 "$ssh_file"
+    done
+    chmod 700 "$HOME/.ssh"
+
     # Warn if authorized_keys is missing (SSH login will fail)
     if [[ ! -f "$HOME/.ssh/authorized_keys" ]]; then
         warning "~/.ssh/authorized_keys does not exist — SSH key login will not work!"
