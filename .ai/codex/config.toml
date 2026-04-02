@@ -3,7 +3,9 @@
 
 model = "o4-mini"
 
-# "suggest" = ask before running commands
-# "auto-edit" = auto-approve file edits, ask for commands
-# "full-auto" = auto-approve everything
-approval_policy = "suggest"
+# "untrusted" = ask before everything (most restrictive)
+# "on-failure" = auto-approve until a command fails
+# "on-request" = auto-approve file edits, ask for commands
+# "granular" = per-tool approval settings
+# "never" = auto-approve everything (least restrictive)
+approval_policy = "on-request"
