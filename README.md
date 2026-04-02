@@ -154,7 +154,7 @@ dotfiles/
 
 ### AI CLI Safety Hooks
 
-The `.ai/hooks/` directory contains PreToolUse hooks shared by Claude Code and Codex CLI:
+The `.ai/common/hooks/` directory contains PreToolUse hooks shared by Claude Code and Codex CLI:
 
 - **`block-dangerous-commands.js`** - Blocks dangerous Bash commands at three safety levels:
   - **Critical**: filesystem destruction (`rm -rf ~/`), disk operations (`dd`, `mkfs`), fork bombs, git history rewriting
@@ -165,16 +165,13 @@ The `.ai/hooks/` directory contains PreToolUse hooks shared by Claude Code and C
 
 - **Custom statusline** (`.ai/claude/config/statusline-command.sh`) displays project name, git branch, session ID, context window %, and model name.
 
-### AI CLI Skills & Commands
+### AI CLI Commands
 
-The `.ai/skills/` and `.ai/commands/` directories provide reusable AI workflows (shared by Claude Code and Codex CLI):
+The `.ai/common/commands/` directory provides custom slash commands (shared by Claude Code and Codex CLI):
 
-- **Skills** (contextual capabilities automatically loaded when relevant):
-  - **`code-review`** — Critical code review across 8 dimensions (correctness, security, concurrency, error handling, performance, API contracts, code quality, test quality). Reviews all changed code, reports findings by severity, fixes everything, and verifies with linter + tests.
-  - **`spec-writing`** — Write implementation-ready specs following proven patterns: phase/epic headers, task templates, quality checklists, and anti-patterns to avoid.
+- **`/craft`** — CRAFT workflow (Code, Review, Audit, Fix, Test): implements a task from the project spec, then refines it through 3 rounds of expert code review with fixes between rounds.
 
-- **Commands** (invoked explicitly via `/command-name`):
-  - **`/craft`** — CRAFT workflow (Code, Review, Audit, Fix, Test): implements a task from the project spec, then refines it through 3 rounds of expert code review with fixes between rounds. Ships artisan-quality code.
+Code review, spec writing, and other workflow skills are provided by the installed Claude Code plugins (`superpowers`, `code-review`, `feature-dev`).
 
 ## VSCodium
 
