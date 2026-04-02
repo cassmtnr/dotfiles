@@ -2,11 +2,11 @@
 
 ## Critical Safety Rules
 
-These rules apply directly to Claude Code and any AI agent in all contexts. Dangerous command patterns (git write ops, destructive system commands, publishing, deployment, network, database, credentials exposure) are enforced by `.ai/hooks/block-dangerous-commands.js`. The rules below cover what the hook cannot enforce programmatically.
+These rules apply to all AI coding agents (Claude Code, Codex CLI, etc.) in all contexts. Dangerous command patterns (git write ops, destructive system commands, publishing, deployment, network, database, credentials exposure) are enforced by `.ai/common/hooks/block-dangerous-commands.js` via PreToolUse hooks in both Claude Code and Codex CLI. The rules below apply regardless of tool.
 
 ### Git — User handles ALL git operations manually
 
-All git write operations are blocked by the hook. Read-only commands (`status`, `log`, `diff`, `show`, `branch -a`, `remote -v`, `stash list`) are allowed.
+All git write operations must be performed by the user manually. Read-only commands (`status`, `log`, `diff`, `show`, `branch -a`, `remote -v`, `stash list`) are allowed.
 
 ### Credentials — NEVER expose:
 
@@ -17,10 +17,10 @@ All git write operations are blocked by the hook. Read-only commands (`status`, 
 
 - NEVER run `npx <unknown-package>` without explicit user instruction
 
-### Attribution — NEVER add Claude as author or co-author:
+### Attribution — NEVER add AI as author or co-author:
 
-- NEVER include `Co-Authored-By`, `Authored-By`, or any similar trailer referencing Claude, Anthropic, or any AI in commit messages, PR descriptions, or any other git metadata
-- NEVER set Claude as the git author or committer
+- NEVER include `Co-Authored-By`, `Authored-By`, or any similar trailer referencing Claude, Anthropic, OpenAI, or any AI in commit messages, PR descriptions, or any other git metadata
+- NEVER set any AI as the git author or committer
 - All commits and contributions must be attributed solely to the human user
 
 ## Refactoring Discipline
@@ -67,13 +67,11 @@ After completing any code change, before presenting results:
 
 1. Run the project's linter (e.g. `ruff check .`)
 2. Run the project's test suite (e.g. `pytest tests/ -q`)
-3. **MANDATORY: Spawn the code-reviewer agent** (run_in_background=true) immediately
-   after tests pass. Do NOT skip this step. Do NOT wait for the user to ask.
-   Launch it in the background while continuing with documentation updates.
-4. When the reviewer completes, fix ALL findings before presenting results
+3. **MANDATORY: Run a code review pass** immediately after tests pass. In Claude Code, spawn the `code-reviewer` agent (run_in_background=true). In Codex CLI, perform a self-review of all changed files. Do NOT skip this step. Do NOT wait for the user to ask.
+4. When the review completes, fix ALL findings before presenting results
 5. If fixes required code changes, re-run tests to confirm nothing broke
 
-The code reviewer ALWAYS finds real issues (duplicated logic, stale comments,
+Code review ALWAYS finds real issues (duplicated logic, stale comments,
 inconsistencies, missing edge cases). Never skip it — the user should never
 have to manually request a code review.
 
@@ -85,29 +83,6 @@ After completing any implementation task, update all relevant documentation:
 - Changelog (what changed and when)
 - Roadmap (mark completed items)
 - Module docstrings and HOW TO MODIFY blocks
-
-## AI CLI Configuration — Dotfiles Convention
-
-All AI CLI global configuration lives in `~/dotfiles/.ai/` (version-controlled)
-and is symlinked to `~/.claude/` and `~/.codex/`. When adding, modifying, or removing
-any AI CLI settings, commands, skills, hooks, or config files:
-
-1. **Always edit in `~/dotfiles/.ai/`** — never edit the global `~/.claude/` or `~/.codex/` directories directly (project-level `.claude/` directories in other repos are fine)
-2. **Run `./update.sh`** to refresh symlinks after any structural changes
-3. **Current symlink structure:**
-   - `~/.claude/CLAUDE.md` → `~/dotfiles/.ai/instructions.md`
-   - `~/.claude/settings.json` → `~/dotfiles/.ai/claude/settings.json`
-   - `~/.claude/commands/` → `~/dotfiles/.ai/commands/`
-   - `~/.claude/skills/` → `~/dotfiles/.ai/skills/`
-   - `~/.claude/config/` → `~/dotfiles/.ai/claude/config/`
-   - `~/.claude/hooks/` → `~/dotfiles/.ai/hooks/`
-   - `~/.codex/prompts/` → `~/dotfiles/.ai/commands/`
-   - `~/.codex/skills/` → `~/dotfiles/.ai/skills/`
-   - `~/.codex/hooks/` → `~/dotfiles/.ai/hooks/`
-   - `~/.codex/config.toml` → `~/dotfiles/.ai/codex/config.toml`
-   - `~/.codex/hooks.json` → `~/dotfiles/.ai/codex/hooks.json`
-
-This ensures all customizations are version-controlled and portable across machines.
 
 ## Deployment Reference
 

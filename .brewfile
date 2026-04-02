@@ -12,7 +12,6 @@ brew "wget"
 brew "curl"
 
 # Modern CLI tools
-brew "tldr"         # Simplified man pages
 brew "jq"           # JSON processor
 brew "yq"           # YAML processor
 
@@ -24,7 +23,7 @@ brew "zsh"
 brew "zsh-completions"
 brew "zsh-autosuggestions"
 brew "zsh-syntax-highlighting"
-brew "starship"    # Cross-shell prompt for beautiful terminal
+brew "starship"
 
 # Programming languages and tools
 brew "nvm"
@@ -33,16 +32,8 @@ brew "poetry"
 brew "pipx"
 brew "pnpm"
 
-# Container and orchestration
-brew "docker"
-brew "docker-compose"
+# Docker orchestration
 brew "lazydocker"
-brew "kubectl"
-brew "helm"
-
-# Database tools
-brew "postgresql@16"
-brew "sqlite"
 
 # Security tools
 brew "gnupg"
@@ -67,10 +58,8 @@ cask "alfred"
 cask "ghostty"
 cask "google-chrome"
 cask "spotify"
-cask "the-unarchiver"
 cask "vlc"
 cask "vscodium"
 
 # Utilities
 brew "fileicon"              # CLI tool for managing custom macOS app icons
-

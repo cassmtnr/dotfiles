@@ -67,16 +67,18 @@ create_symlinks() {
         "$DOTFILES_ROOT/.ghostty:$HOME/.config/ghostty"
         "$DOTFILES_ROOT/.lazydocker:$HOME/.config/lazydocker"
         # AI CLI — shared content (Claude Code + Codex CLI)
-        "$DOTFILES_ROOT/.ai/instructions.md:$HOME/.claude/CLAUDE.md"
-        "$DOTFILES_ROOT/.ai/commands:$HOME/.claude/commands"
-        "$DOTFILES_ROOT/.ai/skills:$HOME/.claude/skills"
-        "$DOTFILES_ROOT/.ai/hooks:$HOME/.claude/hooks"
-        "$DOTFILES_ROOT/.ai/commands:$HOME/.codex/prompts"
-        "$DOTFILES_ROOT/.ai/skills:$HOME/.codex/skills"
-        "$DOTFILES_ROOT/.ai/hooks:$HOME/.codex/hooks"
-        # AI CLI — tool-specific config
+        "$DOTFILES_ROOT/.ai/common/instructions.md:$HOME/.claude/CLAUDE.md"
+        "$DOTFILES_ROOT/.ai/common/instructions.md:$HOME/.codex/instructions.md"
+        "$DOTFILES_ROOT/.ai/common/commands:$HOME/.claude/commands"
+        "$DOTFILES_ROOT/.ai/common/commands:$HOME/.codex/prompts"
+        "$DOTFILES_ROOT/.ai/common/skills:$HOME/.claude/skills"
+        "$DOTFILES_ROOT/.ai/common/skills:$HOME/.codex/skills"
+        "$DOTFILES_ROOT/.ai/common/hooks:$HOME/.claude/hooks"
+        "$DOTFILES_ROOT/.ai/common/hooks:$HOME/.codex/hooks"
+        # AI CLI — Claude Code only
         "$DOTFILES_ROOT/.ai/claude/settings.json:$HOME/.claude/settings.json"
         "$DOTFILES_ROOT/.ai/claude/config:$HOME/.claude/config"
+        # AI CLI — Codex CLI only
         "$DOTFILES_ROOT/.ai/codex/config.toml:$HOME/.codex/config.toml"
         "$DOTFILES_ROOT/.ai/codex/hooks.json:$HOME/.codex/hooks.json"
     )
@@ -113,17 +115,21 @@ create_symlinks() {
         fi
     done
 
-    # Remove stale symlinks from previous .claude/ layout
-    # (sources moved from dotfiles/.claude/ to dotfiles/.ai/)
+    # Remove stale symlinks from previous layouts
+    # (sources moved: dotfiles/.claude/ → dotfiles/.ai/ → dotfiles/.ai/common/)
     for old_link in "$HOME/.claude/CLAUDE.md" "$HOME/.claude/commands" "$HOME/.claude/skills" \
                     "$HOME/.claude/hooks" "$HOME/.claude/settings.json" "$HOME/.claude/config" \
-                    "$HOME/.claude/statusline-command.sh"; do
+                    "$HOME/.claude/statusline-command.sh" \
+                    "$HOME/.codex/instructions.md" "$HOME/.codex/prompts" "$HOME/.codex/skills" \
+                    "$HOME/.codex/hooks" "$HOME/.codex/hooks.json" "$HOME/.codex/config.toml"; do
         if [[ -L "$old_link" ]]; then
             local target
             target="$(readlink "$old_link")"
-            if [[ "$target" == *"/dotfiles/.claude/"* || ! -e "$old_link" ]]; then
+            if [[ "$target" == *"/dotfiles/.claude/"* || "$target" == *"/dotfiles/.ai/instructions"* \
+               || "$target" == *"/dotfiles/.ai/commands"* || "$target" == *"/dotfiles/.ai/skills"* \
+               || "$target" == *"/dotfiles/.ai/hooks"* || ! -e "$old_link" ]]; then
                 rm "$old_link"
-                log "Removed stale symlink (old .claude/ layout): $old_link"
+                log "Removed stale symlink (old layout): $old_link"
             fi
         elif [[ -d "$old_link" && ! -L "$old_link" ]]; then
             rm -rf "$old_link"
