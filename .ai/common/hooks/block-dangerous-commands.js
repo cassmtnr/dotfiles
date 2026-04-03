@@ -159,6 +159,11 @@ const PATTERNS = [
   { level: 'strict', id: 'docker-prune',        regex: /\bdocker\s+(system|image)\s+prune/,                                 reason: 'docker prune removes images' },
 ];
 
+// Commands matching these patterns are always allowed, bypassing all checks.
+const ALLOWLIST = [
+  /\bvps-run\.sh\b/,   // VPS helper script (read-only remote commands)
+];
+
 const LEVELS = { critical: 1, high: 2, strict: 3 };
 const EMOJIS = { critical: '🚨', high: '⛔', strict: '⚠️' };
 function getLogDir() {
@@ -188,6 +193,9 @@ function log(data) {
 
 function checkCommand(cmd, safetyLevel = SAFETY_LEVEL) {
   const threshold = LEVELS[safetyLevel] || 2;
+  for (const allow of ALLOWLIST) {
+    if (allow.test(cmd)) return { blocked: false, pattern: null };
+  }
   for (const p of PATTERNS) {
     if (LEVELS[p.level] <= threshold && p.regex.test(cmd)) {
       return { blocked: true, pattern: p };

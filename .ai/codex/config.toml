@@ -20,5 +20,5 @@ codex_hooks = true
 status_line = ["model-with-reasoning", "context-remaining", "current-dir", "model-name", "project-root", "git-branch", "context-used", "five-hour-limit", "weekly-limit", "context-window-size", "session-id"]
 terminal_title = ["spinner", "project"]
 
-[projects."/Users/cassiano/dotfiles"]
+[projects."~/"]
 trust_level = "trusted"
