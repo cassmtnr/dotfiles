@@ -27,11 +27,11 @@ Options:
   -a, --all         Run all update operations (symlinks + packages + defaults)
   -h, --help        Show this help message
 
-Default behavior (no flags): recreate symlinks only.
+Default behavior (no flags): recreate symlinks + sync VSCodium extensions (bidirectional).
 
 Examples:
-  $(basename "$0")              # Just update symlinks
-  $(basename "$0") -p           # Symlinks + brew bundle
+  $(basename "$0")              # Symlinks + sync extensions
+  $(basename "$0") -p           # Also update brew packages
   $(basename "$0") --all        # Everything
 EOF
 }
@@ -71,17 +71,16 @@ main() {
     echo "======================================"
     echo
 
-    # Always update symlinks and sync extension list
+    # Always update symlinks and sync extensions (bidirectional)
     create_symlinks
     apply_custom_icons
     sync_vscodium_extensions
 
-    # Conditionally update packages and extensions
+    # Conditionally update packages
     if $UPDATE_PACKAGES; then
         install_packages
         hash -r  # Refresh PATH so newly installed binaries are found
         apply_custom_icons
-        install_vscodium_extensions
     fi
 
     # Conditionally apply macOS defaults

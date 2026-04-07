@@ -329,7 +329,7 @@ main() {
     apply_custom_icons
     setup_bun
     setup_nodejs
-    install_vscodium_extensions
+    sync_vscodium_extensions
     configure_macos
     install_motd
     install_ai_tools
