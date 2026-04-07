@@ -76,6 +76,7 @@ create_symlinks() {
         "$DOTFILES_ROOT/.ai/common/skills:$HOME/.codex/skills"
         "$DOTFILES_ROOT/.ai/common/hooks:$HOME/.claude/hooks"
         "$DOTFILES_ROOT/.ai/common/hooks:$HOME/.codex/hooks"
+        "$DOTFILES_ROOT/.ai/common/scripts:$HOME/.claude/scripts"
         # AI CLI — Claude Code only
         "$DOTFILES_ROOT/.ai/claude/settings.json:$HOME/.claude/settings.json"
         "$DOTFILES_ROOT/.ai/claude/config:$HOME/.claude/config"

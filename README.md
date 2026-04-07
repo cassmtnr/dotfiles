@@ -83,11 +83,10 @@ Shared configuration for [Claude Code](https://claude.com/claude-code) and [Code
 - Codex project trust is intentionally not hardcoded in the repo because `projects.<path>.trust_level` is machine-specific
 
 **Safety hooks** — `block-dangerous-commands.js` blocks dangerous Bash commands via PreToolUse hooks at three levels:
+
 - **Critical**: filesystem destruction, disk operations, fork bombs, git history rewriting
 - **High** (default): git write ops, elevated privileges, secrets exposure, publishing/deployment, database ops
 - **Strict**: cautionary patterns (`git checkout .`, `docker prune`)
-
-**Commands** — `/craft` (Code, Review, Audit, Fix, Test) implements a task from a project spec with complexity-scaled review rounds.
 
 **Plugins** (Claude Code only) — installed from enabled entries in `.ai/claude/settings.json` (currently `superpowers`, `code-simplifier`, `frontend-design`, `sentry`, `swift-lsp`, `pyright-lsp`).
 

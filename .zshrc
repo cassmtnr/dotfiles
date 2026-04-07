@@ -91,13 +91,17 @@ setopt HIST_IGNORE_SPACE         # Do not record an event starting with a space
 setopt HIST_SAVE_NO_DUPS         # Do not write a duplicate event to the history file
 setopt HIST_VERIFY               # Do not execute immediately upon history expansion
 
-# Reset kitty keyboard protocol (CSI u) once at shell start.
-printf '\e[<u' 2>/dev/null
-
 # Key bindings
 bindkey -e  # Use emacs key bindings
 bindkey '^[[A' history-search-backward
 bindkey '^[[B' history-search-forward
+
+# Claude Code wrapper — reset kitty keyboard protocol on exit
+# Prevents leftover escape sequences (e.g. '9;5u' on Ctrl+C)
+claude() {
+    command claude "$@"
+    printf '\e[>0u'
+}
 
 # Fix bracketed paste issues
 # This resolves problems with extra characters when pasting
