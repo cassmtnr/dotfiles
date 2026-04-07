@@ -119,8 +119,6 @@
   "typescript.format.insertSpaceAfterOpeningAndBeforeClosingNonemptyBrackets": false,
   // Always update import paths when TS files are renamed or moved
   "typescript.updateImportsOnFileMove.enabled": "always",
-  // Set the overall theme to Dracula
-  "workbench.colorTheme": "Dracula Theme",
   // Disable sticky scroll behavior in the tree views
   "workbench.tree.enableStickyScroll": false,
   // Replace tags when doing a git pull (like `--tags`)
@@ -178,6 +176,7 @@
     "editor.defaultFormatter": "esbenp.prettier-vscode"
   },
   "editor.unicodeHighlight.ambiguousCharacters": false,
+  "workbench.colorTheme": "Dracula Theme",
   "workbench.iconTheme": "material-icon-theme",
   "markdown-preview-enhanced.enablePreviewZenMode": true,
   "markdown-preview-enhanced.previewTheme": "atom-dark.css",

@@ -271,48 +271,11 @@ install_motd() {
     success "Custom MOTD scripts installed"
 }
 
-# Install VSCodium extensions from extensions.txt
-install_vscodium_extensions() {
-    local extensions_file="$DOTFILES_ROOT/.vscodium/extensions.txt"
-
-    if [[ ! -f "$extensions_file" ]]; then
-        warning "VSCodium extensions file not found: $extensions_file"
-        return
-    fi
-
-    if ! command -v codium &> /dev/null; then
-        warning "VSCodium not installed — skipping extension installation"
-        return
-    fi
-
-    log "Installing VSCodium extensions..."
-
-    local installed=0
-    local failed=0
-    while IFS= read -r ext || [[ -n "$ext" ]]; do
-        # Skip empty lines and comments
-        [[ -z "$ext" || "$ext" == \#* ]] && continue
-        # Trim leading/trailing whitespace
-        ext="${ext#"${ext%%[![:space:]]*}"}"
-        ext="${ext%"${ext##*[![:space:]]}"}"
-        [[ -z "$ext" ]] && continue
-
-        if codium --install-extension "$ext" --force; then
-            installed=$((installed + 1))
-        else
-            warning "Failed to install extension: $ext"
-            failed=$((failed + 1))
-        fi
-    done < "$extensions_file"
-
-    if [[ $failed -eq 0 ]]; then
-        success "All $installed VSCodium extensions installed"
-    else
-        warning "$installed extensions installed, $failed failed"
-    fi
-}
-
-# Sync currently installed VSCodium extensions back to extensions.txt
+# Bidirectional sync of VSCodium extensions:
+#   1. Install extensions listed in extensions.txt but not yet installed
+#   2. Add newly installed extensions to extensions.txt
+#   3. Remove extensions from extensions.txt that were uninstalled
+# After sync, extensions.txt matches the installed state exactly.
 sync_vscodium_extensions() {
     local extensions_file="$DOTFILES_ROOT/.vscodium/extensions.txt"
 
@@ -321,11 +284,68 @@ sync_vscodium_extensions() {
         return
     fi
 
-    log "Syncing VSCodium extensions to extensions.txt..."
+    # Ensure the file exists
+    [[ -f "$extensions_file" ]] || touch "$extensions_file"
 
-    codium --list-extensions | sort > "$extensions_file"
+    log "Syncing VSCodium extensions..."
 
-    success "VSCodium extensions synced ($(wc -l < "$extensions_file" | tr -d ' ') extensions)"
+    # Sorted lowercase lists for comparison via comm
+    local tracked_sorted installed_sorted
+    tracked_sorted=$(grep -v '^[[:space:]]*$\|^#' "$extensions_file" | tr '[:upper:]' '[:lower:]' | sort -u)
+    installed_sorted=$(codium --list-extensions | tr '[:upper:]' '[:lower:]' | sort -u)
+
+    # Extensions in file but not installed → need to install
+    local to_install
+    to_install=$(comm -23 <(echo "$tracked_sorted") <(echo "$installed_sorted"))
+
+    # Extensions installed but not in file → will be added
+    local to_add
+    to_add=$(comm -13 <(echo "$tracked_sorted") <(echo "$installed_sorted"))
+
+    # Install missing extensions
+    local install_count=0
+    local failed=0
+    if [[ -n "$to_install" ]]; then
+        while IFS= read -r ext; do
+            if codium --install-extension "$ext" --force; then
+                install_count=$((install_count + 1))
+            else
+                warning "Failed to install extension: $ext"
+                failed=$((failed + 1))
+            fi
+        done <<< "$to_install"
+    fi
+
+    # Count additions and removals for reporting
+    local added=0 removed=0
+    [[ -n "$to_add" ]] && added=$(echo "$to_add" | wc -l | tr -d ' ')
+    # Removals = extensions that failed to install (they were in the file but won't be in the final state)
+    [[ $failed -gt 0 ]] && removed=$failed
+
+    # Rewrite extensions.txt from actual installed state (canonical after sync)
+    if [[ $added -gt 0 || $install_count -gt 0 || $failed -gt 0 ]]; then
+        codium --list-extensions | sort > "$extensions_file"
+    fi
+
+    # Count extensions removed from file (were tracked, not installed, and failed to install)
+    # Re-check: tracked extensions no longer in the final file
+    local final_sorted
+    final_sorted=$(grep -v '^[[:space:]]*$\|^#' "$extensions_file" | tr '[:upper:]' '[:lower:]' | sort -u)
+    local dropped
+    dropped=$(comm -23 <(echo "$tracked_sorted") <(echo "$final_sorted"))
+    [[ -n "$dropped" ]] && removed=$(echo "$dropped" | wc -l | tr -d ' ')
+
+    # Report
+    local msgs=()
+    [[ $install_count -gt 0 ]] && msgs+=("$install_count installed")
+    [[ $failed -gt 0 ]] && msgs+=("$failed failed")
+    [[ $added -gt 0 ]] && msgs+=("$added added to extensions.txt")
+    [[ $removed -gt 0 ]] && msgs+=("$removed removed from extensions.txt")
+    if [[ ${#msgs[@]} -gt 0 ]]; then
+        success "VSCodium extensions synced ($(IFS=', '; echo "${msgs[*]}"))"
+    else
+        success "VSCodium extensions up to date ($(wc -l < "$extensions_file" | tr -d ' ') extensions)"
+    fi
 }
 
 # Apply custom macOS application icons (must run after brew installs/upgrades)
