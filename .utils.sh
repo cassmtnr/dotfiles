@@ -81,7 +81,6 @@ create_symlinks() {
         "$DOTFILES_ROOT/.ai/claude/settings.json:$HOME/.claude/settings.json"
         "$DOTFILES_ROOT/.ai/claude/config:$HOME/.claude/config"
         # AI CLI — Codex CLI only
-        "$DOTFILES_ROOT/.ai/codex/config.toml:$HOME/.codex/config.toml"
         "$DOTFILES_ROOT/.ai/codex/hooks.json:$HOME/.codex/hooks.json"
     )
 
