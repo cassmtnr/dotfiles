@@ -12,7 +12,8 @@ killport() {
     if command -v lsof &> /dev/null; then
         lsof -t -i tcp:"$1" | xargs kill 2>/dev/null || echo "No process found on port $1"
     elif command -v ss &> /dev/null; then
-        local pid=$(ss -tlnp "sport = :$1" | grep -oP 'pid=\K[0-9]+' | head -1)
+        local pid
+        pid="$(ss -tlnp "sport = :$1" | grep -oP 'pid=\K[0-9]+' | head -1)"
         if [[ -n "$pid" ]]; then
             kill "$pid" && echo "Killed process $pid on port $1"
         else
@@ -60,14 +61,18 @@ extract() {
 brew() {
     command brew "$@"
     local exit_code=$?
+    local dotfiles="${DOTFILES_ROOT:-$HOME/dotfiles}"
 
     if [[ $exit_code -eq 0 && ("$1" == "upgrade" || "$1" == "reinstall") ]]; then
         # Re-apply custom icon only when VSCodium itself is affected
         if [[ -z "$2" || "$2" == *vscodium* ]]; then
-            if command -v fileicon &> /dev/null && [[ -f "$DOTFILES_ROOT/.vscodium/icon.icns" ]]; then
+            if command -v fileicon &> /dev/null && [[ -f "$dotfiles/.vscodium/icon.icns" ]]; then
                 if [[ -d "/Applications/VSCodium.app" ]]; then
-                    fileicon set /Applications/VSCodium.app "$DOTFILES_ROOT/.vscodium/icon.icns" 2>/dev/null
-                    echo "Re-applied custom VSCodium icon."
+                    if fileicon set /Applications/VSCodium.app "$dotfiles/.vscodium/icon.icns"; then
+                        echo "Re-applied custom VSCodium icon."
+                    else
+                        echo "Warning: failed to re-apply custom VSCodium icon." >&2
+                    fi
                 fi
             fi
         fi

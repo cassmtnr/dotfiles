@@ -29,6 +29,16 @@ success() { echo -e "${GREEN}[SUCCESS]${NC} $1"; }
 warning() { echo -e "${YELLOW}[WARNING]${NC} $1"; }
 error() { echo -e "${RED}[ERROR]${NC} $1" >&2; }
 
+# Source NVM into the current shell (idempotent)
+source_nvm() {
+    export NVM_DIR="$HOME/.nvm"
+    if [[ -n "$HOMEBREW_PREFIX" && -s "$HOMEBREW_PREFIX/opt/nvm/nvm.sh" ]]; then
+        source "$HOMEBREW_PREFIX/opt/nvm/nvm.sh"
+    elif [[ -s "$NVM_DIR/nvm.sh" ]]; then
+        source "$NVM_DIR/nvm.sh"
+    fi
+}
+
 # Create symbolic links
 create_symlinks() {
     log "Creating symbolic links..."
@@ -47,7 +57,7 @@ create_symlinks() {
         mkdir -p "$HOME/.config/VSCodium/User"
     fi
 
-    # Protect critical SSH files that must never be overwritten
+    # Never overwrite authorized_keys — it controls SSH login access
     local protected_ssh_files=(
         "$HOME/.ssh/authorized_keys"
     )
@@ -96,7 +106,7 @@ create_symlinks() {
         )
     fi
 
-    # Create conditional symlinks for private configs (only if they exist)
+    # Private configs: only symlink if the file exists in the repo
     local private_configs=(
         "$DOTFILES_ROOT/.zshrc.local:$HOME/.zshrc.local"
         "$DOTFILES_ROOT/.ssh/config.local:$HOME/.ssh/config.local"
@@ -201,7 +211,7 @@ install_packages() {
     success "Packages installed"
 }
 
-# Configure MacOS defaults
+# Apply macOS system defaults from .defaults
 configure_macos() {
     if ! $IS_MACOS; then
         warning "macOS defaults skipped (not on macOS)"
@@ -363,7 +373,6 @@ apply_custom_icons() {
     # Map: app path -> icon file in dotfiles
     local icon_pairs=(
         "/Applications/VSCodium.app:$DOTFILES_ROOT/.vscodium/icon.icns"
-        # Add more apps here as needed
     )
 
     for pair in "${icon_pairs[@]}"; do
@@ -371,7 +380,7 @@ apply_custom_icons() {
         local icon="${pair#*:}"
 
         if [[ -d "$app" && -f "$icon" ]]; then
-            if fileicon set "$app" "$icon" 2>/dev/null; then
+            if fileicon set "$app" "$icon"; then
                 log "Applied custom icon to $(basename "$app")"
             else
                 warning "Failed to apply custom icon to $(basename "$app")"

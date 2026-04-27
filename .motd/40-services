@@ -15,11 +15,11 @@ unset IFS
 service_status=()
 # get status of all services
 for service in "${services[@]}"; do
-    service_status+=($(systemctl is-active "$service"))
+    service_status+=("$(systemctl is-active "$service")")
 done
 
 out=""
-for i in ${!services[@]}; do
+for i in "${!services[@]}"; do
     # color green if service is active, else red
     if [[ "${service_status[$i]}" == "active" ]]; then
         out+="${services[$i]}:,${green}${service_status[$i]}${undim},"
@@ -34,4 +34,4 @@ done
 out+="\n"
 
 printf "\nservices:\n"
-printf "$out" | column -ts $',' | sed -e 's/^/  /'
+printf '%b' "$out" | column -ts $',' | sed -e 's/^/  /'

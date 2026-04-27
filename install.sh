@@ -116,7 +116,7 @@ install_deps() {
 
     log "Installing: ${missing[*]}"
     if $IS_MACOS; then
-        xcode-select --install 2>/dev/null || true
+        xcode-select --install || warning "xcode-select install failed (may already be installed)"
     elif $IS_LINUX; then
         sudo apt-get update
         sudo apt-get install -y "${missing[@]}"
@@ -169,14 +169,7 @@ install_oh_my_zsh() {
 # Setup Node.js environment
 setup_nodejs() {
     log "Setting up Node.js environment..."
-
-    # Source NVM in current shell so node/npm remain available for later steps
-    export NVM_DIR="$HOME/.nvm"
-    if [[ -n "$HOMEBREW_PREFIX" && -s "$HOMEBREW_PREFIX/opt/nvm/nvm.sh" ]]; then
-        source "$HOMEBREW_PREFIX/opt/nvm/nvm.sh"
-    elif [[ -s "$NVM_DIR/nvm.sh" ]]; then
-        source "$NVM_DIR/nvm.sh"
-    fi
+    source_nvm
 
     if ! command -v nvm &> /dev/null; then
         warning "NVM not found — skipping Node.js setup"
@@ -251,12 +244,7 @@ install_ai_tools() {
     log "Installing AI CLI tools via npm (Linux)..."
 
     # Ensure NVM and npm are available in current session
-    export NVM_DIR="$HOME/.nvm"
-    if [[ -s "/home/linuxbrew/.linuxbrew/opt/nvm/nvm.sh" ]]; then
-        source "/home/linuxbrew/.linuxbrew/opt/nvm/nvm.sh"
-    elif [[ -s "$NVM_DIR/nvm.sh" ]]; then
-        source "$NVM_DIR/nvm.sh"
-    fi
+    source_nvm
 
     if ! command -v npm &> /dev/null; then
         warning "npm not found — skipping AI CLI tools installation"
@@ -279,7 +267,8 @@ post_install() {
     echo
     log "Final setup - reloading shell configuration..."
 
-    # Automatically source the new shell configuration
+    # Best-effort: source zshrc from bash — zsh-specific syntax will produce
+    # harmless errors, but PATH/env vars are still picked up.
     if [[ -f "$HOME/.zshrc" ]]; then
         source "$HOME/.zshrc" 2>/dev/null || true
         success "Shell configuration reloaded"

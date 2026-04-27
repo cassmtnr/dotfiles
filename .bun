@@ -1,21 +1,9 @@
-# ===============================================
-# .bun - Bun JavaScript Runtime configuration
-# ===============================================
-# Bun is an all-in-one JavaScript runtime & toolkit
-# designed for speed, with a bundler, test runner,
-# and Node.js-compatible package manager.
-#
-# Installation: curl -fsSL https://bun.sh/install | bash
-# Docs: https://bun.sh/docs
-# ===============================================
+# Bun runtime (https://bun.sh)
 
-# Set Bun installation directory
 export BUN_INSTALL="${BUN_INSTALL:-$HOME/.bun}"
-
-# Add Bun to PATH
 export PATH="$BUN_INSTALL/bin:$PATH"
 
-# Load Bun shell completions
+# Shell completions
 if [[ -s "$BUN_INSTALL/_bun" ]]; then
     source "$BUN_INSTALL/_bun"
 fi

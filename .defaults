@@ -4,9 +4,8 @@ echo "========================================="
 echo "Starting MacOS Settings"
 echo "========================================="
 
-# Close any open System Preferences/Settings panes, to prevent them from overriding
+# Close any open System Settings panes, to prevent them from overriding
 # settings we're about to change
-osascript -e 'tell application "System Preferences" to quit' 2>/dev/null || true
 osascript -e 'tell application "System Settings" to quit' 2>/dev/null || true
 
 # Check if we need administrative privileges for system configuration
@@ -86,9 +85,6 @@ defaults write com.apple.SoftwareUpdate ScheduleFrequency -int 1
 # Disable hibernation (speeds up entering sleep mode)
 sudo pmset -a hibernatemode 0
 
-# Disable the sudden motion sensor as it's not useful for SSDs
-sudo pmset -a sms 0
-
 ###############################################################################
 # Trackpad, mouse, keyboard, Bluetooth accessories, and input                 #
 ###############################################################################
@@ -103,9 +99,6 @@ defaults write com.apple.driver.AppleBluetoothMultitouch.trackpad TrackpadCorner
 defaults write com.apple.driver.AppleBluetoothMultitouch.trackpad TrackpadRightClick -bool true
 defaults -currentHost write NSGlobalDomain com.apple.trackpad.trackpadCornerClickBehavior -int 1
 defaults -currentHost write NSGlobalDomain com.apple.trackpad.enableSecondaryClick -bool true
-
-# Increase sound quality for Bluetooth headphones/headsets
-defaults write com.apple.BluetoothAudioAgent "Apple Bitpool Min (editable)" -int 40
 
 # Enable full keyboard access for all controls
 # (e.g. enable Tab in modal dialogs)
@@ -132,12 +125,6 @@ defaults write com.apple.screencapture type -string "jpg"
 
 # Disable shadow in screenshots
 defaults write com.apple.screencapture disable-shadow -bool true
-
-# Enable subpixel font rendering on non-Apple LCDs
-defaults write NSGlobalDomain AppleFontSmoothing -int 2
-
-# Enable HiDPI display modes (requires restart)
-sudo defaults write /Library/Preferences/com.apple.windowserver DisplayResolutionEnabled -bool true
 
 ###############################################################################
 # Finder                                                                      #
@@ -173,9 +160,6 @@ defaults write com.apple.finder ShowStatusBar -bool true
 
 # Finder: show path bar
 defaults write com.apple.finder ShowPathbar -bool true
-
-# Finder: allow text selection in Quick Look
-defaults write com.apple.finder QLEnableTextSelection -bool true
 
 # Display full POSIX path as Finder window title
 defaults write com.apple.finder _FXShowPosixPathInTitle -bool true
@@ -270,19 +254,6 @@ defaults write NSGlobalDomain WebKitDeveloperExtras -bool true
 # Remove the Spotlight icon from the Menu
 defaults write com.apple.Spotlight MenuItemHidden -bool true
 
-# Disable Spotlight indexing temporarily (fixed typo: off not offalf)
-sudo mdutil -a -i off 2>/dev/null || true
-
-# Wait a moment before re-enabling
-sleep 2
-
-# Re-enable Spotlight indexing for all volumes
-sudo mdutil -a -i on 2>/dev/null || true
-
-# Note: Rebuild is optional and can be time-consuming
-# Uncomment if you need a full rebuild:
-# sudo mdutil -E / 2>/dev/null || true
-
 ###############################################################################
 # Time Machine                                                                #
 ###############################################################################
@@ -346,7 +317,6 @@ defaults write com.apple.dock wvous-bl-modifier -int 0
 ###############################################################################
 
 for app in "Activity Monitor" \
-    "Address Book" \
     "Calendar" \
     "Contacts" \
     "cfprefsd" \
@@ -361,8 +331,4 @@ for app in "Activity Monitor" \
     do
     killall "${app}" > /dev/null 2>&1
 done
-echo "Done. Note that some of these changes require a logout/restart to take effect."
-
-
-echo "MacOS defaults done!"
-echo "We are done here."
+echo "MacOS defaults done. Some changes require a logout/restart to take effect."

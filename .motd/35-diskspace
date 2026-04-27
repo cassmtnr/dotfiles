@@ -17,7 +17,8 @@ printf "\ndisk usage:\n"
 for line in "${dfs[@]}"; do
     # get disk usage
     usage=$(echo "$line" | awk '{print $2}' | sed 's/%//')
-    used_width=$((($usage*$bar_width)/100))
+    usage="${usage:-0}"
+    used_width=$(( (usage * bar_width) / 100 ))
     # color is green if usage < max_usage, else red
     if [ "${usage}" -ge "${max_usage}" ]; then
         color=$red

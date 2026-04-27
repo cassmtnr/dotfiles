@@ -52,4 +52,4 @@ if [ $# -eq 0 ]; then
   exit 1
 fi
 
-ssh "$VPS_SSH_HOST" "cd $VPS_APP_DIR && $*"
+ssh "$VPS_SSH_HOST" "cd \"$VPS_APP_DIR\" && $*"

@@ -3,7 +3,7 @@ if command -v codium &> /dev/null; then
     alias code="codium"
 fi
 
-# Navigation aliases
+# Navigation shortcuts
 alias ..="cd .."
 alias ...="cd ../.."
 alias ....="cd ../../.."
@@ -56,11 +56,11 @@ alias cls='clear && printf "\033[3J"'
 # Package management
 alias linked="ls -l node_modules | grep ^l"
 
-# Enhanced ls with colors (using standard ls)
+# Enhanced ls
 alias ll="ls -lh"
 alias la="ls -lah"
 
-# Safety nets
+# Safety nets — prompt before overwriting
 alias rm="rm -i"
 alias cp="cp -i"
 alias mv="mv -i"
@@ -76,7 +76,7 @@ alias fgrep="grep -F --color=auto"
 # Get week number
 alias week="date +%V"
 
-# IP addresses
+# My IP address
 alias publicip="curl -s https://api.ipify.org && echo"
 
 # Show/hide hidden files in Finder (macOS only)

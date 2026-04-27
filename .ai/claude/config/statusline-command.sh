@@ -70,18 +70,26 @@ usage_color() {
     fi
 }
 
-if [[ -n "$SESSION_LIMIT" ]]; then
-    COLOR="$(usage_color "$SESSION_LIMIT")"
-    RND="${SESSION_LIMIT%%.*}"
-    [[ -n "$PARTS" ]] && PARTS+=" "
-    RESET_LABEL=""
-    if [[ -n "$SESSION_RESETS_AT" ]]; then
+# Format a rate-limit bucket: label, used_percentage, resets_at_epoch
+# Outputs the formatted segment and appends it to PARTS.
+format_rate_limit() {
+    local label="$1" pct="$2" resets_at="$3"
+    [[ -z "$pct" ]] && return
+
+    local COLOR RND RESET_LABEL=""
+    COLOR="$(usage_color "$pct")"
+    RND="${pct%%.*}"
+    if [[ -n "$resets_at" ]]; then
+        local NOW SECS_LEFT
         NOW="$(date +%s)"
-        SECS_LEFT=$(( SESSION_RESETS_AT - NOW ))
+        SECS_LEFT=$(( resets_at - NOW ))
         if (( SECS_LEFT > 0 )); then
-            HRS=$(( SECS_LEFT / 3600 ))
-            MINS=$(( (SECS_LEFT % 3600) / 60 ))
-            if (( HRS > 0 )); then
+            local DAYS=$(( SECS_LEFT / 86400 ))
+            local HRS=$(( (SECS_LEFT % 86400) / 3600 ))
+            local MINS=$(( (SECS_LEFT % 3600) / 60 ))
+            if (( DAYS > 0 )); then
+                RESET_LABEL=" | ${DAYS}d${HRS}h"
+            elif (( HRS > 0 )); then
                 RESET_LABEL=" | ${HRS}h${MINS}m"
             else
                 RESET_LABEL=" | ${MINS}m"
@@ -90,31 +98,12 @@ if [[ -n "$SESSION_LIMIT" ]]; then
             RESET_LABEL=" | resetting"
         fi
     fi
-    PARTS+="${COLOR}[5h: ${RND}%${RESET_LABEL}]${RST}"
-fi
-
-if [[ -n "$SEVEN_DAY_LIMIT" ]]; then
-    COLOR="$(usage_color "$SEVEN_DAY_LIMIT")"
-    RND="${SEVEN_DAY_LIMIT%%.*}"
     [[ -n "$PARTS" ]] && PARTS+=" "
-    RESET_LABEL_7D=""
-    if [[ -n "$SEVEN_DAY_RESETS_AT" ]]; then
-        NOW="$(date +%s)"
-        SECS_LEFT=$(( SEVEN_DAY_RESETS_AT - NOW ))
-        if (( SECS_LEFT > 0 )); then
-            DAYS=$(( SECS_LEFT / 86400 ))
-            HRS=$(( (SECS_LEFT % 86400) / 3600 ))
-            if (( DAYS > 0 )); then
-                RESET_LABEL_7D=" | ${DAYS}d${HRS}h"
-            else
-                RESET_LABEL_7D=" | ${HRS}h"
-            fi
-        else
-            RESET_LABEL_7D=" | resetting"
-        fi
-    fi
-    PARTS+="${COLOR}[7d: ${RND}%${RESET_LABEL_7D}]${RST}"
-fi
+    PARTS+="${COLOR}[${label}: ${RND}%${RESET_LABEL}]${RST}"
+}
+
+format_rate_limit "5h" "$SESSION_LIMIT" "$SESSION_RESETS_AT"
+format_rate_limit "7d" "$SEVEN_DAY_LIMIT" "$SEVEN_DAY_RESETS_AT"
 
 if [[ -n "$MODEL" ]]; then
     [[ -n "$PARTS" ]] && PARTS+=" "

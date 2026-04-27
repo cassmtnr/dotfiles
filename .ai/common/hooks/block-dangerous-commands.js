@@ -24,8 +24,10 @@
 const fs = require('fs');
 const path = require('path');
 
+/** @type {'critical' | 'high' | 'strict'} */
 const SAFETY_LEVEL = 'high';
 
+/** @type {Array<{ level: string, id: string, regex: RegExp, reason: string }>} */
 const PATTERNS = [
   // ═══════════════════════════════════════════════════════════════
   // CRITICAL — Catastrophic, unrecoverable
@@ -159,13 +161,20 @@ const PATTERNS = [
   { level: 'strict', id: 'docker-prune',        regex: /\bdocker\s+(system|image)\s+prune/,                                 reason: 'docker prune removes images' },
 ];
 
-// Commands matching these patterns are always allowed, bypassing all checks.
+/** Commands matching these patterns are always allowed, bypassing all checks. @type {RegExp[]} */
 const ALLOWLIST = [
   /\bvps-run\.sh\b/,   // VPS helper script (read-only remote commands)
 ];
 
+/** @type {Record<string, number>} */
 const LEVELS = { critical: 1, high: 2, strict: 3 };
+/** @type {Record<string, string>} */
 const EMOJIS = { critical: '🚨', high: '⛔', strict: '⚠️' };
+
+/**
+ * Determine the log directory based on which CLI invoked the hook.
+ * @returns {string} Absolute path to the hooks log directory.
+ */
 function getLogDir() {
   const home = process.env.HOME || '';
   const invokedPath = process.argv[1] || '';
@@ -183,14 +192,24 @@ function getLogDir() {
 
 const LOG_DIR = getLogDir();
 
+/**
+ * Append a structured log entry to the daily JSONL log file.
+ * @param {Record<string, unknown>} data - Key-value pairs to log.
+ */
 function log(data) {
   try {
     if (!fs.existsSync(LOG_DIR)) fs.mkdirSync(LOG_DIR, { recursive: true });
     const file = path.join(LOG_DIR, `${new Date().toISOString().slice(0, 10)}.jsonl`);
     fs.appendFileSync(file, JSON.stringify({ ts: new Date().toISOString(), ...data }) + '\n');
-  } catch {}
+  } catch { /* Logging is best-effort; never crash the hook. */ }
 }
 
+/**
+ * Check a shell command against blocked patterns at the given safety level.
+ * @param {string} cmd - The shell command string to check.
+ * @param {string} [safetyLevel=SAFETY_LEVEL] - One of 'critical', 'high', 'strict'.
+ * @returns {{ blocked: boolean, pattern: { id: string, level: string, reason: string, regex: RegExp } | null }}
+ */
 function checkCommand(cmd, safetyLevel = SAFETY_LEVEL) {
   const threshold = LEVELS[safetyLevel] || 2;
   for (const allow of ALLOWLIST) {
@@ -204,11 +223,16 @@ function checkCommand(cmd, safetyLevel = SAFETY_LEVEL) {
   return { blocked: false, pattern: null };
 }
 
+/**
+ * Read hook input from stdin, check the command, and emit the hook response.
+ * @returns {Promise<void>}
+ */
 async function main() {
   let input = '';
   for await (const chunk of process.stdin) input += chunk;
 
   try {
+    /** @type {{ tool_name: string, tool_input?: { command?: string }, session_id?: string, cwd?: string, permission_mode?: string }} */
     const data = JSON.parse(input);
     const { tool_name, tool_input, session_id, cwd, permission_mode } = data;
     if (tool_name !== 'Bash') return console.log('{}');
@@ -230,7 +254,14 @@ async function main() {
     console.log('{}');
   } catch (e) {
     log({ level: 'ERROR', error: e.message });
-    console.log('{}');
+    // Fail closed: deny on unexpected errors so a malformed payload cannot bypass checks
+    console.log(JSON.stringify({
+      hookSpecificOutput: {
+        hookEventName: 'PreToolUse',
+        permissionDecision: 'deny',
+        permissionDecisionReason: `Hook error (fail-closed): ${e.message}`
+      }
+    }));
   }
 }
 

@@ -73,15 +73,16 @@ main() {
 
     # Always update symlinks and sync extensions (bidirectional)
     create_symlinks
-    apply_custom_icons
     sync_vscodium_extensions
 
     # Conditionally update packages
     if $UPDATE_PACKAGES; then
         install_packages
         hash -r  # Refresh PATH so newly installed binaries are found
-        apply_custom_icons
     fi
+
+    # Apply custom icons once (after packages, if updated, so new installs get icons)
+    apply_custom_icons
 
     # Conditionally apply macOS defaults
     if $UPDATE_DEFAULTS; then

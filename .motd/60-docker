@@ -11,7 +11,7 @@ mapfile -t containers < <(docker ps -a --format '{{.Names}}\t{{.Status}}' | sort
 
 out=""
 for i in "${!containers[@]}"; do
-    IFS=" " read name status <<< ${containers[i]}
+    IFS=" " read -r name status <<< "${containers[i]}"
     # color green if service is active, else red
     if [[ "${status}" == "Up" ]]; then
         out+="${name}:,${green}${status,,}${undim},"
@@ -26,4 +26,4 @@ done
 out+="\n"
 
 printf "\ndocker status:\n"
-printf "$out" | column -ts $',' | sed -e 's/^/  /'
+printf '%b' "$out" | column -ts $',' | sed -e 's/^/  /'
