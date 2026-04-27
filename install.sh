@@ -178,10 +178,10 @@ setup_nodejs() {
     fi
 
     # Install and activate Node.js
-    log "Installing Node.js v22..."
-    nvm install 22 || { warning "Failed to install Node.js v22"; return 1; }
-    nvm use 22
-    nvm alias default 22
+    log "Installing Node.js v22.19.0..."
+    nvm install 22.19.0 || { warning "Failed to install Node.js v22.19.0"; return 1; }
+    nvm use 22.19.0
+    nvm alias default 22.19.0
 
     log "Node.js version: $(node --version)"
     log "NPM version: $(npm --version)"

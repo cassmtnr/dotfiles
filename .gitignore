@@ -53,3 +53,4 @@ Thumbs.db
 ############
 # .claude/
 .ai/common/skills/.system/
+.ai/codex/config.toml
