@@ -49,8 +49,10 @@ dotfiles/
 ├── .ai/                       # AI CLI configuration
 │   ├── common/                # Shared by Claude Code & Codex CLI
 │   │   ├── instructions.md    # Global AI instructions
-│   │   ├── commands/          # Slash commands (/craft)
-│   │   └── hooks/             # PreToolUse safety hooks
+│   │   ├── commands/          # Slash commands
+│   │   ├── skills/            # AI CLI skills
+│   │   ├── hooks/             # PreToolUse safety hooks (fail-closed)
+│   │   └── scripts/           # Helper scripts (vps-run.sh)
 │   ├── claude/                # Claude Code only
 │   │   ├── settings.json      # Settings (plugins, permissions, statusline)
 │   │   └── config/            # Custom statusline script
@@ -82,7 +84,7 @@ Shared configuration for [Claude Code](https://claude.com/claude-code) and [Code
 - Codex TUI status line and terminal title are versioned in `.ai/codex/config.toml` via the built-in `[tui]` settings; keeping the full `status_line` list there makes it persist across new Codex sessions
 - Codex project trust is intentionally not hardcoded in the repo because `projects.<path>.trust_level` is machine-specific
 
-**Safety hooks** — `block-dangerous-commands.js` blocks dangerous Bash commands via PreToolUse hooks at three levels:
+**Safety hooks** — `block-dangerous-commands.js` blocks dangerous Bash commands via PreToolUse hooks at three levels (fails closed on malformed input):
 
 - **Critical**: filesystem destruction, disk operations, fork bombs, git history rewriting
 - **High** (default): git write ops, elevated privileges, secrets exposure, publishing/deployment, database ops
@@ -107,9 +109,10 @@ Shared configuration for [Claude Code](https://claude.com/claude-code) and [Code
 
 ## Troubleshooting
 
-- **Slow startup**: `time zsh -lic exit` and `zmodload zsh/zprof`
+- **Slow startup**: `time zsh -lic exit` and uncomment `zmodload zsh/zprof` / `zprof` in `.zshrc`
 - **SSH issues**: `ssh -T git@github.com` or `ssh -vT` for debug
 - **Homebrew**: `brew doctor` and `brew update`
+- **macOS defaults**: `.defaults` is audited for macOS 26+ / Apple Silicon — dead settings are removed periodically
 
 ## License
 

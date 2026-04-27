@@ -7,6 +7,84 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Code Quality Audit — 2026-04-24
+
+Comprehensive codebase cleanup across 24 files (net -300 lines).
+
+#### Security
+
+- **Security hook fails closed**: `block-dangerous-commands.js` now returns a deny decision on malformed input instead of silently allowing — a critical fix for the PreToolUse safety hook
+- **Removed global Gatekeeper disable** (`LSQuarantine`): Was disabling the "are you sure?" dialog for all downloaded apps. Use per-app `xattr -d com.apple.quarantine` instead
+- **Removed DMG verification skip** (`skip-verify`): Was skipping integrity checks on disk images. Verification is instant on NVMe — no reason to skip
+
+#### Removed — Dead macOS Defaults
+
+Removed 18 `defaults write` commands from `.defaults` that are no-ops on modern macOS (26.x / Apple Silicon):
+
+- `systemuiserver` menu bar extras (replaced by Control Center in Ventura)
+- `hibernatemode 0` (harmful on Apple Silicon — battery drain loses session; default `3` is already optimized)
+- `AppleFontSmoothing` subpixel rendering (removed in Mojave 2018)
+- `DisplayResolutionEnabled` HiDPI (all modern Macs handle automatically)
+- `QLEnableTextSelection` Quick Look text selection (removed in Yosemite 2014)
+- `sms 0` Sudden Motion Sensor (HDD-only hardware removed in 2012)
+- `BluetoothAudioAgent` bitpool quality (removed in Monterey 2021)
+- `_FXShowPosixPathInTitle` (broken since Ventura — path bar serves same purpose)
+- `NSWindowResizeTime` (no visible effect with modern animation frameworks)
+- `WebKitDeveloperExtras` (Safari uses different developer tools mechanism)
+- `Spotlight MenuItemHidden` (managed by Control Center now)
+- `menuextra.clock DateFormat` (managed by Control Center now)
+- Chrome `ExtensionInstallSources` (userscripts.org offline since 2014)
+- Chrome trackpad backswipe (had comment/value mismatch)
+- Spotlight indexing off/sleep/on cycle (no-op)
+- "System Preferences" quit (renamed to "System Settings" in Ventura)
+- "Address Book" in kill list (renamed to "Contacts" years ago)
+
+#### Removed — Unused Code
+
+- 3 dead Starship module configs (`cmd_duration`, `memory_usage`, `battery`) not referenced in the custom `format` string
+- Windows-only VSCodium setting (`update.enableWindowsBackgroundUpdates`)
+- Dead `configure_macos` inline fallback in `.utils.sh` (duplicated a subset of `.defaults`)
+
+#### Changed — DRY Consolidation
+
+- **Extracted `source_nvm()`** into `.utils.sh` — replaces duplicate 5-line NVM sourcing blocks in `install.sh`
+- **Extracted `format_rate_limit()`** in `statusline-command.sh` — replaces two 16-line copy-pasted rate-limit display blocks
+- **Fixed duplicate `apply_custom_icons` call** in `update.sh` — was running icons twice during `--packages`/`--all`
+- **Fixed hardcoded linuxbrew path** in `install_ai_tools()` — now uses `$HOMEBREW_PREFIX` consistently
+
+#### Changed — Shell Hardening
+
+- Replaced 11 backtick command substitutions with `$()` in `.motd/20-sysinfo`
+- Fixed unquoted command substitution in array assignments (`.motd/40-services`, `.motd/50-fail2ban`)
+- Fixed `printf "$var"` format string injection in `.motd/40-services`, `.motd/50-fail2ban`, `.motd/60-docker`
+- Added `mapfile -t` for safe array population in `.motd/50-fail2ban`
+- Added `-r` flag to `read` commands to prevent backslash interpretation
+- Added variable defaults (`${VAR:-0}`) to prevent arithmetic errors on empty values
+- Split `local pid=$(...)` in `.functions` to avoid masking exit codes
+- Added `${DOTFILES_ROOT:-default}` fallback in `brew()` wrapper
+- Quoted `$VPS_APP_DIR` inside SSH command string in `vps-run.sh`
+
+#### Changed — Error Visibility
+
+- Removed `2>/dev/null` from `fileicon set` (`.utils.sh`, `.functions`) — failures now show the reason
+- Removed `2>/dev/null` from `ssh-add -q` (`.ssh-agent`) — key loading errors now visible
+- Removed `2>/dev/null || true` from `mdutil` in `.defaults` — Spotlight config failures now visible
+- Changed `xcode-select --install 2>/dev/null || true` to show a warning on failure
+
+#### Changed — Modernization
+
+- Renamed `ChallengeResponseAuthentication` → `KbdInteractiveAuthentication` in `.ssh/config` (deprecated in OpenSSH 8.7)
+- Added full JSDoc type annotations to `block-dangerous-commands.js`
+
+#### Changed — Comment Cleanup
+
+- Removed AI-generated boilerplate and box headers (`===`, `---` banners) across all files
+- Removed comments restating the code; kept navigational section headers and "why" comments
+- `.ghostty/config` reduced from 159 → 77 lines with concise inline comments preserved
+- `.bun` reduced from 21 → 9 lines (removed 10-line boilerplate header)
+
+---
+
 ### Fixed — Codex Status Line Persistence
 
 - **Persisted Codex status line across sessions**: Replaced the short default `tui.status_line` list in `.ai/codex/config.toml` with the full confirmed item set so new Codex sessions keep the same footer layout
