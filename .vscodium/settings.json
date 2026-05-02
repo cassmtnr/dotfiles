@@ -221,4 +221,12 @@
   "[scss]": {
     "editor.defaultFormatter": "esbenp.prettier-vscode",
   },
+  "files.exclude": {
+    "**/__init__.py": true,
+    "**/__pycache__": true,
+    "**/.mypy_cache": true,
+    "**/.pytest_cache": true,
+    "**/.ruff_cache": true,
+    "**/.venv": true,
+  },
 }

@@ -6,16 +6,19 @@
 # --- Font ---
 font-family = "Fira Code"
 font-size = 14
-font-thicken = true  # macOS font rendering enhancement
+# macOS font rendering enhancement
+font-thicken = true
 
 # --- Theme ---
 # For light/dark auto-switching: theme = light:Nord Light,dark:Nord
 theme = Nord
 
 # --- Window ---
-window-padding-x = 4  # in points
+# in points
+window-padding-x = 4
 window-padding-y = 2
-window-padding-balance = true  # rebalance padding on resize
+# rebalance padding on resize
+window-padding-balance = true
 window-save-state = always
 window-inherit-working-directory = true
 window-new-tab-position = end
@@ -35,7 +38,8 @@ clipboard-trim-trailing-spaces = true
 clipboard-paste-protection = false
 
 # --- Scrollback ---
-scrollback-limit = 10000000  # ~10MB, allocated lazily
+# ~10MB, allocated lazily
+scrollback-limit = 10000000
 
 # --- Key Bindings: Tab Navigation ---
 keybind = cmd+one=goto_tab:1
@@ -49,23 +53,30 @@ keybind = cmd+eight=goto_tab:8
 keybind = cmd+nine=goto_tab:9
 
 # --- Key Bindings: Text Navigation ---
-keybind = alt+left=text:\x1b\x62    # word backward
-keybind = alt+right=text:\x1b\x66   # word forward
-keybind = cmd+left=text:\x01         # line start
-keybind = cmd+right=text:\x05        # line end
+# word backward
+keybind = alt+left=text:\x1b\x62
+# word forward
+keybind = alt+right=text:\x1b\x66
+# line start
+keybind = cmd+left=text:\x01
+# line end
+keybind = cmd+right=text:\x05
 keybind = cmd+k=clear_screen
 
 # --- macOS ---
 macos-icon = custom
 macos-custom-icon = ~/dotfiles/.ghostty/icon.icns
 macos-titlebar-style = native
-macos-option-as-alt = true  # send escape sequences instead of special characters
+# send escape sequences instead of special characters
+macos-option-as-alt = true
 
 # xterm-256color for SSH compatibility (xterm-ghostty terminfo often missing on remote hosts)
 term = xterm-256color
 
 # --- Misc ---
-confirm-close-surface = true  # prompt before closing with running processes
+# prompt before closing with running processes
+confirm-close-surface = true
 mouse-hide-while-typing = true
-link-url = true  # clickable URLs
+# clickable URLs
+link-url = true
 keybind = shift+enter=text:\x1b\r
