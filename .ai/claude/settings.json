@@ -25,7 +25,6 @@
     "superpowers@claude-plugins-official": true
   },
   "extraKnownMarketplaces": {},
-  "effortLevel": "medium",
   "skipDangerousModePermissionPrompt": true,
   "voiceEnabled": true,
   "autoCompactEnabled": false,

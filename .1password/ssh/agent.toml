@@ -1,0 +1,19 @@
+# 1Password SSH agent configuration
+# Docs: https://developer.1password.com/docs/ssh/agent/config/
+#
+# Each [[ssh-keys]] block exposes one SSH key item from your vault to the
+# agent. Keys not listed here remain in the vault but are not loaded — so
+# `ssh` will only ever see the keys explicitly named below.
+#
+# Each `item` value MUST match the title of an SSH key item in 1Password
+# exactly. Case- and whitespace-sensitive. Verify in the 1Password app.
+
+# Used for GitHub, VPS, PiHole
+[[ssh-keys]]
+item = "SSH @ Personal"
+vault = "Personal"
+
+# Used for GitLab
+[[ssh-keys]]
+item = "SSH @ Work"
+vault = "Personal"

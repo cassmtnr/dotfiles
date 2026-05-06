@@ -45,6 +45,7 @@ create_symlinks() {
 
     # Ensure target directories exist before symlinking
     mkdir -p "$HOME/.config"
+    mkdir -p "$HOME/.config/1Password/ssh"
     mkdir -p "$HOME/.ssh"
     mkdir -p "$HOME/.ssh/sockets"
     mkdir -p "$HOME/.claude"
@@ -74,6 +75,7 @@ create_symlinks() {
         "$DOTFILES_ROOT/.zshenv:$HOME/.zshenv"
         "$DOTFILES_ROOT/.starship:$HOME/.config/starship.toml"
         "$DOTFILES_ROOT/.ssh/config:$HOME/.ssh/config"
+        "$DOTFILES_ROOT/.1password/ssh/agent.toml:$HOME/.config/1Password/ssh/agent.toml"
         "$DOTFILES_ROOT/.ghostty:$HOME/.config/ghostty"
         "$DOTFILES_ROOT/.lazydocker:$HOME/.config/lazydocker"
         # AI CLI — shared content (Claude Code + Codex CLI)
