@@ -16,4 +16,4 @@ vault = "Personal"
 # Used for GitLab
 [[ssh-keys]]
 item = "SSH @ Work"
-vault = "Personal"
+vault = "Work"
