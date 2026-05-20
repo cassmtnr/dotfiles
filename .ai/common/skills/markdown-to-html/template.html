@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="color-scheme" content="light dark" />
+<title>Page Title</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght,SOFT,WONK@0,9..144,300..900,0..100,0..1;1,9..144,300..900,0..100,0..1&family=DM+Sans:opsz,wght@9..40,300..700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+
+<!-- Set theme before paint to avoid flash. Reads localStorage > prefers-color-scheme. -->
+<script>
+  (function () {
+    try {
+      var saved = localStorage.getItem('theme');
+      var sys = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+      document.documentElement.dataset.theme = saved || sys;
+    } catch (e) {
+      document.documentElement.dataset.theme = 'light';
+    }
+  })();
+</script>
+
+<!-- ╔══════════════════════════════════════════════════════════════════════╗ -->
+<!-- ║ At generation time, replace this block with:                         ║ -->
+<!-- ║   <style>{contents of style.css}</style>                             ║ -->
+<!-- ║ Loaded from ~/.claude/skills/markdown-to-html/style.css              ║ -->
+<!-- ║ Keeps CSS as a single source of truth; output stays portable.        ║ -->
+<!-- ╚══════════════════════════════════════════════════════════════════════╝ -->
+<!-- INJECT-MARKDOWN-CSS -->
+</head>
+<body>
+
+<header class="page-header" id="page-header">
+  <nav class="breadcrumb">
+    <!-- Default to plain text; only wrap "home" in <a href="./index.html"> if a hub page actually exists. -->
+    <span>home</span>
+    <span class="sep">/</span>
+    <span>page</span>
+  </nav>
+  <button class="theme-toggle" type="button" aria-label="Toggle theme" id="theme-toggle">
+    <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+      <circle cx="12" cy="12" r="4"/>
+      <path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/>
+    </svg>
+    <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+      <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+    </svg>
+  </button>
+</header>
+
+<main class="content">
+  <article>
+
+    <header class="article-header">
+      <p class="eyebrow">Optional eyebrow / category</p>
+      <h1>Page Title</h1>
+      <p class="lead">A one or two sentence lead that summarizes what this page is about.</p>
+      <div class="article-meta">
+        <!-- Fill with real values from frontmatter or git, e.g. "updated · 2025-05-10".
+             Remove the whole block if no real metadata exists. Never invent dates or reading times. -->
+      </div>
+    </header>
+
+    <div class="article-body">
+      <!-- ─── BODY: replace this section with the rendered markdown content ─── -->
+      <!-- Use semantic HTML: h2/h3/h4 for headings, p for paragraphs, ul/ol for lists,
+           pre/code for code blocks, blockquote for quotes, table for tables, etc.
+           For callouts: <aside class="callout note|warn|info|success"><p class="callout-title">Title</p><p>body</p></aside>
+           For inline highlighted terms: <code class="pill">TERM</code> -->
+
+      <h2>First section heading</h2>
+      <p>Paragraph content. <strong>Bold</strong>, <em>italic</em>, <code>inline code</code>, and <a href="#">links</a> all just work.</p>
+
+      <h2>Section with a list</h2>
+      <ul>
+        <li>First item</li>
+        <li>Second item with a <code>code reference</code></li>
+        <li>Third item</li>
+      </ul>
+
+      <h2>Code blocks</h2>
+      <pre><code>def hello(name):
+    return f"Hello, {name}"</code></pre>
+
+      <h2>Tables and callouts</h2>
+      <table>
+        <thead><tr><th>Column A</th><th>Column B</th></tr></thead>
+        <tbody>
+          <tr><td>Row 1 A</td><td>Row 1 B</td></tr>
+          <tr><td>Row 2 A</td><td>Row 2 B</td></tr>
+        </tbody>
+      </table>
+
+      <aside class="callout note">
+        <p class="callout-title">Note</p>
+        <p>This is a callout. Use it for asides, warnings, or contextual info.</p>
+      </aside>
+    </div>
+
+  </article>
+</main>
+
+<footer class="page-footer">
+  <span>Source · markdown-to-html skill</span>
+  <span>Press <kbd>D</kbd> to toggle theme</span>
+</footer>
+
+<script>
+  // Theme toggle
+  (function () {
+    var html = document.documentElement;
+    var btn = document.getElementById('theme-toggle');
+
+    function setTheme(theme) {
+      html.dataset.theme = theme;
+      try { localStorage.setItem('theme', theme); } catch (e) {}
+      btn.setAttribute('aria-label', theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode');
+    }
+
+    btn.addEventListener('click', function () {
+      setTheme(html.dataset.theme === 'dark' ? 'light' : 'dark');
+    });
+
+    // Keyboard shortcut: D to toggle
+    window.addEventListener('keydown', function (e) {
+      if (e.target instanceof HTMLInputElement || e.target instanceof HTMLTextAreaElement) return;
+      if (e.metaKey || e.ctrlKey || e.altKey) return;
+      if (e.key === 'd' || e.key === 'D') {
+        setTheme(html.dataset.theme === 'dark' ? 'light' : 'dark');
+      }
+    });
+
+    // Initial label
+    btn.setAttribute('aria-label', html.dataset.theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode');
+
+    // Header shadow on scroll
+    var header = document.getElementById('page-header');
+    var apply = function () {
+      header.classList.toggle('scrolled', window.scrollY > 8);
+    };
+    apply();
+    window.addEventListener('scroll', apply, { passive: true });
+  })();
+</script>
+
+</body>
+</html>

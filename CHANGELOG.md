@@ -7,6 +7,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### AI/Editor Config Refresh — 2026-05-21
+
+#### Added
+
+- **`markdown-to-html` skill** (`.ai/common/skills/markdown-to-html/`) — turns markdown into a self-contained single-file HTML page. Fraunces serif headings, DM Sans body, IBM Plex Mono code, inline CSS, built-in dark-mode toggle that persists to `localStorage` and respects `prefers-color-scheme`. Replaces the older decorative `editorial-html-pages` skill with a calmer docs/blog aesthetic
+- **`Working Style` section** in `.ai/common/instructions.md` — captures durable cross-session preferences: trust the user, junior-clear documentation, research discipline (verify before specs), spec conventions (one file per phase, no date prefixes), commit bundling, deploy approach (full automation, never silently downgrade)
+- **`agentPushNotifEnabled: true`** in `.ai/claude/settings.json` — enables system notifications when background agents finish
+
+#### Changed
+
+- **`git.autofetch: false`** + **`git.autofetchPeriod: 0`** in `.vscodium/settings.json` — was causing background fetch churn; explicit period of 0 prevents re-enable if VSCodium changes its default
+- **Trailing commas** added throughout `.vscodium/settings.json` to match Prettier JSONC output and avoid noisy diffs on future edits
+
 ### Code Quality Audit — 2026-04-24
 
 Comprehensive codebase cleanup across 24 files (net -300 lines).

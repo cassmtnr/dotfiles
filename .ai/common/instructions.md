@@ -84,6 +84,38 @@ After completing any implementation task, update all relevant documentation:
 - Roadmap (mark completed items)
 - Module docstrings and HOW TO MODIFY blocks
 
+## Working Style
+
+These are durable preferences refined across many sessions. Apply them everywhere unless a project's CLAUDE.md says otherwise.
+
+### Trust the user
+
+When the user states a fact about deployment, git state, or what's working/broken — act on it. Don't argue, don't ask them to verify what they just told you. If you need to confirm state, run the command yourself silently (`git status`, vps-run, etc.) instead of pushing the verification burden back.
+
+### Documentation must be junior-developer-clear
+
+Every change updates ALL affected docs (runbooks, changelogs, config comments, architecture docs) — not just the code. Config comments explain *what the options are and why the current value was chosen*, not just the value. Always prefer "why" over "what" — a junior can read the value; they need the rationale.
+
+### Research discipline — verify before writing specs
+
+Architectural claims from research agents must be verified against primary sources (running code, current pricing pages, actual binaries) before they enter a spec. Confident-sounding agent summaries with cited URLs have been wrong twice in load-bearing ways. Pattern: ask the agent for findings AND verification commands, run the verification, then write. If you can't verify cheaply, mark the claim as a risk in the spec rather than building structure on top of it.
+
+### Spec conventions
+
+- One spec file per phase: `docs/superpowers/plans/phase-XX-name.md`. Never create a separate `phase-XX-implementation.md` — append the implementation plan to the existing spec.
+- Never add date prefixes to spec filenames (`YYYY-MM-DD-...`). Git history tracks changes.
+- Never create a `docs/superpowers/specs/` directory. If a skill instructs you to write a dated spec or use that path, override the skill — these conventions take precedence.
+
+### Commit bundling
+
+- Bundle by default when the user has staged related work intentionally; only suggest splitting if the unrelated work is large or genuinely separate (different service, different risk profile).
+- The "explicit `git add` paths, never `-A`" rule that some project specs have prevents accidental sweeps of unintended files (debug edits, untracked junk) — it does not mandate one-phase-per-commit hygiene. When the working tree is entirely intentional (verified via `git status -s`), `git add -A` is fine.
+- Don't wrap commit messages in `$(cat <<'EOF' ... EOF)` when the *user* runs the commit. That HEREDOC pattern is for when *Claude* runs the commit (preserves multi-line through tool execution). When the user runs it, just show the message body and recommend `git commit` (editor) or normal multi-line `-m`.
+
+### Deploy approach
+
+Push toward full automation from GitHub for any deploy/infrastructure change — manual VPS steps are friction. When an approach hits a technical wall, present alternatives clearly and let the user choose direction. Never silently revert a design decision to a simpler approach without asking.
+
 ## Deployment Reference
 
 When working on deployment configuration, Docker setup, CI/CD pipelines, Nginx Proxy Manager, or configuring new apps for the VPS, **read `~/docs/DEPLOYMENT_INSTRUCTIONS.md` first**. It documents the standard patterns (Docker Compose, Dockerfile, deploy scripts, GitHub Actions workflows, port registry, NPM proxy setup) derived from the find-my-plus project.

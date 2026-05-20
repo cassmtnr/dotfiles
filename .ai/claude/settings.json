@@ -26,7 +26,8 @@
   },
   "extraKnownMarketplaces": {},
   "skipDangerousModePermissionPrompt": true,
-  "voiceEnabled": true,
   "autoCompactEnabled": false,
-  "remoteControlAtStartup": false
+  "remoteControlAtStartup": false,
+  "voiceEnabled": true,
+  "agentPushNotifEnabled": true
 }
