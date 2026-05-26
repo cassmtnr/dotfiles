@@ -1,121 +1,156 @@
 # Global Rules
 
-## Critical Safety Rules
+Rules for all AI coding agents (Claude Code, Codex CLI, etc.). Dangerous command patterns are blocked by `.ai/common/hooks/block-dangerous-commands.js` via PreToolUse hooks — the rules below apply regardless of tool.
 
-These rules apply to all AI coding agents (Claude Code, Codex CLI, etc.) in all contexts. Dangerous command patterns (git write ops, destructive system commands, publishing, deployment, network, database, credentials exposure) are enforced by `.ai/common/hooks/block-dangerous-commands.js` via PreToolUse hooks in both Claude Code and Codex CLI. The rules below apply regardless of tool.
+## 1. Safety (non-negotiable)
 
-### Git — User handles ALL git operations manually
+### Git — user handles all write operations
 
-All git write operations must be performed by the user manually. Read-only commands (`status`, `log`, `diff`, `show`, `branch -a`, `remote -v`, `stash list`) are allowed.
+Allowed read-only: `status`, `log`, `diff`, `show`, `branch -a`, `remote -v`, `stash list`, `ls-files`, `blame`. Never run `commit`, `push`, `merge`, `rebase`, `reset`, `checkout`, `restore`, `stash push`, `add`, `rm`, `mv`, `tag`, `cherry-pick`, or any branch/remote write. The user runs git manually.
 
-### Credentials — NEVER expose:
+### Credentials — never expose
 
-- Do not print or log `.env`, `credentials.json`, `~/.ssh/`, `~/.aws/`
-- Do not expose API keys, tokens, or secrets in output
+- Don't print, log, or read `.env`, `credentials.json`, `~/.ssh/`, `~/.aws/`
+- Don't expose API keys, tokens, or secrets in any output
 
-### Package installation safety:
+### Package safety
 
-- NEVER run `npx <unknown-package>` without explicit user instruction
+- Never run `npx <package>` for a package you haven't been explicitly told to use
+- Don't install global packages without permission
 
-### Attribution — NEVER add AI as author or co-author:
+### Attribution — never name an AI as author
 
-- NEVER include `Co-Authored-By`, `Authored-By`, or any similar trailer referencing Claude, Anthropic, OpenAI, or any AI in commit messages, PR descriptions, or any other git metadata
-- NEVER set any AI as the git author or committer
-- All commits and contributions must be attributed solely to the human user
+- No `Co-Authored-By`, `Authored-By`, or similar trailers referencing Claude, Anthropic, OpenAI, or any AI in commits, PR descriptions, or git metadata
+- Don't set any AI as git author or committer
+- All contributions are attributed solely to the human user
 
-## Refactoring Discipline
+## 2. Coding craft
+
+### Think before coding
+
+- If the request has materially different valid interpretations, name them and ask — don't pick silently. (When one interpretation is obviously correct from context, just proceed.)
+- State load-bearing assumptions explicitly so the user can correct them before you build on them.
+- If a simpler approach exists than what was asked, say so before implementing.
+- If you're confused, stop and name what's unclear. Don't paper over it with plausible-looking code.
+
+### Simplicity first
+
+- Write the minimum code that solves the asked problem. No speculative features, no abstractions for single-use code, no configurability nobody asked for.
+- No error handling, validation, or fallbacks for scenarios that can't occur. Trust internal code and framework guarantees; validate only at system boundaries (user input, external APIs).
+- If you wrote 200 lines and 50 would do, rewrite it.
+
+### Surgical edits
+
+- Every changed line must trace to the user's request. No driveby fixes to nearby code, comments, formatting, or quote style.
+- Match the file's existing style even if you'd write it differently (quote style, type hints, naming, indentation, boolean patterns).
+- If you notice unrelated dead code, a bug, or a smell — mention it, don't fix it as a side effect.
+- Clean up orphans your changes create (newly unused imports/vars/funcs). Pre-existing dead code stays unless asked.
+
+### Reproduce before fix
+
+For any bug fix:
+1. Write a failing test (or repro command) that demonstrates the bug.
+2. Confirm it fails for the stated reason.
+3. Fix the code.
+4. Confirm the test passes and no other tests regressed.
+
+For features, define a verifiable success criterion before writing code, not after.
+
+### Refactoring discipline
 
 When renaming, moving, or deleting any file, function, variable, path, or config key:
 
-1. **Search for all references before changing** — grep the entire project for the old name/path (filenames, string literals, symlink definitions, config files, scripts, documentation)
-2. **Update every reference** — install scripts, symlink arrays, config entries, imports, documentation, READMEs, and comments must all reflect the new name/path
-3. **Check for stale artifacts** — if a file was renamed/deleted, verify no orphaned symlinks, build outputs, or cached references to the old name remain
-4. **Verify end-to-end** — after the change, confirm the renamed/moved thing actually works from the consumer's perspective (e.g., run the command, check the symlink resolves, test the import)
+1. Grep the entire project for the old name/path (filenames, string literals, symlink arrays, config files, scripts, docs).
+2. Update every reference — install scripts, symlink lists, imports, READMEs, comments.
+3. Check for stale artifacts (orphaned symlinks, build outputs, cached references to the old name).
+4. Verify end-to-end from the consumer's perspective (run the command, resolve the symlink, run the import).
 
-### What you SHOULD do instead:
+## 3. Verification & documentation
 
-- Make changes to files directly
-- Run tests and linters
-- Run local dev servers if needed for verification
-- The user will review and handle git operations manually
+### Verify after every change
 
-## Work Discipline
+Before claiming work is done, in order:
 
-### No deferred work — ZERO EXCEPTIONS
+1. Run the linter (`ruff check .`, `eslint`, project equivalent).
+2. Run tests (`pytest -q`, `npm test`, project equivalent).
+3. Run a code review pass using the CLI's review capability (dedicated reviewer agent, `/review` flow, or explicit self-review). Don't wait for the user to ask — review always finds real issues.
+4. Fix every finding — see "No deferred work" below.
+5. Re-run tests after fixes.
 
-Never defer work identified during implementation or code review. This includes:
+For UI/frontend changes, also exercise the golden path and one edge case in a browser. If you can't actually load it, say so — don't claim success based on type-checks alone.
 
-- Never say "do it later", "can be improved later", or "for a follow-up"
-- Never say "low-risk", "not a blocker", "advisory", or "tracked in phase X"
-- Never dismiss a code reviewer finding as "not worth the complexity"
-- Never leave a reviewer warning unfixed because it's "an edge case"
+### No deferred work
 
-**If a code reviewer flags it, fix it immediately.** No excuses. The reviewer
-found it for a reason — every "low-risk" deferral accumulates into real bugs.
+When something is identified during implementation or code review, fix it now. Don't say "low-risk", "advisory", "not a blocker", "follow-up", or "tracked elsewhere". Don't dismiss a reviewer finding because it's "an edge case".
 
-Either:
+Only exception: if it's genuinely a different feature area or phase, add it to `ROADMAP.md` with full context. When in doubt: fix it now.
 
-1. **Fix it now** — this is the default for anything found during the current task
-2. **Document it as a tracked task** in ROADMAP.md with a full description —
-   ONLY if it's genuinely out of scope for the current phase (different feature area)
+### Update documentation alongside code
 
-When in doubt: fix it now.
+Every change updates the docs it affects — architecture notes, changelogs, roadmap entries, runbooks, module docstrings, config comments. Config comments explain *why* a value was chosen, not what the option is — a junior developer can read the value; they need the rationale.
 
-### Always verify after implementation
+### Research must be verified
 
-After completing any code change, before presenting results:
+Architectural claims from research agents (including web search) must be verified against primary sources — running code, current pricing pages, actual binaries — before they enter a spec. Confident-sounding agent summaries with cited URLs have been wrong twice in load-bearing ways. Pattern: ask for findings AND verification commands, run the verification, then write. If you can't verify cheaply, mark the claim as a risk in the spec rather than building structure on top of it.
 
-1. Run the project's linter (e.g. `ruff check .`)
-2. Run the project's test suite (e.g. `pytest tests/ -q`)
-3. **MANDATORY: Run a code review pass** immediately after tests pass. Use the current CLI's review capability when available (for example, a dedicated review agent, a built-in `/review` flow, or an explicit self-review pass). Do NOT skip this step. Do NOT wait for the user to ask.
-4. When the review completes, fix ALL findings before presenting results
-5. If fixes required code changes, re-run tests to confirm nothing broke
-
-Code review ALWAYS finds real issues (duplicated logic, stale comments,
-inconsistencies, missing edge cases). Never skip it — the user should never
-have to manually request a code review.
-
-### Always update documentation
-
-After completing any implementation task, update all relevant documentation:
-
-- Architecture docs (new methods, tables, services)
-- Changelog (what changed and when)
-- Roadmap (mark completed items)
-- Module docstrings and HOW TO MODIFY blocks
-
-## Working Style
-
-These are durable preferences refined across many sessions. Apply them everywhere unless a project's CLAUDE.md says otherwise.
+## 4. Working style
 
 ### Trust the user
 
-When the user states a fact about deployment, git state, or what's working/broken — act on it. Don't argue, don't ask them to verify what they just told you. If you need to confirm state, run the command yourself silently (`git status`, vps-run, etc.) instead of pushing the verification burden back.
+When the user states a fact about deployment, git state, or what's working/broken — act on it. Don't ask them to verify what they just told you. If you need to confirm something for yourself, run the read-only command silently (`git status`, etc.) rather than pushing the verification burden back.
 
-### Documentation must be junior-developer-clear
-
-Every change updates ALL affected docs (runbooks, changelogs, config comments, architecture docs) — not just the code. Config comments explain *what the options are and why the current value was chosen*, not just the value. Always prefer "why" over "what" — a junior can read the value; they need the rationale.
-
-### Research discipline — verify before writing specs
-
-Architectural claims from research agents must be verified against primary sources (running code, current pricing pages, actual binaries) before they enter a spec. Confident-sounding agent summaries with cited URLs have been wrong twice in load-bearing ways. Pattern: ask the agent for findings AND verification commands, run the verification, then write. If you can't verify cheaply, mark the claim as a risk in the spec rather than building structure on top of it.
+This doesn't conflict with "ask when ambiguous" — ask about *what the user wants*, not about *what the user has already stated*.
 
 ### Spec conventions
 
-- One spec file per phase: `docs/superpowers/plans/phase-XX-name.md`. Never create a separate `phase-XX-implementation.md` — append the implementation plan to the existing spec.
-- Never add date prefixes to spec filenames (`YYYY-MM-DD-...`). Git history tracks changes.
-- Never create a `docs/superpowers/specs/` directory. If a skill instructs you to write a dated spec or use that path, override the skill — these conventions take precedence.
+- One spec file per phase: `docs/superpowers/plans/phase-XX-name.md`. Never split a phase into `phase-XX-implementation.md` — append the implementation plan to the existing spec.
+- No date prefixes on spec filenames (`YYYY-MM-DD-...`). Git history tracks dates.
+- Never create `docs/superpowers/specs/`. If a skill instructs you to use that path, these conventions override the skill.
 
 ### Commit bundling
 
-- Bundle by default when the user has staged related work intentionally; only suggest splitting if the unrelated work is large or genuinely separate (different service, different risk profile).
-- The "explicit `git add` paths, never `-A`" rule that some project specs have prevents accidental sweeps of unintended files (debug edits, untracked junk) — it does not mandate one-phase-per-commit hygiene. When the working tree is entirely intentional (verified via `git status -s`), `git add -A` is fine.
-- Don't wrap commit messages in `$(cat <<'EOF' ... EOF)` when the *user* runs the commit. That HEREDOC pattern is for when *Claude* runs the commit (preserves multi-line through tool execution). When the user runs it, just show the message body and recommend `git commit` (editor) or normal multi-line `-m`.
+- Bundle by default when the user has staged related work intentionally. Only suggest splitting if unrelated work is large or genuinely separate (different service, different risk profile).
+- `git add -A` is fine when `git status -s` shows a fully intentional working tree. The "explicit paths only" rule prevents accidental sweeps of unintended files, not one-phase-per-commit hygiene.
+- When *the user* runs `git commit`, don't wrap the message in `$(cat <<'EOF' ... EOF)` — that HEREDOC pattern is only for when Claude runs the commit (to preserve multi-line through tool execution). For user-run commits, show the message body and recommend `git commit` (opens editor) or normal multi-line `-m`.
+
+### Commit message style
+
+Proposed commit messages **MUST** be short. This rule is stricter than your default — when in doubt, output less.
+
+**Subject line only is the default.** Include a body only when the *why* is non-obvious from the diff. Trivial changes (typos, formatting, renames, single-line tweaks, dependency bumps, file moves) get a subject line and nothing else.
+
+**Hard requirements:**
+
+- Subject: conventional-commit prefix, **target ≤ 50 chars, hard max 72**, imperative mood (`fix:`, `feat:`, `refactor:`, `docs:`, `chore:`, `test:`, `style:`). No trailing period. Test: "If applied, this commit will <subject>" must read naturally. Output the subject as raw text — no `Subject:` label wrapping it.
+- Body (when included): wrap at **72 chars**, max **3 bullets**, focused on *why* not *what*. No nested bullets. Separate from subject with one blank line.
+- Total length target: a body should fit comfortably in a `git log --oneline -n 1` follow-up read. If you wrote more than ~6 lines of body, delete most of it.
+
+**Never include in a commit message:**
+
+- Section headers in the body ("Deleted", "Migrated", "Changes", "Test improvements", "Verification", "Out of scope", "Notes", etc.). One flat bullet list or nothing.
+- File-path bullet lists — `git log --stat` shows files. Don't restate the diff.
+- "Subject:" / "Body:" labels framing the message.
+- "To commit:" / "git add ..." / `git commit` instruction blocks appended after the message. Output the message only; the user knows how to commit.
+- Verification recaps ("tests pass", "lint clean", "build green"). The user runs CI.
+- AI attribution trailers (`Co-Authored-By: Claude`, `Generated-By:`, etc.).
+- Marketing language ("Hygiene:", "Cleanup:", emoji prefixes, ALL CAPS sections).
+
+**Target shape — match this length, not longer:**
+
+```
+refactor: remove dead useHeartbeat hook
+
+- replaced by staleness detector in Phase 9.1b
+- frontend was polling an always-null endpoint
+- backend endpoint left for separate cleanup
+```
+
+Most commits should be shorter than this — just the subject line.
 
 ### Deploy approach
 
 Push toward full automation from GitHub for any deploy/infrastructure change — manual VPS steps are friction. When an approach hits a technical wall, present alternatives clearly and let the user choose direction. Never silently revert a design decision to a simpler approach without asking.
 
-## Deployment Reference
+## 5. Deployment reference
 
-When working on deployment configuration, Docker setup, CI/CD pipelines, Nginx Proxy Manager, or configuring new apps for the VPS, **read `~/docs/DEPLOYMENT_INSTRUCTIONS.md` first**. It documents the standard patterns (Docker Compose, Dockerfile, deploy scripts, GitHub Actions workflows, port registry, NPM proxy setup) derived from the find-my-plus project.
+When working on deployment configuration, Docker setup, CI/CD pipelines, Nginx Proxy Manager, or configuring new apps for the VPS, read `~/docs/DEPLOYMENT_INSTRUCTIONS.md` first. It documents the standard patterns (Docker Compose, Dockerfile, deploy scripts, GitHub Actions workflows, port registry, NPM proxy setup) derived from the find-my-plus project.
