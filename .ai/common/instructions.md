@@ -83,7 +83,18 @@ For UI/frontend changes, also exercise the golden path and one edge case in a br
 
 When something is identified during implementation or code review, fix it now. Don't say "low-risk", "advisory", "not a blocker", "follow-up", or "tracked elsewhere". Don't dismiss a reviewer finding because it's "an edge case".
 
-Only exception: if it's genuinely a different feature area or phase, add it to `ROADMAP.md` with full context. When in doubt: fix it now.
+Only exception: if it's genuinely a different feature area or phase, see "If something isn't fixed, write it down" below. When in doubt: fix it now.
+
+### If something isn't fixed, write it down
+
+Anything raised during a session but not fixed before it ends must be captured in writing so it isn't forgotten. This covers:
+
+- Items the user explicitly deferred ("skip it", "not now", "later")
+- Bugs or smells you noticed but the "Surgical edits" rule kept you from touching
+- Review findings left unaddressed
+- Verification steps that failed and weren't resolved (failing tests, lint errors, broken build)
+
+Write to the project's existing follow-up file if it has one (check the repo first — common names include `TODO.md`, `BACKLOG.md`, or whatever convention the project uses). If none exists, create `TODO.md` at the repo root. Each entry needs enough context — file path, what the issue is, why it was deferred — that a future session can act on it without re-discovering. Mention the addition in your session-end summary so the user sees it.
 
 ### Update documentation alongside code
 
