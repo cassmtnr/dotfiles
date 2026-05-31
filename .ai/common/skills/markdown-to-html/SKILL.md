@@ -62,7 +62,12 @@ Edits to `style.css` propagate to all NEW pages generated afterwards.
 python3 - <<'PY'
 from pathlib import Path
 import re
-skill_dir = Path.home() / ".claude/skills/markdown-to-html"
+# Skill is symlinked into both ~/.claude/skills and ~/.codex/skills via dotfiles.
+# Find whichever exists in this runtime.
+candidates = [Path.home() / ".claude/skills/markdown-to-html",
+              Path.home() / ".codex/skills/markdown-to-html"]
+skill_dir = next((p for p in candidates if (p / "style.css").exists()), None)
+assert skill_dir, f"markdown-to-html skill files not found in {candidates}"
 css = (skill_dir / "style.css").read_text()
 template = (skill_dir / "template.html").read_text()
 out, n = re.subn(
@@ -168,7 +173,9 @@ Do not remove the toggle — it's part of the skill's contract.
 ```python
 from pathlib import Path
 import re
-new_css = Path.home().joinpath(".claude/skills/markdown-to-html/style.css").read_text()
+candidates = [Path.home() / ".claude/skills/markdown-to-html/style.css",
+              Path.home() / ".codex/skills/markdown-to-html/style.css"]
+new_css = next(p for p in candidates if p.exists()).read_text()
 existing = Path("docs/some-page.html").read_text()
 updated = re.sub(r"<style>.*?</style>", f"<style>\n{new_css}</style>", existing, count=1, flags=re.DOTALL)
 Path("docs/some-page.html").write_text(updated)

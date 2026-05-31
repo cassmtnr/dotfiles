@@ -6,8 +6,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "node ~/.codex/hooks/block-dangerous-commands.js",
-            "timeout": 600
+            "command": "node ~/.codex/hooks/block-dangerous-commands.js"
           }
         ]
       }

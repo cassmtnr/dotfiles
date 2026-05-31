@@ -67,11 +67,8 @@ const PATTERNS = [
   { level: 'high', id: 'git-no-verify',        regex: /\bgit\b.+--no-verify/,                                              reason: '--no-verify skips safety hooks' },
   { level: 'high', id: 'git-stash-destruct',   regex: /\bgit\s+stash\s+(drop|clear|pop)\b/,                                reason: 'destructive git stash operation' },
   { level: 'high', id: 'git-branch-D',         regex: /\bgit\s+branch\s+(-D|--delete\s+--force)\b/,                        reason: 'git branch -D force-deletes branch' },
-  { level: 'high', id: 'git-checkout-force',   regex: /\bgit\s+checkout\s+(-f|--\s+\.)/,                                   reason: 'git checkout -f/-- . discards changes' },
-  { level: 'high', id: 'git-restore-destruct', regex: /\bgit\s+restore\s+(--staged\s+--worktree|\.)/,                      reason: 'git restore discards changes' },
   { level: 'high', id: 'git-update-ref',       regex: /\bgit\s+(update-ref|symbolic-ref|replace)\b/,                       reason: 'git ref manipulation blocked' },
   { level: 'high', id: 'git-config-global',    regex: /\bgit\s+config\s+--(global|system)\b/,                              reason: 'git global/system config blocked' },
-  { level: 'high', id: 'git-tag-delete',       regex: /\bgit\s+tag\s+(-d|--delete)\b/,                                    reason: 'git tag deletion blocked' },
 
   // Git — general operations (user handles manually)
   { level: 'high', id: 'git-push',             regex: /\bgit\s+push\b/,                                                    reason: 'git push blocked — user handles manually' },
@@ -83,6 +80,12 @@ const PATTERNS = [
   { level: 'high', id: 'git-merge',            regex: /\bgit\s+merge\b/,                                                   reason: 'git merge blocked — user handles manually' },
   { level: 'high', id: 'git-rebase',           regex: /\bgit\s+rebase\b/,                                                  reason: 'git rebase blocked — user handles manually' },
   { level: 'high', id: 'git-reset',            regex: /\bgit\s+reset\b/,                                                   reason: 'git reset blocked — user handles manually' },
+  { level: 'high', id: 'git-checkout',         regex: /\bgit\s+checkout\b/,                                                reason: 'git checkout blocked — user handles manually' },
+  { level: 'high', id: 'git-restore',          regex: /\bgit\s+restore\b/,                                                 reason: 'git restore blocked — user handles manually' },
+  { level: 'high', id: 'git-mv',               regex: /\bgit\s+mv\b/,                                                      reason: 'git mv blocked — user handles manually' },
+  { level: 'high', id: 'git-rm',               regex: /\bgit\s+rm\b/,                                                      reason: 'git rm blocked — user handles manually' },
+  { level: 'high', id: 'git-tag',              regex: /\bgit\s+tag\b/,                                                     reason: 'git tag blocked — user handles manually' },
+  { level: 'high', id: 'git-cherry-pick',      regex: /\bgit\s+cherry-pick\b/,                                             reason: 'git cherry-pick blocked — user handles manually' },
   { level: 'high', id: 'git-remote-mod',       regex: /\bgit\s+remote\s+(add|set-url|remove)\b/,                           reason: 'git remote modification blocked' },
   { level: 'high', id: 'git-submodule',        regex: /\bgit\s+submodule\s+(add|update)\b/,                                reason: 'git submodule operation blocked' },
 
@@ -157,7 +160,6 @@ const PATTERNS = [
   // ═══════════════════════════════════════════════════════════════
   // STRICT — Cautionary, context-dependent
   // ═══════════════════════════════════════════════════════════════
-  { level: 'strict', id: 'git-checkout-dot',    regex: /\bgit\s+checkout\s+\./,                                             reason: 'git checkout . discards changes' },
   { level: 'strict', id: 'docker-prune',        regex: /\bdocker\s+(system|image)\s+prune/,                                 reason: 'docker prune removes images' },
 ];
 

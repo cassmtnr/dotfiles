@@ -6,7 +6,7 @@ Rules for all AI coding agents (Claude Code, Codex CLI, etc.). Dangerous command
 
 ### Git — user handles all write operations
 
-Allowed read-only: `status`, `log`, `diff`, `show`, `branch -a`, `remote -v`, `stash list`, `ls-files`, `blame`. Never run `commit`, `push`, `merge`, `rebase`, `reset`, `checkout`, `restore`, `stash push`, `add`, `rm`, `mv`, `tag`, `cherry-pick`, or any branch/remote write. The user runs git manually.
+Allowed read-only: `status`, `log`, `diff`, `show`, `branch -a`, `remote -v`, `stash list`, `ls-files`, `blame`. Never run `commit`, `push`, `merge`, `rebase`, `reset`, `checkout`, `restore`, `stash push`, `stash pop`, `stash drop`, `stash clear`, `add`, `rm`, `mv`, `tag`, `cherry-pick`, or any branch/remote write. The user runs git manually.
 
 ### Credentials — never expose
 
@@ -110,6 +110,31 @@ For non-trivial algorithms, formulas, or external behavior copied or adapted fro
 
 For anything time-sensitive (deploys, market-data work, scheduling, retention/expiry logic), run `date -u` once per session — or `curl https://timeapi.io/api/Time/current/zone?timeZone=UTC` if you only have an HTTP path — rather than trusting the session-start context line. Long-running or resumed sessions can have stale dates, and getting this wrong silently corrupts logs, filenames, and scheduled jobs.
 
+### Lint project docs at session start
+
+When you read the project's "what's next" state (see "What's next" in §4), also run a quick structural lint pass over the docs. Lint reports drift between docs and code reality — it does not act on findings.
+
+Default checks:
+- `TODO.md` items unchanged for >14 days — stale or done?
+- `ROADMAP.md` "Blocked" items with no `log.md` entry for >14 days
+- Memory entries that reference files/paths no longer in the repo
+- `log.md` gap: no entries for >3 days while `git log --since=3.days.ago` shows activity (don't flag gaps when there was no activity to log)
+- Dead markdown cross-references in `ROADMAP.md` / `log.md` / memory
+
+Surface a one-line summary inline ("3 stale items, 1 dead ref — details?") before listing work; produce details only on request. Append the summary to `log.md` as a type `lint` entry so future sessions see what's been checked. On-demand: the user can also say "lint this project" to force a pass.
+
+### File substantive analyses durably
+
+When you produce a high-effort analysis (multi-agent dispatch, ≥2 files or external sources cited, or a recommendation the user might revisit), save the synthesis somewhere durable — don't let it die in chat history.
+
+Filing target, in preference order:
+
+1. If the project has `docs/analyses/` or `docs/reviews/`, write a new file `docs/analyses/<kebab-name>.md` (no date prefix — git tracks dates, per "Spec conventions").
+2. Else if `log.md` exists, append a type `analysis` entry with the synthesis inline.
+3. Else, ask the user where to file it — don't drop it.
+
+Cross-link from any memory entry the analysis updates or supersedes. Announce the filing in your reply ("Filing this as `docs/analyses/ai-folder-review.md`"). The user can override per-analysis with "skip filing" or "don't save".
+
 ## 4. Working style
 
 ### Trust the user
@@ -120,9 +145,35 @@ This doesn't conflict with "ask when ambiguous" — ask about *what the user wan
 
 ### "What's next" and roadmap scaffolding
 
-- When asked "what's next" or about blocked work, read the project's `ROADMAP.md` / `TODO.md` / `BACKLOG.md` first — including any "Blocked" section — before suggesting work. If the project has no such file and you're about to list options from memory or scratch, ask whether to create one.
+- When asked "what's next" or about blocked work, read the project's `ROADMAP.md` / `TODO.md` / `BACKLOG.md` first — including any "Blocked" section — and the last ~10 entries of `log.md` (if present, via `grep "^## \[" log.md | tail -10`) before suggesting work. Also run a quick lint pass (see "Lint project docs at session start" in §3). If the project has no such file and you're about to list options from memory or scratch, ask whether to create one.
 - For new projects, scaffold a single `ROADMAP.md` first. Don't generate per-phase spec files until that phase is about to start — unimplemented specs written far in advance go stale, still look authoritative, and cause hallucination in later sessions.
 - When the user says "save in memory" or flags something as a long-lived constraint, known issue, or recurring blocker, write it down (roadmap "Blocked" section, project notes, or memory) — not only in the chat reply.
+
+### Project log (log.md)
+
+Each project optionally has a `log.md` at its root — an append-only chronological record complementing `ROADMAP.md` (forward), `TODO.md` (deferred), and memory (durable). Format:
+
+```
+## [YYYY-MM-DD] type | one-line title
+
+Optional 1–3 line context.
+```
+
+Types: `commit`, `review`, `decision`, `ingest`, `fix`, `block`, `unblock`, `lint`, `analysis`. Parseable with `grep "^## \[" log.md | tail -10`.
+
+Auto-append after any of:
+
+- Completing a code review pass
+- The user runs `git commit` (log the subject + one-line context — observe via `git log -1 --pretty='%s'`)
+- Recording a named design decision in conversation
+- Ingesting a new spec, source, or doc
+- Filing an analysis (see "File substantive analyses durably" in §3)
+- Flagging or unblocking a phase / TODO item
+- Running a lint pass (the one-line summary)
+
+Do NOT log routine reads, queries, status checks, failed attempts, or single-file edits without a decision attached.
+
+If `log.md` doesn't exist yet, create it on the first log-worthy event without asking — append the first entry in the same turn. The user can say "no log" to skip permanently for that project; record the opt-out as a project memory entry so future sessions respect it.
 
 ### Spec conventions
 

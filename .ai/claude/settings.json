@@ -9,7 +9,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "bash -lc 'node \"$HOME/.claude/hooks/block-dangerous-commands.js\"'"
+            "command": "node \"$HOME/.claude/hooks/block-dangerous-commands.js\""
           }
         ]
       }

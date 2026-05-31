@@ -2,6 +2,12 @@
 # vps-run.sh — Run a command on a remote server in the project's app directory.
 # Reads connection details from .claude/vps.env in the current working directory.
 #
+# WARNING: This script is allowlisted in block-dangerous-commands.js, which
+# means commands passed to it BYPASS all local safety hook checks. Use only
+# for read-only inspection (logs, status, docker ps, etc.) — the remote shell
+# executes whatever you pass, so e.g. `vps-run.sh "rm -rf ~"` would wipe the
+# remote home. Caller is responsible for command safety.
+#
 # Required .claude/vps.env variables:
 #   VPS_SSH_HOST  — SSH host alias or user@host (e.g., "tars", "deploy@10.0.0.1")
 #   VPS_APP_DIR   — Remote directory to cd into (e.g., "apps/ai-trading")
