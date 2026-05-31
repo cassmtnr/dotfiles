@@ -104,6 +104,12 @@ Every change updates the docs it affects — architecture notes, changelogs, roa
 
 Architectural claims from research agents (including web search) must be verified against primary sources — running code, current pricing pages, actual binaries — before they enter a spec. Confident-sounding agent summaries with cited URLs have been wrong twice in load-bearing ways. Pattern: ask for findings AND verification commands, run the verification, then write. If you can't verify cheaply, mark the claim as a risk in the spec rather than building structure on top of it.
 
+For non-trivial algorithms, formulas, or external behavior copied or adapted from research, cite the primary source inline in the spec or code (URL + brief quote of the relevant excerpt) — not only in the chat reply. The spec/code should be auditable later without re-finding the source.
+
+### Verify the date externally
+
+For anything time-sensitive (deploys, market-data work, scheduling, retention/expiry logic), run `date -u` once per session — or `curl https://timeapi.io/api/Time/current/zone?timeZone=UTC` if you only have an HTTP path — rather than trusting the session-start context line. Long-running or resumed sessions can have stale dates, and getting this wrong silently corrupts logs, filenames, and scheduled jobs.
+
 ## 4. Working style
 
 ### Trust the user
@@ -112,11 +118,28 @@ When the user states a fact about deployment, git state, or what's working/broke
 
 This doesn't conflict with "ask when ambiguous" — ask about *what the user wants*, not about *what the user has already stated*.
 
+### "What's next" and roadmap scaffolding
+
+- When asked "what's next" or about blocked work, read the project's `ROADMAP.md` / `TODO.md` / `BACKLOG.md` first — including any "Blocked" section — before suggesting work. If the project has no such file and you're about to list options from memory or scratch, ask whether to create one.
+- For new projects, scaffold a single `ROADMAP.md` first. Don't generate per-phase spec files until that phase is about to start — unimplemented specs written far in advance go stale, still look authoritative, and cause hallucination in later sessions.
+- When the user says "save in memory" or flags something as a long-lived constraint, known issue, or recurring blocker, write it down (roadmap "Blocked" section, project notes, or memory) — not only in the chat reply.
+
 ### Spec conventions
 
 - One spec file per phase: `docs/superpowers/plans/phase-XX-name.md`. Never split a phase into `phase-XX-implementation.md` — append the implementation plan to the existing spec.
 - No date prefixes on spec filenames (`YYYY-MM-DD-...`). Git history tracks dates.
 - Never create `docs/superpowers/specs/`. If a skill instructs you to use that path, these conventions override the skill.
+
+### "Review and output a commit message" — default workflow
+
+When the user says "review and output a commit message" (or any variant: "code review, fix issues, output commit", "single commit, review before, output message", "do a code review first, fix issues and output a commit message"), it's shorthand for the full loop — run it without further prompting:
+
+1. Code-review pass (dedicated reviewer agent / `/review` flow / explicit self-review).
+2. Fix every finding (see "No deferred work").
+3. Write down anything left unfixed (see "If something isn't fixed, write it down").
+4. Propose one short commit message (see "Commit message style").
+
+Don't stop after step 1 and wait for "now fix it and output the message" — the phrase already authorized all four steps. Output one message for the whole set of changes; don't ask whether to split unless the working tree contains genuinely unrelated work.
 
 ### Commit bundling
 
@@ -127,6 +150,17 @@ This doesn't conflict with "ask when ambiguous" — ask about *what the user wan
 ### Commit message style
 
 Proposed commit messages **MUST** be short. This rule is stricter than your default — when in doubt, output less.
+
+**Pre-output gate — scan your draft against this before pasting; if any line fails, rewrite:**
+
+- Subject ≤ 50 chars (hard max 72), conventional-commit prefix, imperative mood, no trailing period
+- No `Subject:` or `Body:` labels framing the message
+- No section headers in the body (no "Deleted", "Migrated", "Test improvements", "Out of scope", "Verification", etc.)
+- No file-path bullet lists
+- No trailing `To commit:` / `git add` / `git commit` instruction blocks
+- No verification recaps, AI attribution trailers, or emoji / "Hygiene:" / "Cleanup:" prefixes
+
+(Full rules and rationale below.)
 
 **Subject line only is the default.** Include a body only when the *why* is non-obvious from the diff. Trivial changes (typos, formatting, renames, single-line tweaks, dependency bumps, file moves) get a subject line and nothing else.
 
@@ -164,4 +198,12 @@ Push toward full automation from GitHub for any deploy/infrastructure change —
 
 ## 5. Deployment reference
 
-When working on deployment configuration, Docker setup, CI/CD pipelines, Nginx Proxy Manager, or configuring new apps for the VPS, read `~/docs/DEPLOYMENT_INSTRUCTIONS.md` first. It documents the standard patterns (Docker Compose, Dockerfile, deploy scripts, GitHub Actions workflows, port registry, NPM proxy setup) derived from the find-my-plus project.
+When working on deployment configuration, Docker setup, CI/CD pipelines, Nginx Proxy Manager, or configuring new apps for the VPS, read the shared docs in `~/Dev/docs/` first:
+
+- `~/Dev/docs/README.md` — index
+- `~/Dev/docs/VPS_ACCESS.md` — SSH, `vps-run.sh`, `.claude/vps.env` pattern
+- `~/Dev/docs/DEPLOYMENT_INSTRUCTIONS.md` — Docker Compose, Dockerfile, deploy scripts, GitHub Actions, NPM, dispatcher, GHCR pattern
+- `~/Dev/docs/PORTS.md` — port registry (check before assigning ports)
+- `~/Dev/docs/APPS.md` — registry of apps on `tars` with repo/domain/ports
+
+The VPS mirrors `~/Dev/docs/` at `/home/tars/docs/`. Edit locally, then sync via `rsync -av ~/Dev/docs/ tars:~/docs/`.

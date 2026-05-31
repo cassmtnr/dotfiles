@@ -28,6 +28,7 @@
   "skipDangerousModePermissionPrompt": true,
   "autoCompactEnabled": false,
   "remoteControlAtStartup": false,
+  "agentPushNotifEnabled": true,
   "voiceEnabled": true,
-  "agentPushNotifEnabled": true
+  "effortLevel": "xhigh"
 }
