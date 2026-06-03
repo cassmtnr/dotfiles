@@ -33,6 +33,18 @@ Allowed read-only: `status`, `log`, `diff`, `show`, `branch -a`, `remote -v`, `s
 - If a simpler approach exists than what was asked, say so before implementing.
 - If you're confused, stop and name what's unclear. Don't paper over it with plausible-looking code.
 
+### Don't assert facts that depend on external authority without checking
+
+Anything where the truth depends on something outside the codebase — broker policies, regulatory compliance (PRIIPS, MiFID, KYC, tax rules), jurisdiction-specific availability, real-fill behavior, account-level permissions, third-party API quotas, current pricing-page details — defaults to "I don't know" unless you have:
+
+- The user's own statement of the fact, OR
+- A live test in the actual target environment (paper-tradeable in this account ≠ live-tradeable; tradeable for one jurisdiction ≠ another), OR
+- A primary-source citation from the authority itself (broker rejection log, regulator's published rule), not a third-party summary
+
+Web-search summaries and ETF popularity are NOT verification. If you find yourself about to type "this is PRIIPS-cleared" or "this works in live mode for X residence" or "this strategy is allowed under MiFID" — stop. State what you'd need to check, or ask the user.
+
+The user's lived experience and broker error messages outrank web research. Confident-sounding regulatory claims that turn out wrong destroy trust faster than admitting "I don't know — let's verify."
+
 ### Simplicity first
 
 - Write the minimum code that solves the asked problem. No speculative features, no abstractions for single-use code, no configurability nobody asked for.
