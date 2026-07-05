@@ -161,10 +161,10 @@
   // Enable type checking for Python (standard level)
   "python.analysis.typeCheckingMode": "standard",
   "[typescript]": {
-    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "editor.defaultFormatter": "biomejs.biome",
   },
   "[typescriptreact]": {
-    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "editor.defaultFormatter": "biomejs.biome",
   },
   "[python]": {
     "editor.defaultColorDecorators": "never",

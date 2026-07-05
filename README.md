@@ -61,8 +61,7 @@ dotfiles/
 │       └── hooks.json         # Hook configuration
 ├── .vscodium/                 # VSCodium settings, extensions, custom icon
 ├── .lazydocker/               # LazyDocker terminal UI configuration
-├── .motd/                     # Message of the Day scripts (Linux/VPS)
-└── .alfred/                   # Alfred workflows and preferences (macOS only)
+└── .motd/                     # Message of the Day scripts (Linux/VPS)
 ```
 
 ## Post-Install Configuration
