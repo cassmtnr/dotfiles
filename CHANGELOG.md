@@ -7,6 +7,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Agent Reach Integration — 2026-07-06
+
+#### Added
+
+- **Agent Reach** internet channel router for AI CLIs — `install_agent_reach()` in `install.sh` (pipx install + core channels + bilibili/twitter + rdt-cli for Reddit). Active channels: web pages, Exa search, YouTube, GitHub, RSS, V2EX, Bilibili (bili-cli), Twitter (twitter-cli), Reddit (rdt-cli). Twitter/Reddit logins are cookie-based, manual per machine
+- **`agent-reach` skill** (`.ai/common/skills/agent-reach/`) — platform routing rules and per-domain command references, auto-shared with Claude Code and Codex via the existing skills symlink. Trimmed to installed channels (upstream ships docs for 15 platforms incl. XiaoHongShu/Facebook/Instagram/LinkedIn — removed along with all OpenCLI references) and translated from Chinese to English; `career.md` is a stub because `agent-reach doctor` recreates deleted skill files
+- **`config/mcporter.json`** symlinked to `~/.mcporter/mcporter.json` — makes Exa search work from any directory (was project-local to the dotfiles repo only)
+- **`update.sh -p` now also runs `pipx upgrade-all`** — upgrades the channel CLIs alongside brew packages; agent-reach re-installs from its main.zip spec when upstream bumps its version; rdt-cli stays at its pinned commit
+- **`skill-lint.sh`** (`.ai/common/scripts/`) — structural health check for AI CLI skills, runs on every `update.sh`: missing SKILL.md/frontmatter, dead relative links, commands referenced in code blocks that aren't installed. Idea extracted from [ctx](https://github.com/stevesolun/ctx)'s skill-health without adopting its recommendation layer
+
 ### AI/Editor Config Refresh — 2026-05-21
 
 #### Added

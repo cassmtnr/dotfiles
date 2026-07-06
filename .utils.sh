@@ -50,6 +50,7 @@ create_symlinks() {
     mkdir -p "$HOME/.ssh/sockets"
     mkdir -p "$HOME/.claude"
     mkdir -p "$HOME/.codex"
+    mkdir -p "$HOME/.mcporter"
 
     # Ensure VSCodium config directory exists before symlinking
     if $IS_MACOS; then
@@ -94,6 +95,8 @@ create_symlinks() {
         "$DOTFILES_ROOT/.ai/claude/config:$HOME/.claude/config"
         # AI CLI — Codex CLI only
         "$DOTFILES_ROOT/.ai/codex/hooks.json:$HOME/.codex/hooks.json"
+        # mcporter — global config so Exa search (agent-reach) works from any directory
+        "$DOTFILES_ROOT/config/mcporter.json:$HOME/.mcporter/mcporter.json"
     )
 
     # Platform-specific symlinks

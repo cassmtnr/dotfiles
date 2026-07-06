@@ -22,16 +22,16 @@ Usage: $(basename "$0") [OPTIONS]
 Update dotfiles symlinks and optionally refresh packages or macOS defaults.
 
 Options:
-  -p, --packages    Also update Homebrew packages from .brewfile
+  -p, --packages    Also update Homebrew packages from .brewfile and pipx tools
   -d, --defaults    Also re-apply macOS system defaults (macOS only)
   -a, --all         Run all update operations (symlinks + packages + defaults)
   -h, --help        Show this help message
 
-Default behavior (no flags): recreate symlinks + sync VSCodium extensions (bidirectional).
+Default behavior (no flags): recreate symlinks + sync VSCodium extensions (bidirectional) + skill lint.
 
 Examples:
-  $(basename "$0")              # Symlinks + sync extensions
-  $(basename "$0") -p           # Also update brew packages
+  $(basename "$0")              # Symlinks + sync extensions + skill lint
+  $(basename "$0") -p           # Also update brew packages + pipx tools
   $(basename "$0") --all        # Everything
 EOF
 }
@@ -75,9 +75,18 @@ main() {
     create_symlinks
     sync_vscodium_extensions
 
+    # Lint skills for rot: missing frontmatter, dead links, uninstalled commands
+    "$DOTFILES_ROOT/.ai/common/scripts/skill-lint.sh" || \
+        warning "Skill lint found issues (see above)"
+
     # Conditionally update packages
     if $UPDATE_PACKAGES; then
         install_packages
+        # pipx tools (agent-reach + channel CLIs; rdt-cli stays at its pinned commit)
+        if command -v pipx &> /dev/null; then
+            log "Updating pipx tools..."
+            pipx upgrade-all || warning "Some pipx upgrades failed"
+        fi
         hash -r  # Refresh PATH so newly installed binaries are found
     fi
 

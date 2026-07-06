@@ -260,6 +260,41 @@ install_ai_tools() {
     success "AI CLI tools installed"
 }
 
+# Install Agent Reach (internet channel router for AI CLIs)
+install_agent_reach() {
+    if ! command -v pipx &> /dev/null; then
+        warning "pipx not found — skipping Agent Reach installation"
+        return
+    fi
+
+    if ! command -v agent-reach &> /dev/null; then
+        log "Installing Agent Reach..."
+        pipx install https://github.com/Panniantong/agent-reach/archive/main.zip || {
+            # plain return: `return 1` would abort the whole script under set -e
+            warning "Agent Reach installation failed"
+            return
+        }
+    fi
+
+    # backs `agent-reach configure --from-browser` (cookie import for Twitter login)
+    pipx inject agent-reach browser-cookie3 || warning "browser-cookie3 injection failed"
+
+    # Channels: core public set + bilibili/twitter (no browser needed;
+    # Twitter login is manual per machine — see README)
+    agent-reach install --env=auto --channels=bilibili,twitter || \
+        warning "Some Agent Reach channels failed — run 'agent-reach doctor' to diagnose"
+
+    # Reddit backend installed directly: the agent-reach reddit channel would pull
+    # in OpenCLI (browser bridge) on desktop — we use cookie-based rdt-cli instead.
+    # Pinned commit is the version agent-reach's own docs pin. Login: `rdt login`.
+    if ! command -v rdt &> /dev/null; then
+        pipx install 'git+https://github.com/public-clis/rdt-cli.git@5e4fb3720d5c174e976cd425ccc3b879d52cac66' || \
+            warning "rdt-cli (Reddit) installation failed"
+    fi
+
+    success "Agent Reach installed"
+}
+
 # Post-installation message
 post_install() {
     echo
@@ -286,6 +321,7 @@ post_install() {
     fi
     echo "  ✓ VSCodium editor with extensions and custom icon"
     echo "  ✓ AI CLI configuration (Claude Code + Codex CLI — instructions, commands, hooks)"
+    echo "  ✓ Agent Reach internet channels (web, YouTube, GitHub, RSS, Twitter, Reddit…)"
     echo "  ✓ Symbolic links for all configurations"
     echo ""
     echo
@@ -323,6 +359,7 @@ main() {
     install_motd
     install_ai_tools
     install_claude_plugins
+    install_agent_reach
     set_default_shell
     post_install
 }

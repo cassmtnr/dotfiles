@@ -20,8 +20,8 @@ Idempotent — safe to run multiple times.
 ### Updating
 
 ```bash
-./update.sh              # Refresh symlinks only
-./update.sh -p           # Also update Homebrew packages
+./update.sh              # Refresh symlinks + skill lint
+./update.sh -p           # Also update Homebrew packages + pipx tools
 ./update.sh -d           # Also re-apply macOS defaults
 ./update.sh -a           # All of the above
 ```
@@ -52,13 +52,14 @@ dotfiles/
 │   │   ├── commands/          # Slash commands
 │   │   ├── skills/            # AI CLI skills
 │   │   ├── hooks/             # PreToolUse safety hooks (fail-closed)
-│   │   └── scripts/           # Helper scripts (vps-run.sh)
+│   │   └── scripts/           # Helper scripts (vps-run.sh, skill-lint.sh)
 │   ├── claude/                # Claude Code only
 │   │   ├── settings.json      # Settings (plugins, permissions, statusline)
 │   │   └── config/            # Custom statusline script
 │   └── codex/                 # Codex CLI only
 │       ├── config.toml        # Model and approval policy
 │       └── hooks.json         # Hook configuration
+├── config/                    # Misc tool configs (mcporter → ~/.mcporter/mcporter.json)
 ├── .vscodium/                 # VSCodium settings, extensions, custom icon
 ├── .lazydocker/               # LazyDocker terminal UI configuration
 └── .motd/                     # Message of the Day scripts (Linux/VPS)
@@ -82,6 +83,8 @@ Shared configuration for [Claude Code](https://claude.com/claude-code) and [Code
 - Codex hooks are enabled explicitly in `.ai/codex/config.toml` because `hooks.json` is ignored unless the `codex_hooks` feature is on
 - Codex TUI status line and terminal title are versioned in `.ai/codex/config.toml` via the built-in `[tui]` settings; keeping the full `status_line` list there makes it persist across new Codex sessions
 - Codex project trust is intentionally not hardcoded in the repo because `projects.<path>.trust_level` is machine-specific
+
+**Agent Reach** — internet access channels for AI CLIs ([Panniantong/agent-reach](https://github.com/Panniantong/agent-reach)). `install.sh` installs it via pipx and activates: web pages (Jina Reader), Exa web search (via mcporter, config in `config/mcporter.json`), YouTube (yt-dlp), GitHub (gh), RSS, V2EX, Bilibili (bili-cli), Twitter (twitter-cli), Reddit (rdt-cli). The skill lives in `.ai/common/skills/agent-reach/` — trimmed to these channels; re-trim if an agent-reach upgrade regenerates it with upstream's full 15-platform docs. Manual per-machine steps (cookie logins, no browser needed at runtime): Twitter — log into x.com in Chrome, then `agent-reach configure --from-browser chrome`; Reddit — log into reddit.com in Chrome, then `rdt login`. Don't log out of those sites afterwards; that invalidates the tokens. Credentials live in `~/.agent-reach/` — never in this repo. Health check: `agent-reach doctor`.
 
 **Safety hooks** — `block-dangerous-commands.js` blocks dangerous Bash commands via PreToolUse hooks at three levels (fails closed on malformed input):
 
