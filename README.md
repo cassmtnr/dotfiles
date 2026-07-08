@@ -13,9 +13,20 @@ cd ~/dotfiles
 # Review .brewfile, .aliases, .functions, and .defaults before running
 # to customize packages and preferences for your setup.
 ./install.sh
+
+# Fresh personal Mac that needs Homebrew or system-level defaults:
+./install.sh --sudo
 ```
 
 Idempotent — safe to run multiple times.
+
+**Sudo is platform-conditional**: Linux (servers, root available) uses sudo
+by default; macOS runs in no-sudo mode by default so managed work laptops
+just work — steps that need admin privileges (Homebrew bootstrap,
+system-level macOS defaults, `/etc` changes) are skipped with a warning,
+everything user-level still runs. Override with `--sudo` (fresh personal
+Mac) or `--no-sudo` (Linux without root). If the sudo password prompt
+fails, the script falls back to no-sudo mode automatically.
 
 ### Updating
 
@@ -23,6 +34,7 @@ Idempotent — safe to run multiple times.
 ./update.sh              # Refresh symlinks + skill lint
 ./update.sh -p           # Also update Homebrew packages + pipx tools
 ./update.sh -d           # Also re-apply macOS defaults
+./update.sh -P           # Also install Claude Code plugins (needs logged-in CLI)
 ./update.sh -a           # All of the above
 ```
 
@@ -71,6 +83,11 @@ dotfiles/
 2. **SSH Agent**: Edit `.ssh-agent` with your key paths
 3. **Git**: `git config --global user.name/user.email`
 4. **Local overrides**: Create `~/.zshrc.local` for machine-specific settings
+5. **Claude Code**: run `claude` and authenticate. Plugins need a logged-in
+   CLI — `install.sh` waits and prompts for this; if you skipped it, run
+   `./update.sh --plugins` after logging in
+6. **Agent Reach logins**: `agent-reach configure --from-browser chrome`
+   (Twitter) and `rdt login` (Reddit) — see the Agent Reach section
 
 ## AI CLI Configuration
 

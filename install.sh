@@ -9,6 +9,16 @@ set -euo pipefail  # Exit on error, undefined variable, or pipe failure
 # Load shared utilities (OS detection, logging, symlinks, packages, defaults)
 source "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/.utils.sh"
 
+# RUN_SUDO: whether steps that need administrative privileges run at all.
+# Default by platform: Linux (servers, we have root) uses sudo; macOS and
+# anything else (laptops, often managed without admin rights) does not.
+# Override with --sudo / --no-sudo. Auto-disabled if the sudo prompt fails.
+if $IS_LINUX; then
+    RUN_SUDO=true
+else
+    RUN_SUDO=false
+fi
+
 # Help function
 show_help() {
     cat << EOF
@@ -21,6 +31,12 @@ This script will:
 - Install Oh My Zsh
 - Create symbolic links for dotfiles
 - Configure MacOS defaults (macOS only)
+
+Options:
+  --sudo       Use administrative privileges (default on Linux)
+  --no-sudo    Skip all steps that need administrative privileges
+               (Homebrew bootstrap, system defaults, /etc changes;
+               default on macOS)
 
 Run without any arguments to start the installation.
 
@@ -35,6 +51,12 @@ parse_args() {
             -h|--help)
                 show_help
                 exit 0
+                ;;
+            --sudo)
+                RUN_SUDO=true
+                ;;
+            --no-sudo)
+                RUN_SUDO=false
                 ;;
             *)
                 error "Unknown option: $1"
@@ -64,9 +86,18 @@ show_welcome() {
     fi
     echo "  • Configuration file symlinks"
     echo
+    if ! $RUN_SUDO; then
+        log "Running in no-sudo mode — admin-only steps will be skipped"
+        log "(use --sudo for a fresh machine that needs Homebrew or system defaults)"
+        return
+    fi
+
     echo "Administrative privileges are required for system configuration."
     echo "Please enter your password to continue:"
-    sudo -v
+    if ! sudo -v; then
+        warning "Could not obtain administrative privileges — continuing in no-sudo mode"
+        RUN_SUDO=false
+    fi
 }
 
 # Check prerequisites
@@ -114,6 +145,11 @@ install_deps() {
         return
     fi
 
+    if ! $RUN_SUDO; then
+        warning "Missing system dependencies (${missing[*]}) — cannot install without admin rights"
+        return
+    fi
+
     log "Installing: ${missing[*]}"
     if $IS_MACOS; then
         xcode-select --install || warning "xcode-select install failed (may already be installed)"
@@ -129,6 +165,12 @@ install_deps() {
 install_homebrew() {
     if command -v brew &> /dev/null; then
         log "Homebrew already installed"
+        return
+    fi
+
+    if ! $RUN_SUDO; then
+        warning "Homebrew not installed and requires admin rights to bootstrap — skipping"
+        warning "Ask IT to install Homebrew, or install packages manually"
         return
     fi
 
@@ -172,14 +214,15 @@ setup_nodejs() {
     source_nvm
 
     if ! command -v nvm &> /dev/null; then
+        # plain return: `return 1` would abort the whole script under set -e
         warning "NVM not found — skipping Node.js setup"
         warning "Install NVM first with: brew install nvm"
-        return 1
+        return
     fi
 
     # Install and activate Node.js
     log "Installing Node.js v22.19.0..."
-    nvm install 22.19.0 || { warning "Failed to install Node.js v22.19.0"; return 1; }
+    nvm install 22.19.0 || { warning "Failed to install Node.js v22.19.0"; return; }
     nvm use 22.19.0
     nvm alias default 22.19.0
 
@@ -214,8 +257,9 @@ setup_bun() {
             warning "Bun installed but not found in PATH - restart your shell"
         fi
     else
+        # plain return: `return 1` would abort the whole script under set -e
         warning "Bun installation failed - you can install manually later with: curl -fsSL https://bun.sh/install | bash"
-        return 1
+        return
     fi
 
     # Install global packages
@@ -247,9 +291,10 @@ install_ai_tools() {
     source_nvm
 
     if ! command -v npm &> /dev/null; then
+        # plain return: `return 1` would abort the whole script under set -e
         warning "npm not found — skipping AI CLI tools installation"
         warning "Install Node.js first, then run: npm install -g @anthropic-ai/claude-code @google/gemini-cli"
-        return 1
+        return
     fi
 
     npm install -g @anthropic-ai/claude-code @google/gemini-cli || {
@@ -376,6 +421,10 @@ set_default_shell() {
 
     # On Linux, ensure zsh is listed in /etc/shells (required by chsh)
     if $IS_LINUX && ! grep -qx "$zsh_path" /etc/shells 2>/dev/null; then
+        if ! $RUN_SUDO; then
+            warning "Cannot add $zsh_path to /etc/shells without admin rights — skipping shell change"
+            return
+        fi
         log "Adding $zsh_path to /etc/shells..."
         echo "$zsh_path" | sudo tee -a /etc/shells > /dev/null
     fi

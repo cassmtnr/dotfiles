@@ -8,8 +8,11 @@ echo "========================================="
 # settings we're about to change
 osascript -e 'tell application "System Settings" to quit' 2>/dev/null || true
 
-# Check if we need administrative privileges for system configuration
-if ! sudo -n true 2>/dev/null; then
+# Check if we need administrative privileges for system configuration.
+# RUN_SUDO comes from install.sh (--sudo/--no-sudo); when run standalone this
+# is a macOS-only script, so it defaults to no-sudo — admin-only settings are
+# skipped. Run with RUN_SUDO=true to apply them.
+if ${RUN_SUDO:-false} && ! sudo -n true 2>/dev/null; then
     echo "Administrative privileges required for MacOS configuration."
     sudo -v
 fi
@@ -52,8 +55,8 @@ defaults write NSGlobalDomain NSDisableAutomaticTermination -bool false
 defaults write com.apple.helpviewer DevMode -bool true
 
 # Reveal IP address, hostname, OS version, etc. when clicking the clock
-# in the login window
-sudo defaults write /Library/Preferences/com.apple.loginwindow AdminHostInfo HostName
+# in the login window (system-level — needs admin)
+! ${RUN_SUDO:-false} || sudo defaults write /Library/Preferences/com.apple.loginwindow AdminHostInfo HostName
 
 # Check for software updates daily, not just once per week
 defaults write com.apple.SoftwareUpdate ScheduleFrequency -int 1

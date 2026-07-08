@@ -236,7 +236,7 @@ configure_macos() {
         defaults write NSGlobalDomain ApplePressAndHoldEnabled -bool false
         defaults write NSGlobalDomain KeyRepeat -int 2
         defaults write NSGlobalDomain InitialKeyRepeat -int 15
-        sudo killall Finder 2>/dev/null || true
+        killall Finder 2>/dev/null || true
     fi
 
     success "MacOS configured"
@@ -245,6 +245,11 @@ configure_macos() {
 # Install custom MOTD scripts (Linux only, requires sudo)
 install_motd() {
     if ! $IS_LINUX; then
+        return
+    fi
+
+    if ! ${RUN_SUDO:-true}; then
+        warning "MOTD scripts need admin rights to install into /etc/update-motd.d — skipping"
         return
     fi
 
@@ -393,6 +398,13 @@ apply_custom_icons() {
     done
 }
 
+# Claude Code login state: OAuth login writes oauthAccount into ~/.claude.json;
+# API-key auth uses the environment instead
+claude_authenticated() {
+    [[ -n "${ANTHROPIC_API_KEY:-}" ]] && return 0
+    [[ -f "$HOME/.claude.json" ]] && jq -e '.oauthAccount' "$HOME/.claude.json" &> /dev/null
+}
+
 # Install Claude Code plugins listed in settings.json
 install_claude_plugins() {
     if ! command -v claude &> /dev/null; then
@@ -405,12 +417,32 @@ install_claude_plugins() {
         return
     fi
 
+    # Plugins only install once the CLI is authenticated — gate on it instead
+    # of failing every `claude plugin install` call on a fresh machine
+    while ! claude_authenticated; do
+        if [[ ! -t 0 ]]; then
+            warning "Claude Code not authenticated — run './update.sh --plugins' after logging in"
+            return
+        fi
+        log "Claude Code is not authenticated yet — plugins need a logged-in CLI."
+        log "Open another terminal, run 'claude' and complete the login."
+        printf "%b" "${BLUE}[INFO]${NC} Press Enter when done (or 's' to skip plugins): "
+        read -r response
+        if [[ "$response" =~ ^[Ss]$ ]]; then
+            warning "Skipping plugin installation — run './update.sh --plugins' after authenticating"
+            return
+        fi
+    done
+
     log "Installing Claude Code plugins..."
 
     local settings_file="$DOTFILES_ROOT/.ai/claude/settings.json"
     local plugins=()
 
-    mapfile -t plugins < <(jq -r '
+    # while-read instead of mapfile: macOS ships bash 3.2
+    while IFS= read -r plugin; do
+        [[ -n "$plugin" ]] && plugins+=("$plugin")
+    done < <(jq -r '
         .enabledPlugins // {}
         | to_entries[]
         | select(.value == true)

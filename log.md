@@ -64,3 +64,22 @@ info strings); update.sh/README default-behavior texts missed the skill lint;
 CHANGELOG overstated pipx upgrade-all (agent-reach only re-installs on
 upstream version bumps); install.sh summary line and README scripts/ entry
 were stale; log.md entries reordered to append-only chronological.
+
+## [2026-07-06] fix | No-sudo mode + Claude plugin auth gate
+
+Work-machine fixes: install.sh --no-sudo skips all admin-requiring steps
+(audited: sudo -v welcome, Homebrew bootstrap, apt-get, /etc/shells, MOTD,
+.defaults loginwindow write; killall Finder never needed sudo — dropped).
+install_claude_plugins now gates on CLI auth (oauthAccount in ~/.claude.json)
+and waits interactively instead of failing; deferred path: update.sh
+--plugins. Live-testing surfaced that mapfile (bash 4+) broke the plugin
+loop under macOS bash 3.2 — replaced with while-read; plugins had likely
+never installed via script on stock macOS.
+
+## [2026-07-07] fix | Platform-conditional sudo + return-1 trio fixed
+
+Sudo is now decided by platform: Linux defaults to sudo, macOS to no-sudo
+(work laptops just work); --sudo/--no-sudo override, .defaults standalone
+defaults to no-sudo too. Fixed the TODO item: setup_nodejs/setup_bun/
+install_ai_tools return-1-under-set-e no longer aborts the whole install
+on guarded failures (missing NVM, failed Bun download).

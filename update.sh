@@ -14,6 +14,7 @@ source "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/.utils.sh"
 # Flags
 UPDATE_PACKAGES=false
 UPDATE_DEFAULTS=false
+UPDATE_PLUGINS=false
 
 show_help() {
     cat << EOF
@@ -24,7 +25,8 @@ Update dotfiles symlinks and optionally refresh packages or macOS defaults.
 Options:
   -p, --packages    Also update Homebrew packages from .brewfile and pipx tools
   -d, --defaults    Also re-apply macOS system defaults (macOS only)
-  -a, --all         Run all update operations (symlinks + packages + defaults)
+  -P, --plugins     Also install Claude Code plugins (needs authenticated CLI)
+  -a, --all         Run all update operations (symlinks + packages + defaults + plugins)
   -h, --help        Show this help message
 
 Default behavior (no flags): recreate symlinks + sync VSCodium extensions (bidirectional) + skill lint.
@@ -45,9 +47,13 @@ parse_args() {
             -d|--defaults)
                 UPDATE_DEFAULTS=true
                 ;;
+            -P|--plugins)
+                UPDATE_PLUGINS=true
+                ;;
             -a|--all)
                 UPDATE_PACKAGES=true
                 UPDATE_DEFAULTS=true
+                UPDATE_PLUGINS=true
                 ;;
             -h|--help)
                 show_help
@@ -96,6 +102,12 @@ main() {
     # Conditionally apply macOS defaults
     if $UPDATE_DEFAULTS; then
         configure_macos
+    fi
+
+    # Conditionally install Claude Code plugins (deferred from install.sh
+    # when the CLI wasn't authenticated yet)
+    if $UPDATE_PLUGINS; then
+        install_claude_plugins
     fi
 
     echo

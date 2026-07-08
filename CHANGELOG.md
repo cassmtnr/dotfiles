@@ -7,6 +7,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### No-Sudo Mode & Plugin Auth Gate — 2026-07-06
+
+#### Added
+
+- **Platform-conditional sudo** — Linux defaults to sudo (servers with root), macOS defaults to no-sudo (managed work laptops just work); `--sudo`/`--no-sudo` override. No-sudo mode skips Homebrew bootstrap, apt-get, `/etc/shells`, system-level macOS defaults, and MOTD install, each with a warning, and auto-engages if the `sudo -v` prompt fails
+- **Claude Code plugin auth gate** — `install_claude_plugins` now checks login state (`oauthAccount` in `~/.claude.json` or `ANTHROPIC_API_KEY`) and interactively waits for the user to authenticate in another terminal instead of failing every install on a fresh machine; skippable, with `./update.sh --plugins` (`-P`) as the deferred path
+
+#### Fixed
+
+- **`install_claude_plugins` never worked under macOS system bash** — `mapfile` is bash 4+; replaced with a `while read` loop (macOS ships bash 3.2)
+- **`setup_nodejs`/`setup_bun`/`install_ai_tools` aborted the whole install on guarded failures** — `return 1` under `set -e` exits the script; a missing NVM or a failed Bun download now warns and continues like every other optional step
+- **`killall Finder` no longer uses sudo** — restarting the user's own Finder never needed it
+
 ### Agent Reach Integration — 2026-07-06
 
 #### Added
