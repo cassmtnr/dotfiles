@@ -7,6 +7,45 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Repo Overhaul — 2026-07-13
+
+#### Fixed
+
+- **`.ssh-agent` leaked one agent per shell** — `ssh-add -l` exit 1 (agent up, no keys) was treated like exit 2 (no agent), so every terminal spawned a fresh `ssh-agent` (36 were running); now only starts on exit 2
+- **RSS skill instructions required `feedparser`, which isn't installed** — replaced with a dependency-free Python stdlib snippet (handles RSS and Atom), verified against a live feed
+- **Stale `.ai/common/commands` symlink pairs removed** — the directory died in 2026-04 when its last command was deleted; every install/update printed two "Source file not found" warnings since
+- **Four more `set -e` abort paths** — `source_nvm` on unset `HOMEBREW_PREFIX`, extension sync on an empty `extensions.txt` (plus a BRE bug letting blank lines through to `codium --install-extension ""`), the MOTD prompt in non-interactive sessions, and `set_default_shell` when zsh is absent — all now warn and continue
+- **`setup_bun` never synced global packages on machines that already had bun** — early return skipped yarn/typescript/eslint/nodemon forever
+- **`.gitignore` now covers `.ssh/config.work`** — the install flow symlinks it as a private config, but it wasn't ignored; creating it would have made a work SSH config committable to this public repo
+- README corrections: removed references to the deleted `.ai/codex/config.toml`, fixed the plugin list (`ponytail`, not sentry/swift-lsp/pyright-lsp), brewfile count, structure tree, and documented the agent-reach skill auto-restore
+
+#### Removed (clarification for earlier [Unreleased] entries)
+
+- `.ai/codex/config.toml` (removed 2026-04-16) and `.ai/common/commands/` (last file deleted 2026-04-07) no longer exist — earlier entries below that reference them are historical
+
+### No-Sudo Mode & Plugin Auth Gate — 2026-07-06 → 2026-07-13
+
+#### Added
+
+- **Platform-conditional sudo** — Linux defaults to sudo (servers with root), macOS defaults to no-sudo (managed work laptops just work); `--sudo`/`--no-sudo` override. No-sudo mode skips Homebrew bootstrap, apt-get, `/etc/shells`, system-level macOS defaults, and MOTD install, each with a warning, and auto-engages if the `sudo -v` prompt fails
+- **Claude Code plugin auth gate** — `install_claude_plugins` now checks login state (`oauthAccount` in `~/.claude.json` or `ANTHROPIC_API_KEY`) and interactively waits for the user to authenticate in another terminal instead of failing every install on a fresh machine; skippable, with `./update.sh --plugins` (`-P`) as the deferred path
+
+#### Added (macOS defaults)
+
+- **`capture-setting.sh`** — one-step capture of any macOS setting into `.defaults`: run it, change the setting in System Settings, press Enter; it detects the changed preference keys, filters out churn (timestamps, counters, caches, app state), and appends ready-made `defaults write` lines to `.defaults` for review via `git diff`. Deliberate non-goal: importing a full `defaults read` dump (app state + machine identifiers, not preferences). Replaced an earlier defaults-diff.sh/defaults-sync.sh pair that required manual diff-reading
+
+- **Finder view preferences captured into `.defaults`** — default icon view (`FXPreferredViewStyle icnv`), Recent Tags hidden, and the ⌘J "Use as Defaults" icon-view template (64px icons, grid 54, text 12, sort by name, item info + previews) via PlistBuddy since it's a nested dict. Per-folder view overrides live in `.DS_Store` files and cannot be captured
+
+#### Fixed
+
+- **Trackpad corner right-click never fully applied** — `.defaults` only wrote the Bluetooth-trackpad domain (built-in trackpads read `com.apple.AppleMultitouchTrackpad`), and two pre-existing values were wrong for corner mode (`TrackpadRightClick` and `enableSecondaryClick` must be false). Full six-key set captured live while flipping the setting in System Settings
+- **`install_claude_plugins` never worked under macOS system bash** — `mapfile` is bash 4+; replaced with a `while read` loop (macOS ships bash 3.2)
+- **agent-reach upgrades overwrite the trimmed skill** — newer versions regenerate the skill with upstream's Chinese 15-platform docs instead of preserving existing files; `install_agent_reach()` now restores the committed trimmed version from git after every channel install
+- **`set_default_shell` tried to chsh from `/bin/zsh` to brew's zsh** — failed on macOS ("non-standard shell", not in `/etc/shells`); any zsh now counts as done
+- **`.defaults` kill-apps loop aborted install.sh when an app wasn't running** — `killall` exits 1 on no match; now `|| true` (same `set -e` failure class as the `return 1` fixes)
+- **`setup_nodejs`/`setup_bun`/`install_ai_tools` aborted the whole install on guarded failures** — `return 1` under `set -e` exits the script; a missing NVM or a failed Bun download now warns and continues like every other optional step
+- **`killall Finder` no longer uses sudo** — restarting the user's own Finder never needed it
+
 ### Agent Reach Integration — 2026-07-06
 
 #### Added

@@ -32,7 +32,7 @@ error() { echo -e "${RED}[ERROR]${NC} $1" >&2; }
 # Source NVM into the current shell (idempotent)
 source_nvm() {
     export NVM_DIR="$HOME/.nvm"
-    if [[ -n "$HOMEBREW_PREFIX" && -s "$HOMEBREW_PREFIX/opt/nvm/nvm.sh" ]]; then
+    if [[ -n "${HOMEBREW_PREFIX:-}" && -s "${HOMEBREW_PREFIX:-}/opt/nvm/nvm.sh" ]]; then
         source "$HOMEBREW_PREFIX/opt/nvm/nvm.sh"
     elif [[ -s "$NVM_DIR/nvm.sh" ]]; then
         source "$NVM_DIR/nvm.sh"
@@ -83,8 +83,6 @@ create_symlinks() {
         # Only put files in .ai/common when both CLIs support them.
         "$DOTFILES_ROOT/.ai/common/instructions.md:$HOME/.claude/CLAUDE.md"
         "$DOTFILES_ROOT/.ai/common/instructions.md:$HOME/.codex/instructions.md"
-        "$DOTFILES_ROOT/.ai/common/commands:$HOME/.claude/commands"
-        "$DOTFILES_ROOT/.ai/common/commands:$HOME/.codex/prompts"
         "$DOTFILES_ROOT/.ai/common/skills:$HOME/.claude/skills"
         "$DOTFILES_ROOT/.ai/common/skills:$HOME/.codex/skills"
         "$DOTFILES_ROOT/.ai/common/hooks:$HOME/.claude/hooks"
@@ -236,7 +234,7 @@ configure_macos() {
         defaults write NSGlobalDomain ApplePressAndHoldEnabled -bool false
         defaults write NSGlobalDomain KeyRepeat -int 2
         defaults write NSGlobalDomain InitialKeyRepeat -int 15
-        sudo killall Finder 2>/dev/null || true
+        killall Finder 2>/dev/null || true
     fi
 
     success "MacOS configured"
@@ -248,9 +246,19 @@ install_motd() {
         return
     fi
 
+    if ! ${RUN_SUDO:-true}; then
+        warning "MOTD scripts need admin rights to install into /etc/update-motd.d — skipping"
+        return
+    fi
+
     local motd_dir="$DOTFILES_ROOT/.motd"
     if [[ ! -d "$motd_dir" ]]; then
         warning "MOTD directory not found: $motd_dir"
+        return
+    fi
+
+    if [[ ! -t 0 ]]; then
+        log "Non-interactive session — skipping MOTD prompt"
         return
     fi
 
@@ -288,7 +296,9 @@ install_motd() {
 # Bidirectional sync of VSCodium extensions:
 #   1. Install extensions listed in extensions.txt but not yet installed
 #   2. Add newly installed extensions to extensions.txt
-#   3. Remove extensions from extensions.txt that were uninstalled
+#   3. Reinstall tracked extensions that are missing (extensions.txt is the
+#      source of truth — a fresh machine must converge to it, which means an
+#      extension uninstalled by hand comes back; delete its line here instead)
 # After sync, extensions.txt matches the installed state exactly.
 sync_vscodium_extensions() {
     local extensions_file="$DOTFILES_ROOT/.vscodium/extensions.txt"
@@ -305,7 +315,10 @@ sync_vscodium_extensions() {
 
     # Sorted lowercase lists for comparison via comm
     local tracked_sorted installed_sorted
-    tracked_sorted=$(grep -v '^[[:space:]]*$\|^#' "$extensions_file" | tr '[:upper:]' '[:lower:]' | sort -u)
+    # grep -E (BRE treats the \| alternation's $ literally, letting blank
+    # lines through); || true: grep exits 1 on an empty file, which would
+    # abort the whole script under set -e
+    tracked_sorted=$(grep -Ev '^[[:space:]]*$|^#' "$extensions_file" | tr '[:upper:]' '[:lower:]' | sort -u || true)
     installed_sorted=$(codium --list-extensions | tr '[:upper:]' '[:lower:]' | sort -u)
 
     # Extensions in file but not installed → need to install
@@ -393,6 +406,13 @@ apply_custom_icons() {
     done
 }
 
+# Claude Code login state: OAuth login writes oauthAccount into ~/.claude.json;
+# API-key auth uses the environment instead
+claude_authenticated() {
+    [[ -n "${ANTHROPIC_API_KEY:-}" ]] && return 0
+    [[ -f "$HOME/.claude.json" ]] && jq -e '.oauthAccount' "$HOME/.claude.json" &> /dev/null
+}
+
 # Install Claude Code plugins listed in settings.json
 install_claude_plugins() {
     if ! command -v claude &> /dev/null; then
@@ -405,12 +425,32 @@ install_claude_plugins() {
         return
     fi
 
+    # Plugins only install once the CLI is authenticated — gate on it instead
+    # of failing every `claude plugin install` call on a fresh machine
+    while ! claude_authenticated; do
+        if [[ ! -t 0 ]]; then
+            warning "Claude Code not authenticated — run './update.sh --plugins' after logging in"
+            return
+        fi
+        log "Claude Code is not authenticated yet — plugins need a logged-in CLI."
+        log "Open another terminal, run 'claude' and complete the login."
+        printf "%b" "${BLUE}[INFO]${NC} Press Enter when done (or 's' to skip plugins): "
+        read -r response
+        if [[ "$response" =~ ^[Ss]$ ]]; then
+            warning "Skipping plugin installation — run './update.sh --plugins' after authenticating"
+            return
+        fi
+    done
+
     log "Installing Claude Code plugins..."
 
     local settings_file="$DOTFILES_ROOT/.ai/claude/settings.json"
     local plugins=()
 
-    mapfile -t plugins < <(jq -r '
+    # while-read instead of mapfile: macOS ships bash 3.2
+    while IFS= read -r plugin; do
+        [[ -n "$plugin" ]] && plugins+=("$plugin")
+    done < <(jq -r '
         .enabledPlugins // {}
         | to_entries[]
         | select(.value == true)

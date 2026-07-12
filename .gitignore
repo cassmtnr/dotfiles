@@ -30,6 +30,7 @@ tsconfig.json
 # This keeps all configs centralized while maintaining privacy
 .ssh/config.local
 .ssh/config.*.local
+.ssh/config.work
 
 # Sensitive data #
 ##################

@@ -8,8 +8,11 @@ echo "========================================="
 # settings we're about to change
 osascript -e 'tell application "System Settings" to quit' 2>/dev/null || true
 
-# Check if we need administrative privileges for system configuration
-if ! sudo -n true 2>/dev/null; then
+# Check if we need administrative privileges for system configuration.
+# RUN_SUDO comes from install.sh (--sudo/--no-sudo); when run standalone this
+# is a macOS-only script, so it defaults to no-sudo — admin-only settings are
+# skipped. Run with RUN_SUDO=true to apply them.
+if ${RUN_SUDO:-false} && ! sudo -n true 2>/dev/null; then
     echo "Administrative privileges required for MacOS configuration."
     sudo -v
 fi
@@ -52,8 +55,8 @@ defaults write NSGlobalDomain NSDisableAutomaticTermination -bool false
 defaults write com.apple.helpviewer DevMode -bool true
 
 # Reveal IP address, hostname, OS version, etc. when clicking the clock
-# in the login window
-sudo defaults write /Library/Preferences/com.apple.loginwindow AdminHostInfo HostName
+# in the login window (system-level — needs admin)
+! ${RUN_SUDO:-false} || sudo defaults write /Library/Preferences/com.apple.loginwindow AdminHostInfo HostName
 
 # Check for software updates daily, not just once per week
 defaults write com.apple.SoftwareUpdate ScheduleFrequency -int 1
@@ -68,10 +71,16 @@ defaults -currentHost write NSGlobalDomain com.apple.mouse.tapBehavior -int 1
 defaults write NSGlobalDomain com.apple.mouse.tapBehavior -int 1
 
 # Trackpad: map bottom right corner to right-click
+# (all six lines captured live while flipping the setting in System
+# Settings: corner mode = CornerSecondaryClick 2 + RightClick false in
+# BOTH trackpad domains, cornerClickBehavior 1, enableSecondaryClick 0 —
+# enableSecondaryClick=true would mean the two-finger mode instead)
 defaults write com.apple.driver.AppleBluetoothMultitouch.trackpad TrackpadCornerSecondaryClick -int 2
-defaults write com.apple.driver.AppleBluetoothMultitouch.trackpad TrackpadRightClick -bool true
+defaults write com.apple.driver.AppleBluetoothMultitouch.trackpad TrackpadRightClick -bool false
+defaults write com.apple.AppleMultitouchTrackpad TrackpadCornerSecondaryClick -int 2
+defaults write com.apple.AppleMultitouchTrackpad TrackpadRightClick -bool false
 defaults -currentHost write NSGlobalDomain com.apple.trackpad.trackpadCornerClickBehavior -int 1
-defaults -currentHost write NSGlobalDomain com.apple.trackpad.enableSecondaryClick -bool true
+defaults -currentHost write NSGlobalDomain com.apple.trackpad.enableSecondaryClick -bool false
 
 # Enable full keyboard access for all controls
 # (e.g. enable Tab in modal dialogs)
@@ -115,7 +124,8 @@ defaults write com.apple.finder NewWindowTarget -string "PfLo"
 defaults write com.apple.finder NewWindowTargetPath -string "file://${HOME}/"
 
 # Show icons for servers, and removable media on the desktop
-defaults write com.apple.finder ShowMountedServersOnDesktop -bool false
+# (value adopted from the configured machine, 2026-07)
+defaults write com.apple.finder ShowMountedServersOnDesktop -bool true
 defaults write com.apple.finder ShowRemovableMediaOnDesktop -bool false
 
 # Hide icons for hard drives on the desktop
@@ -166,6 +176,31 @@ defaults write com.apple.finder FXInfoPanesExpanded -dict \
 	General -bool true \
 	OpenWith -bool true \
 	Privileges -bool true
+
+# Always open folders in icon view
+defaults write com.apple.finder FXPreferredViewStyle -string "icnv"
+
+# Hide "Recent Tags" from the sidebar
+defaults write com.apple.finder ShowRecentTags -bool false
+
+# Icon-view template (Finder ⌘J → "Use as Defaults"): 64px icons, grid 54,
+# text 12, sort by name, item info + icon previews shown. Nested dict, so
+# PlistBuddy instead of `defaults write`; Set fails on a fresh plist that
+# lacks the key, then Add creates it. Per-folder overrides live in each
+# folder's .DS_Store and cannot be captured.
+finder_plist="$HOME/Library/Preferences/com.apple.finder.plist"
+for entry in "arrangeBy string name" "gridSpacing real 54" \
+             "iconSize real 64" "textSize real 12" \
+             "labelOnBottom bool true" "showItemInfo bool true" \
+             "showIconPreview bool true"; do
+    read -r vkey vtype vval <<< "$entry"
+    /usr/libexec/PlistBuddy \
+        -c "Set :StandardViewSettings:IconViewSettings:${vkey} ${vval}" \
+        "$finder_plist" 2>/dev/null || \
+    /usr/libexec/PlistBuddy \
+        -c "Add :StandardViewSettings:IconViewSettings:${vkey} ${vtype} ${vval}" \
+        "$finder_plist" 2>/dev/null || true
+done
 
 ###############################################################################
 # Dock, Dashboard, and hot corners                                            #
@@ -223,7 +258,9 @@ defaults write com.apple.ActivityMonitor OpenMainWindow -bool true
 defaults write com.apple.ActivityMonitor IconType -int 5
 
 # Show all processes in Activity Monitor
-defaults write com.apple.ActivityMonitor ShowCategory -int 0
+# (100 = All Processes — the old value 0 wasn't a valid category;
+# adopted from the configured machine, 2026-07)
+defaults write com.apple.ActivityMonitor ShowCategory -int 100
 
 # Sort Activity Monitor results by CPU usage
 defaults write com.apple.ActivityMonitor SortColumn -string "CPUUsage"
@@ -271,6 +308,8 @@ for app in "Activity Monitor" \
     "SystemUIServer" \
     "Terminal"
     do
-    killall "${app}" > /dev/null 2>&1
+    # || true: killall exits 1 when the app isn't running, which would
+    # abort install.sh (set -e) when this file is sourced
+    killall "${app}" > /dev/null 2>&1 || true
 done
 echo "MacOS defaults done. Some changes require a logout/restart to take effect."
