@@ -161,3 +161,13 @@ real. (3) CHANGELOG understated the trackpad fix (flipped values, not just
 missing domain). (4) "four keys" comment vs six lines. (5) Pre-existing:
 .defaults killall loop exits 1 on not-running apps, aborting install.sh
 under set -e — || true added.
+
+## [2026-07-13] fix | agent-reach upgrade clobbered the trimmed skill — safeguard added
+
+The documented risk fired: after pipx upgrade-all pulled a newer agent-reach,
+its installer overwrote all 7 trimmed English skill files with upstream's
+Chinese 15-platform versions (older version preserved existing files; new one
+doesn't). Safeguard: install_agent_reach() now git-checkouts the skill dir
+after channel installs when it differs from HEAD. User restores this
+occurrence manually (git restore). Also fixed: set_default_shell chsh'd from
+/bin/zsh to brew zsh and failed ("non-standard shell") — any zsh now counts.

@@ -337,6 +337,14 @@ install_agent_reach() {
             warning "rdt-cli (Reddit) installation failed"
     fi
 
+    # agent-reach regenerates its skill with upstream content (Chinese docs,
+    # all 15 platforms incl. uninstalled ones) — restore our trimmed English
+    # version from git. No-op when the files already match.
+    if ! git -C "$DOTFILES_ROOT" diff --quiet -- .ai/common/skills/agent-reach/ 2>/dev/null; then
+        git -C "$DOTFILES_ROOT" checkout -- .ai/common/skills/agent-reach/ && \
+            log "Restored trimmed agent-reach skill (installer had overwritten it)"
+    fi
+
     success "Agent Reach installed"
 }
 
@@ -414,7 +422,9 @@ set_default_shell() {
     local zsh_path
     zsh_path="$(which zsh)"
 
-    if [[ "$SHELL" == "$zsh_path" ]]; then
+    # Any zsh counts — on macOS $SHELL is typically /bin/zsh while brew's
+    # zsh isn't in /etc/shells, so chsh to it fails without admin rights
+    if [[ "$SHELL" == *zsh ]]; then
         log "Zsh is already the default shell"
         return
     fi

@@ -24,6 +24,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - **Trackpad corner right-click never fully applied** — `.defaults` only wrote the Bluetooth-trackpad domain (built-in trackpads read `com.apple.AppleMultitouchTrackpad`), and two pre-existing values were wrong for corner mode (`TrackpadRightClick` and `enableSecondaryClick` must be false). Full six-key set captured live while flipping the setting in System Settings
 - **`install_claude_plugins` never worked under macOS system bash** — `mapfile` is bash 4+; replaced with a `while read` loop (macOS ships bash 3.2)
+- **agent-reach upgrades overwrite the trimmed skill** — newer versions regenerate the skill with upstream's Chinese 15-platform docs instead of preserving existing files; `install_agent_reach()` now restores the committed trimmed version from git after every channel install
+- **`set_default_shell` tried to chsh from `/bin/zsh` to brew's zsh** — failed on macOS ("non-standard shell", not in `/etc/shells`); any zsh now counts as done
 - **`.defaults` kill-apps loop aborted install.sh when an app wasn't running** — `killall` exits 1 on no match; now `|| true` (same `set -e` failure class as the `return 1` fixes)
 - **`setup_nodejs`/`setup_bun`/`install_ai_tools` aborted the whole install on guarded failures** — `return 1` under `set -e` exits the script; a missing NVM or a failed Bun download now warns and continues like every other optional step
 - **`killall Finder` no longer uses sudo** — restarting the user's own Finder never needed it
