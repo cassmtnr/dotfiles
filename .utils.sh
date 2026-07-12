@@ -32,7 +32,7 @@ error() { echo -e "${RED}[ERROR]${NC} $1" >&2; }
 # Source NVM into the current shell (idempotent)
 source_nvm() {
     export NVM_DIR="$HOME/.nvm"
-    if [[ -n "$HOMEBREW_PREFIX" && -s "$HOMEBREW_PREFIX/opt/nvm/nvm.sh" ]]; then
+    if [[ -n "${HOMEBREW_PREFIX:-}" && -s "${HOMEBREW_PREFIX:-}/opt/nvm/nvm.sh" ]]; then
         source "$HOMEBREW_PREFIX/opt/nvm/nvm.sh"
     elif [[ -s "$NVM_DIR/nvm.sh" ]]; then
         source "$NVM_DIR/nvm.sh"
@@ -83,8 +83,6 @@ create_symlinks() {
         # Only put files in .ai/common when both CLIs support them.
         "$DOTFILES_ROOT/.ai/common/instructions.md:$HOME/.claude/CLAUDE.md"
         "$DOTFILES_ROOT/.ai/common/instructions.md:$HOME/.codex/instructions.md"
-        "$DOTFILES_ROOT/.ai/common/commands:$HOME/.claude/commands"
-        "$DOTFILES_ROOT/.ai/common/commands:$HOME/.codex/prompts"
         "$DOTFILES_ROOT/.ai/common/skills:$HOME/.claude/skills"
         "$DOTFILES_ROOT/.ai/common/skills:$HOME/.codex/skills"
         "$DOTFILES_ROOT/.ai/common/hooks:$HOME/.claude/hooks"
@@ -259,6 +257,11 @@ install_motd() {
         return
     fi
 
+    if [[ ! -t 0 ]]; then
+        log "Non-interactive session — skipping MOTD prompt"
+        return
+    fi
+
     echo
     log "Custom MOTD scripts found in dotfiles."
     log "This will copy them to /etc/update-motd.d/ (requires sudo)."
@@ -293,7 +296,9 @@ install_motd() {
 # Bidirectional sync of VSCodium extensions:
 #   1. Install extensions listed in extensions.txt but not yet installed
 #   2. Add newly installed extensions to extensions.txt
-#   3. Remove extensions from extensions.txt that were uninstalled
+#   3. Reinstall tracked extensions that are missing (extensions.txt is the
+#      source of truth — a fresh machine must converge to it, which means an
+#      extension uninstalled by hand comes back; delete its line here instead)
 # After sync, extensions.txt matches the installed state exactly.
 sync_vscodium_extensions() {
     local extensions_file="$DOTFILES_ROOT/.vscodium/extensions.txt"
@@ -310,7 +315,10 @@ sync_vscodium_extensions() {
 
     # Sorted lowercase lists for comparison via comm
     local tracked_sorted installed_sorted
-    tracked_sorted=$(grep -v '^[[:space:]]*$\|^#' "$extensions_file" | tr '[:upper:]' '[:lower:]' | sort -u)
+    # grep -E (BRE treats the \| alternation's $ literally, letting blank
+    # lines through); || true: grep exits 1 on an empty file, which would
+    # abort the whole script under set -e
+    tracked_sorted=$(grep -Ev '^[[:space:]]*$|^#' "$extensions_file" | tr '[:upper:]' '[:lower:]' | sort -u || true)
     installed_sorted=$(codium --list-extensions | tr '[:upper:]' '[:lower:]' | sort -u)
 
     # Extensions in file but not installed → need to install

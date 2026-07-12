@@ -62,7 +62,6 @@ dotfiles/
 ├── .ai/                       # AI CLI configuration
 │   ├── common/                # Shared by Claude Code & Codex CLI
 │   │   ├── instructions.md    # Global AI instructions
-│   │   ├── commands/          # Slash commands
 │   │   ├── skills/            # AI CLI skills
 │   │   ├── hooks/             # PreToolUse safety hooks (fail-closed)
 │   │   └── scripts/           # Helper scripts (vps-run.sh, skill-lint.sh)
@@ -70,12 +69,16 @@ dotfiles/
 │   │   ├── settings.json      # Settings (plugins, permissions, statusline)
 │   │   └── config/            # Custom statusline script
 │   └── codex/                 # Codex CLI only
-│       ├── config.toml        # Model and approval policy
 │       └── hooks.json         # Hook configuration
 ├── config/                    # Misc tool configs (mcporter → ~/.mcporter/mcporter.json)
+├── .1password/                # 1Password SSH agent config
 ├── .vscodium/                 # VSCodium settings, extensions, custom icon
 ├── .lazydocker/               # LazyDocker terminal UI configuration
-└── .motd/                     # Message of the Day scripts (Linux/VPS)
+├── .motd/                     # Message of the Day scripts (Linux/VPS)
+├── index.html                 # GitHub Pages shell (renders this README)
+├── CHANGELOG.md               # Notable changes
+├── TODO.md                    # Deferred work
+└── log.md                     # Append-only project log
 ```
 
 ### Capturing macOS settings
@@ -116,13 +119,11 @@ Shared configuration for [Claude Code](https://claude.com/claude-code) and [Code
 
 - `.ai/common/` contains only assets that are intended to work for both CLIs
 - `.ai/claude/` contains Claude-only settings
-- `.ai/codex/` contains Codex-only settings
-- `~/.codex/instructions.md` is loaded by Codex via `model_instructions_file` in `.ai/codex/config.toml`
-- Codex hooks are enabled explicitly in `.ai/codex/config.toml` because `hooks.json` is ignored unless the `codex_hooks` feature is on
-- Codex TUI status line and terminal title are versioned in `.ai/codex/config.toml` via the built-in `[tui]` settings; keeping the full `status_line` list there makes it persist across new Codex sessions
-- Codex project trust is intentionally not hardcoded in the repo because `projects.<path>.trust_level` is machine-specific
+- `.ai/codex/` contains Codex-only settings (`hooks.json`; the former
+  `config.toml` was removed — Codex hooks stay dormant until a machine-local
+  config enables the `codex_hooks` feature)
 
-**Agent Reach** — internet access channels for AI CLIs ([Panniantong/agent-reach](https://github.com/Panniantong/agent-reach)). `install.sh` installs it via pipx and activates: web pages (Jina Reader), Exa web search (via mcporter, config in `config/mcporter.json`), YouTube (yt-dlp), GitHub (gh), RSS, V2EX, Bilibili (bili-cli), Twitter (twitter-cli), Reddit (rdt-cli). The skill lives in `.ai/common/skills/agent-reach/` — trimmed to these channels; re-trim if an agent-reach upgrade regenerates it with upstream's full 15-platform docs. Manual per-machine steps (cookie logins, no browser needed at runtime): Twitter — log into x.com in Chrome, then `agent-reach configure --from-browser chrome`; Reddit — log into reddit.com in Chrome, then `rdt login`. Don't log out of those sites afterwards; that invalidates the tokens. Credentials live in `~/.agent-reach/` — never in this repo. Health check: `agent-reach doctor`.
+**Agent Reach** — internet access channels for AI CLIs ([Panniantong/agent-reach](https://github.com/Panniantong/agent-reach)). `install.sh` installs it via pipx and activates: web pages (Jina Reader), Exa web search (via mcporter, config in `config/mcporter.json`), YouTube (yt-dlp), GitHub (gh), RSS, V2EX, Bilibili (bili-cli), Twitter (twitter-cli), Reddit (rdt-cli). The skill lives in `.ai/common/skills/agent-reach/` — trimmed to these channels; upgrades regenerate it with upstream's full 15-platform Chinese docs, so `install.sh` auto-restores the trimmed version from git afterwards (after `./update.sh -p`, restore manually: `git restore .ai/common/skills/agent-reach/`). Manual per-machine steps (cookie logins, no browser needed at runtime): Twitter — log into x.com in Chrome, then `agent-reach configure --from-browser chrome`; Reddit — log into reddit.com in Chrome, then `rdt login`. Don't log out of those sites afterwards; that invalidates the tokens. Credentials live in `~/.agent-reach/` — never in this repo. Health check: `agent-reach doctor`.
 
 **Safety hooks** — `block-dangerous-commands.js` blocks dangerous Bash commands via PreToolUse hooks at three levels (fails closed on malformed input):
 
@@ -130,7 +131,7 @@ Shared configuration for [Claude Code](https://claude.com/claude-code) and [Code
 - **High** (default): git write ops, elevated privileges, secrets exposure, publishing/deployment, database ops
 - **Strict**: cautionary patterns (`git checkout .`, `docker prune`)
 
-**Plugins** (Claude Code only) — installed from enabled entries in `.ai/claude/settings.json` (currently `superpowers`, `code-simplifier`, `frontend-design`, `sentry`, `swift-lsp`, `pyright-lsp`).
+**Plugins** (Claude Code only) — installed from enabled entries in `.ai/claude/settings.json` (currently `code-simplifier`, `frontend-design`, `superpowers` from the official marketplace, plus `ponytail` from its own marketplace). Needs an authenticated CLI — `install.sh` prompts for login; deferred path: `./update.sh --plugins`.
 
 ## VSCodium
 

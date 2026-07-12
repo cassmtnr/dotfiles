@@ -106,6 +106,7 @@ chains):
 - [Dev](references/dev.md) — GitHub CLI
 - [Web](references/web.md) — Jina Reader, RSS
 - [Video](references/video.md) — YouTube, Bilibili
+- [Career](references/career.md) — LinkedIn (stub; channel not installed)
 
 ## Configure a channel
 

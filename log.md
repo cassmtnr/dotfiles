@@ -171,3 +171,18 @@ doesn't). Safeguard: install_agent_reach() now git-checkouts the skill dir
 after channel installs when it differs from HEAD. User restores this
 occurrence manually (git restore). Also fixed: set_default_shell chsh'd from
 /bin/zsh to brew zsh and failed ("non-standard shell") — any zsh now counts.
+
+## [2026-07-13] review | Full repo overhaul — 3 parallel audits, 15 bugs/doc-drifts fixed
+
+Three reviewer agents (scripts, docs-vs-reality, AI tree). Fixed: ssh-agent
+leak (36 running; exit-code 1-vs-2 confusion — one agent per shell), RSS
+skill needed uninstalled feedparser (→ stdlib), 4 more set-e abort paths
+(HOMEBREW_PREFIX unset, empty extensions.txt + BRE blank-line bug, MOTD read
+non-interactive, set_default_shell without zsh), setup_bun never syncing
+packages when bun preexists, .gitignore missing .ssh/config.work (public-repo
+leak footgun), stale commands symlink pairs, README drift (codex config.toml
+ghosts, wrong plugin list, counts, structure), CHANGELOG missing Removed
+notes, extension-sync comment contradicting behavior. Deferred nits recorded
+in TODO.md. Verified: bash 3.2 + zsh syntax across all scripts, update.sh
+end-to-end zero warnings, skill lint clean, ssh-agent leak regression-tested
+(3 shells → 1 agent).

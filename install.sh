@@ -236,30 +236,30 @@ setup_nodejs() {
 setup_bun() {
     log "Setting up Bun JavaScript runtime..."
 
-    # Check if Bun is already installed
+    # Check if Bun is already installed (packages below still sync)
     if command -v bun &> /dev/null; then
         log "Bun is already installed ($(bun --version))"
-        return 0
-    fi
-
-    log "Installing Bun..."
-
-    # Install Bun using official installer
-    if curl -fsSL https://bun.sh/install | bash; then
-        # Add Bun to PATH for current session
-        export BUN_INSTALL="$HOME/.bun"
-        export PATH="$BUN_INSTALL/bin:$PATH"
-
-        # Verify installation
-        if command -v bun &> /dev/null; then
-            success "Bun installed successfully ($(bun --version))"
-        else
-            warning "Bun installed but not found in PATH - restart your shell"
-        fi
     else
-        # plain return: `return 1` would abort the whole script under set -e
-        warning "Bun installation failed - you can install manually later with: curl -fsSL https://bun.sh/install | bash"
-        return
+        log "Installing Bun..."
+
+        # Install Bun using official installer
+        if curl -fsSL https://bun.sh/install | bash; then
+            # Add Bun to PATH for current session
+            export BUN_INSTALL="$HOME/.bun"
+            export PATH="$BUN_INSTALL/bin:$PATH"
+
+            # Verify installation
+            if command -v bun &> /dev/null; then
+                success "Bun installed successfully ($(bun --version))"
+            else
+                warning "Bun installed but not found in PATH - restart your shell"
+                return
+            fi
+        else
+            # plain return: `return 1` would abort the whole script under set -e
+            warning "Bun installation failed - you can install manually later with: curl -fsSL https://bun.sh/install | bash"
+            return
+        fi
     fi
 
     # Install global packages
@@ -341,8 +341,11 @@ install_agent_reach() {
     # all 15 platforms incl. uninstalled ones) — restore our trimmed English
     # version from git. No-op when the files already match.
     if ! git -C "$DOTFILES_ROOT" diff --quiet -- .ai/common/skills/agent-reach/ 2>/dev/null; then
-        git -C "$DOTFILES_ROOT" checkout -- .ai/common/skills/agent-reach/ && \
+        if git -C "$DOTFILES_ROOT" checkout -- .ai/common/skills/agent-reach/; then
             log "Restored trimmed agent-reach skill (installer had overwritten it)"
+        else
+            warning "Could not restore trimmed agent-reach skill from git"
+        fi
     fi
 
     success "Agent Reach installed"
@@ -419,13 +422,17 @@ main() {
 
 # Set zsh as default shell
 set_default_shell() {
-    local zsh_path
-    zsh_path="$(which zsh)"
-
     # Any zsh counts — on macOS $SHELL is typically /bin/zsh while brew's
     # zsh isn't in /etc/shells, so chsh to it fails without admin rights
     if [[ "$SHELL" == *zsh ]]; then
         log "Zsh is already the default shell"
+        return
+    fi
+
+    local zsh_path
+    zsh_path="$(which zsh || true)"
+    if [[ -z "$zsh_path" ]]; then
+        warning "zsh not installed — cannot set it as default shell"
         return
     fi
 

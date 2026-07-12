@@ -10,8 +10,11 @@ start_ssh_agent() {
         source "$ssh_env" > /dev/null
     fi
 
-    # Check if agent is running
-    if ! ssh-add -l &>/dev/null; then
+    # Check if agent is running: ssh-add exits 2 when no agent is reachable,
+    # 1 when the agent runs but holds no identities — only start on 2, or
+    # every shell spawns a fresh agent when no keys get added (process leak)
+    ssh-add -l &>/dev/null
+    if [[ $? -eq 2 ]]; then
         # Start new agent
         echo "Starting new SSH agent..."
         ssh-agent > "$ssh_env"
