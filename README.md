@@ -55,6 +55,7 @@ dotfiles/
 ├── .completion                # Shell completions
 ├── .starship                  # Starship prompt configuration
 ├── .defaults                  # macOS system preferences
+├── capture-setting.sh         # Capture a changed macOS setting into .defaults
 ├── .bun                       # Bun JavaScript runtime config
 ├── .ghostty/                  # Ghostty terminal (Nord theme, custom keybindings)
 ├── .ssh/config                # SSH configuration template
@@ -76,6 +77,26 @@ dotfiles/
 ├── .lazydocker/               # LazyDocker terminal UI configuration
 └── .motd/                     # Message of the Day scripts (Linux/VPS)
 ```
+
+### Capturing macOS settings
+
+To make a System Settings change reproducible on future machines, capture it
+into `.defaults`:
+
+```bash
+./capture-setting.sh      # 1. run it — it snapshots current preferences
+                          # 2. change ONE setting in System Settings, wait ~2s
+                          # 3. press Enter
+```
+
+The script detects which preference keys changed, filters out macOS churn
+(timestamps, counters, caches), and appends ready-made `defaults write` lines
+to `.defaults` — review with `git diff .defaults`, optionally move the lines
+into a themed section, and commit. Keys the change *removed* are printed for
+information but not appended (macOS often deletes a key to mean "back to
+default"). If more than 12 keys changed, nothing is appended — that's
+background noise; re-run and change only one thing. Captured settings apply
+to new machines via `install.sh` (some need logout/login to take effect).
 
 ## Post-Install Configuration
 

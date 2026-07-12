@@ -14,9 +14,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Platform-conditional sudo** — Linux defaults to sudo (servers with root), macOS defaults to no-sudo (managed work laptops just work); `--sudo`/`--no-sudo` override. No-sudo mode skips Homebrew bootstrap, apt-get, `/etc/shells`, system-level macOS defaults, and MOTD install, each with a warning, and auto-engages if the `sudo -v` prompt fails
 - **Claude Code plugin auth gate** — `install_claude_plugins` now checks login state (`oauthAccount` in `~/.claude.json` or `ANTHROPIC_API_KEY`) and interactively waits for the user to authenticate in another terminal instead of failing every install on a fresh machine; skippable, with `./update.sh --plugins` (`-P`) as the deferred path
 
+#### Added (macOS defaults)
+
+- **`capture-setting.sh`** — one-step capture of any macOS setting into `.defaults`: run it, change the setting in System Settings, press Enter; it detects the changed preference keys, filters out churn (timestamps, counters, caches, app state), and appends ready-made `defaults write` lines to `.defaults` for review via `git diff`. Deliberate non-goal: importing a full `defaults read` dump (app state + machine identifiers, not preferences). Replaced an earlier defaults-diff.sh/defaults-sync.sh pair that required manual diff-reading
+
+- **Finder view preferences captured into `.defaults`** — default icon view (`FXPreferredViewStyle icnv`), Recent Tags hidden, and the ⌘J "Use as Defaults" icon-view template (64px icons, grid 54, text 12, sort by name, item info + previews) via PlistBuddy since it's a nested dict. Per-folder view overrides live in `.DS_Store` files and cannot be captured
+
 #### Fixed
 
+- **Trackpad corner right-click never fully applied** — `.defaults` only wrote the Bluetooth-trackpad domain (built-in trackpads read `com.apple.AppleMultitouchTrackpad`), and two pre-existing values were wrong for corner mode (`TrackpadRightClick` and `enableSecondaryClick` must be false). Full six-key set captured live while flipping the setting in System Settings
 - **`install_claude_plugins` never worked under macOS system bash** — `mapfile` is bash 4+; replaced with a `while read` loop (macOS ships bash 3.2)
+- **`.defaults` kill-apps loop aborted install.sh when an app wasn't running** — `killall` exits 1 on no match; now `|| true` (same `set -e` failure class as the `return 1` fixes)
 - **`setup_nodejs`/`setup_bun`/`install_ai_tools` aborted the whole install on guarded failures** — `return 1` under `set -e` exits the script; a missing NVM or a failed Bun download now warns and continues like every other optional step
 - **`killall Finder` no longer uses sudo** — restarting the user's own Finder never needed it
 
