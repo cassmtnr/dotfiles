@@ -4,6 +4,13 @@ echo "========================================="
 echo "Starting MacOS Settings"
 echo "========================================="
 
+# Record failing commands instead of aborting on the first one; the summary
+# at the end lists them and the exit status lets the caller (configure_macos)
+# warn. ||-guarded lines (e.g. killall ... || true) are not counted.
+# No $LINENO: macOS system bash 3.2 reports 0 inside ERR traps.
+FAILED_ITEMS=()
+trap 'FAILED_ITEMS+=("$BASH_COMMAND")' ERR
+
 # Close any open System Settings panes, to prevent them from overriding
 # settings we're about to change
 osascript -e 'tell application "System Settings" to quit' 2>/dev/null || true
@@ -14,7 +21,9 @@ osascript -e 'tell application "System Settings" to quit' 2>/dev/null || true
 # skipped. Run with RUN_SUDO=true to apply them.
 if ${RUN_SUDO:-false} && ! sudo -n true 2>/dev/null; then
     echo "Administrative privileges required for MacOS configuration."
-    sudo -v
+    # Degrade to no-sudo instead of counting the failure and letting every
+    # later sudo line re-prompt (same pattern as install.sh's welcome step)
+    sudo -v || RUN_SUDO=false
 fi
 
 echo "Setup started... Hold on..."
@@ -50,9 +59,6 @@ defaults write NSGlobalDomain NSTextShowsControlCharacters -bool true
 
 # Disable automatic termination of inactive apps
 defaults write NSGlobalDomain NSDisableAutomaticTermination -bool false
-
-# Set Help Viewer windows to non-floating mode
-defaults write com.apple.helpviewer DevMode -bool true
 
 # Reveal IP address, hostname, OS version, etc. when clicking the clock
 # in the login window (system-level — needs admin)
@@ -99,8 +105,15 @@ defaults write NSGlobalDomain NSAutomaticSpellingCorrectionEnabled -bool false
 # Screen                                                                      #
 ###############################################################################
 
-# Save screenshots to the Screenshots folder
-defaults write com.apple.screencapture location -string "$HOME/Screenshots"
+# Save screenshots to the Screenshots folder. screencapture doesn't create
+# missing target folders, so don't point it at a path mkdir couldn't create;
+# the manual append is needed because non-final && / if-condition commands
+# are exempt from the ERR trap
+if mkdir -p "$HOME/Screenshots"; then
+    defaults write com.apple.screencapture location -string "$HOME/Screenshots"
+else
+    FAILED_ITEMS+=("mkdir -p \$HOME/Screenshots")
+fi
 
 # Save screenshots in JPG format (other options: BMP, GIF, JPG, PDF, TIFF)
 defaults write com.apple.screencapture type -string "jpg"
@@ -308,8 +321,14 @@ for app in "Activity Monitor" \
     "SystemUIServer" \
     "Terminal"
     do
-    # || true: killall exits 1 when the app isn't running, which would
-    # abort install.sh (set -e) when this file is sourced
+    # || true: killall exits 1 when the app isn't running — not a failure
+    # worth recording in FAILED_ITEMS
     killall "${app}" > /dev/null 2>&1 || true
 done
 echo "MacOS defaults done. Some changes require a logout/restart to take effect."
+
+if [[ ${#FAILED_ITEMS[@]} -gt 0 ]]; then
+    echo "WARNING: ${#FAILED_ITEMS[@]} command(s) failed while applying defaults:" >&2
+    printf '  %s\n' "${FAILED_ITEMS[@]}" >&2
+    exit 1
+fi

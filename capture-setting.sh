@@ -152,7 +152,10 @@ block = ("# Captured with capture-setting.sh — review, comment, move to a sect
 if MARK in content:
     content = content.replace(MARK, block + MARK, 1)
 else:
-    content += "\n" + block
+    # Never append at EOF: the FAILED_ITEMS summary there can `exit 1`
+    # before reaching lines placed after it
+    raise SystemExit("ERROR: insertion mark not found in .defaults — "
+                     "was the 'Kill affected applications' banner reworded?")
 with open(DEFAULTS_FILE, "w") as f:
     f.write(content)
 

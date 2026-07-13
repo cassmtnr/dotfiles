@@ -49,7 +49,7 @@ cask "font-meslo-for-powerline"
 cask "font-meslo-lg"
 
 # AI CLI tools
-cask "claude-code"
+cask "claude-code@latest"
 
 # Applications
 cask "1password"

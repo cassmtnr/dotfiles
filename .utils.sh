@@ -30,12 +30,17 @@ warning() { echo -e "${YELLOW}[WARNING]${NC} $1"; }
 error() { echo -e "${RED}[ERROR]${NC} $1" >&2; }
 
 # Source NVM into the current shell (idempotent)
+# --no-use skips nvm's auto-activation: a cwd .nvmrc for an uninstalled Node
+# version makes it return nonzero, aborting the install under set -e.
+# setup_nodejs activates a version explicitly; install_ai_tools falls back
+# to the default alias. || warning: any other failure while sourcing an
+# external script must not abort the install either.
 source_nvm() {
     export NVM_DIR="$HOME/.nvm"
     if [[ -n "${HOMEBREW_PREFIX:-}" && -s "${HOMEBREW_PREFIX:-}/opt/nvm/nvm.sh" ]]; then
-        source "$HOMEBREW_PREFIX/opt/nvm/nvm.sh"
+        source "$HOMEBREW_PREFIX/opt/nvm/nvm.sh" --no-use || warning "nvm.sh failed to load"
     elif [[ -s "$NVM_DIR/nvm.sh" ]]; then
-        source "$NVM_DIR/nvm.sh"
+        source "$NVM_DIR/nvm.sh" --no-use || warning "nvm.sh failed to load"
     fi
 }
 
@@ -195,9 +200,50 @@ create_symlinks() {
     success "Symbolic links created"
 }
 
+# Put brew on PATH and export HOMEBREW_PREFIX etc. if installed but not yet
+# loaded (fresh shells haven't sourced .zshrc, so brew's shellenv isn't in
+# effect). Returns 1 if brew is not installed or broken — a binary whose
+# `shellenv` fails (e.g. a half-deleted install) must not count as installed.
+# Probe list kept in sync with .zshenv's HOMEBREW_PREFIX detection.
+ensure_brew_path() {
+    local shellenv_out
+    if command -v brew &> /dev/null; then
+        # Already loaded (interactive shells export HOMEBREW_PREFIX in .zshenv)
+        [[ -n "${HOMEBREW_PREFIX:-}" ]] && return 0
+        # On PATH (e.g. via /etc/paths.d) but shellenv not in effect yet
+        if shellenv_out="$(brew shellenv 2>/dev/null)"; then
+            eval "$shellenv_out"
+            return 0
+        fi
+        # brew on PATH is broken — fall through to the probe loop
+    fi
+    local brew_bin
+    for brew_bin in /opt/homebrew/bin/brew /home/linuxbrew/.linuxbrew/bin/brew; do
+        if [[ -x "$brew_bin" ]] && shellenv_out="$("$brew_bin" shellenv 2>/dev/null)"; then
+            eval "$shellenv_out"
+            return 0
+        fi
+    done
+    return 1
+}
+
 # Install Homebrew packages
 install_packages() {
     log "Installing Homebrew packages..."
+
+    if ! ensure_brew_path; then
+        warning "Homebrew not installed — skipping package installation"
+        return
+    fi
+
+    # One-time migration: the old claude-code cask ships the same claude
+    # binary as claude-code@latest (now in .brewfile) and fails brew bundle
+    # with a binary conflict on every run until removed. Dir test instead of
+    # `brew list --cask` — that costs ~0.7s of Ruby startup on every run.
+    if [[ -d "${HOMEBREW_PREFIX:-}/Caskroom/claude-code" ]]; then
+        log "Migrating cask: claude-code → claude-code@latest"
+        brew uninstall --cask claude-code || warning "Could not uninstall old claude-code cask"
+    fi
 
     if [[ -f "$DOTFILES_ROOT/.brewfile" ]]; then
         if $IS_LINUX; then
@@ -222,10 +268,12 @@ configure_macos() {
 
     log "Configuring MacOS defaults..."
 
-    # Run detailed MacOS configuration script if it exists
+    # Run as a subprocess, not sourced: under install.sh's set -e, one failing
+    # `defaults write` (e.g. a domain macOS has sandboxed away) would abort the
+    # whole install and skip the remaining defaults.
     if [[ -f "$DOTFILES_ROOT/.defaults" ]]; then
         log "Running detailed MacOS configuration..."
-        source "$DOTFILES_ROOT/.defaults"
+        RUN_SUDO="${RUN_SUDO:-false}" bash "$DOTFILES_ROOT/.defaults" || warning "Some macOS defaults failed to apply"
     else
         # Basic configuration if script not found
         mkdir -p "$HOME/Screenshots"

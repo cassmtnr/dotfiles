@@ -23,20 +23,21 @@ export PAGER="${PAGER:-less}"
 export NODE_OPTIONS="--max-old-space-size=8192"
 
 # Homebrew paths (macOS and Linux)
+# Keep in sync with ensure_brew_path in .utils.sh
 if [[ -f "/opt/homebrew/bin/brew" ]]; then
     export HOMEBREW_PREFIX="/opt/homebrew"
-elif [[ -f "/usr/local/bin/brew" ]]; then
-    export HOMEBREW_PREFIX="/usr/local"
 elif [[ -f "/home/linuxbrew/.linuxbrew/bin/brew" ]]; then
     export HOMEBREW_PREFIX="/home/linuxbrew/.linuxbrew"
 fi
 
 # Path construction
+# :-/opt/homebrew fallback: with HOMEBREW_PREFIX unset, $HOMEBREW_PREFIX/bin
+# would expand to literal /bin and front-load it ahead of ~/.local/bin
 typeset -U path
 path=(
     /usr/local/bin
-    $HOMEBREW_PREFIX/bin(N)
-    $HOMEBREW_PREFIX/sbin(N)
+    ${HOMEBREW_PREFIX:-/opt/homebrew}/bin(N)
+    ${HOMEBREW_PREFIX:-/opt/homebrew}/sbin(N)
     $HOME/.local/bin(N)
     $path
 )

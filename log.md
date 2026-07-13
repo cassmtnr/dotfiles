@@ -186,3 +186,32 @@ notes, extension-sync comment contradicting behavior. Deferred nits recorded
 in TODO.md. Verified: bash 3.2 + zsh syntax across all scripts, update.sh
 end-to-end zero warnings, skill lint clean, ssh-agent leak regression-tested
 (3 shells → 1 agent).
+
+## [2026-07-13] fix | Install failures: brew off PATH, cask conflict, set -e abort in .defaults
+
+Work machine hit `brew: command not found`; this machine hit the
+claude-code cask binary conflict and a sandboxed com.apple.helpviewer
+`defaults write` that aborted install.sh mid-run. New ensure_brew_path(),
+one-time cask migration to claude-code@latest, .defaults now a subprocess
+with an ERR-trap failure counter.
+
+## [2026-07-13] review | Install-fixes changeset — 8-angle review, 7 findings fixed, 2 deferred to TODO.md
+
+## [2026-07-13] decision | No brew-free fallbacks for work Mac — wait for brew
+
+Work Mac (no admin) stays on plain zsh until Homebrew is available; declined
+adding curl/git-clone installers for starship, zsh plugins, and nvm to
+install.sh. Default-shell fix there: chsh -s /bin/zsh (no admin needed).
+
+## [2026-07-13] fix | Cleared the two review deferrals: Screenshots mkdir + source_nvm --no-use
+
+Both TODO.md entries from today's review fixed and removed. source_nvm abort
+reproduced with a fake $HOME before fixing. New instructions.md rule: fix
+findings right away when feasible instead of filing them to TODO.md.
+
+## [2026-07-13] review | Final pre-commit review of install-fixes changeset — 10 findings fixed
+
+8-angle review of the full working tree. Highlights: guarded the Homebrew and
+Oh My Zsh remote installers (empty-script false success + set -e abort),
+broken-brew-on-PATH detection, nvm default-alias fallback, .zshenv unset-prefix
+PATH leak, cask migration via dir test (0.7s/run saved).

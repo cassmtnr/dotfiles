@@ -55,7 +55,7 @@ The user's lived experience and broker error messages outrank web research. Conf
 
 - Every changed line must trace to the user's request. No driveby fixes to nearby code, comments, formatting, or quote style.
 - Match the file's existing style even if you'd write it differently (quote style, type hints, naming, indentation, boolean patterns).
-- If you notice unrelated dead code, a bug, or a smell — mention it, don't fix it as a side effect.
+- If you notice unrelated dead code, a bug, or a smell — mention it, never fix it as a silent side effect of an unrelated edit. If it's quick to fix, do it as its own visible step (see "If something isn't fixed, write it down" in §3); otherwise file it.
 - Clean up orphans your changes create (newly unused imports/vars/funcs). Pre-existing dead code stays unless asked.
 
 ### Reproduce before fix
@@ -99,10 +99,12 @@ Only exception: if it's genuinely a different feature area or phase, see "If som
 
 ### If something isn't fixed, write it down
 
+Filing is a last resort, not a first response: if a finding can be fixed right away with reasonable effort (small, verifiable, low-risk — even when it's outside the current change's scope), fix it now instead of adding it to `TODO.md`. Reserve the follow-up file for things that genuinely can't or shouldn't be done in this session: user-deferred items, behavior changes needing the user's call, or work too large to bolt on safely.
+
 Anything raised during a session but not fixed before it ends must be captured in writing so it isn't forgotten. This covers:
 
 - Items the user explicitly deferred ("skip it", "not now", "later")
-- Bugs or smells you noticed but the "Surgical edits" rule kept you from touching
+- Bugs or smells you noticed that couldn't be fixed within the session
 - Review findings left unaddressed
 - Verification steps that failed and weren't resolved (failing tests, lint errors, broken build)
 

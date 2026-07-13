@@ -163,7 +163,7 @@ install_deps() {
 
 # Install Homebrew
 install_homebrew() {
-    if command -v brew &> /dev/null; then
+    if ensure_brew_path; then
         log "Homebrew already installed"
         return
     fi
@@ -176,17 +176,22 @@ install_homebrew() {
 
     log "Installing Homebrew..."
 
+    # Download first: `bash -c "$(curl ...)"` with a failed curl runs an
+    # empty script and reports false success
+    local installer
+    if ! installer="$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"; then
+        warning "Could not download the Homebrew installer — skipping"
+        return
+    fi
+
     # Homebrew installation script handles its own sudo requests
-    NONINTERACTIVE=1 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+    if ! NONINTERACTIVE=1 /bin/bash -c "$installer"; then
+        warning "Homebrew installation failed — continuing without it"
+        return
+    fi
 
     # Add Homebrew to PATH
-    if [[ -f "/opt/homebrew/bin/brew" ]]; then
-        eval "$(/opt/homebrew/bin/brew shellenv)"
-    elif [[ -f "/usr/local/bin/brew" ]]; then
-        eval "$(/usr/local/bin/brew shellenv)"
-    elif [[ -f "/home/linuxbrew/.linuxbrew/bin/brew" ]]; then
-        eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
-    fi
+    ensure_brew_path || warning "Homebrew installed but brew binary not found"
 
     success "Homebrew installed"
 }
@@ -200,10 +205,19 @@ install_oh_my_zsh() {
 
     log "Installing Oh My Zsh..."
 
-    # Prevent Oh My Zsh from replacing .zshrc
-    export KEEP_ZSHRC=yes
-    sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" "" --unattended
-    unset KEEP_ZSHRC
+    # Download first: `sh -c "$(curl ...)"` with a failed curl runs an
+    # empty script and reports false success
+    local installer
+    if ! installer="$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"; then
+        warning "Could not download the Oh My Zsh installer — skipping"
+        return
+    fi
+
+    # KEEP_ZSHRC prevents Oh My Zsh from replacing .zshrc
+    if ! KEEP_ZSHRC=yes sh -c "$installer" "" --unattended; then
+        warning "Oh My Zsh installation failed — continuing without it"
+        return
+    fi
 
     success "Oh My Zsh installed"
 }
@@ -289,6 +303,10 @@ install_ai_tools() {
 
     # Ensure NVM and npm are available in current session
     source_nvm
+
+    # source_nvm no longer auto-activates a node (--no-use); if setup_nodejs
+    # couldn't install the pinned version, fall back to the default alias
+    command -v npm &> /dev/null || nvm use --silent default &> /dev/null || true
 
     if ! command -v npm &> /dev/null; then
         # plain return: `return 1` would abort the whole script under set -e

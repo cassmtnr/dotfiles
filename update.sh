@@ -77,6 +77,10 @@ main() {
     echo "======================================"
     echo
 
+    # Fresh shells may not have brew's bin dir on PATH, hiding brew-installed
+    # binaries the steps below check for (codium, fileicon, jq)
+    ensure_brew_path || true
+
     # Always update symlinks and sync extensions (bidirectional)
     create_symlinks
     sync_vscodium_extensions
@@ -107,6 +111,10 @@ main() {
     # Conditionally install Claude Code plugins (deferred from install.sh
     # when the CLI wasn't authenticated yet)
     if $UPDATE_PLUGINS; then
+        # On Linux claude is npm-installed under nvm, invisible to fresh
+        # shells until a node is activated
+        source_nvm
+        command -v claude &> /dev/null || nvm use --silent default &> /dev/null || true
         install_claude_plugins
     fi
 

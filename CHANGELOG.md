@@ -7,6 +7,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Install Failure Fixes — 2026-07-13
+
+#### Fixed
+
+- **`brew bundle` crashed when brew wasn't on PATH** (`.utils.sh:207: brew: command not found` on the work machine) — new `ensure_brew_path()` finds an installed brew that isn't on PATH yet (fresh shells), exports its shellenv (incl. `HOMEBREW_PREFIX`, which `source_nvm` needs), rejects broken binaries, and `install_packages` now skips with a warning when brew is truly absent. `update.sh` calls it up front so brew-installed binaries (codium, fileicon, claude, jq) are found in fresh shells too
+- **`claude-code` cask conflicted with the installed `claude-code@latest`** — both ship `/opt/homebrew/bin/claude`; `.brewfile` now tracks `claude-code@latest` and `install_packages` migrates machines that still have the old cask (one-time `brew uninstall`)
+- **A failing `defaults write` aborted the whole install** — `com.apple.helpviewer` is sandboxed on macOS 26+ and killed the run mid-way (skipping plugins, agent-reach, shell setup) because `.defaults` was sourced under `set -e`; the dead helpviewer tweak is removed, `.defaults` now runs as a subprocess with an ERR-trap failure counter, and `configure_macos` warns instead of dying when some defaults fail
+- **`source_nvm` aborted the install on a fresh machine with a cwd `.nvmrc`** — nvm's auto-`use` returns nonzero for an uninstalled version (reproduced with a fake `$HOME`); now sourced with `--no-use` since the callers run `nvm install`/`nvm use` explicitly
+- **`~/Screenshots` was never created** — `.defaults` pointed `com.apple.screencapture location` at it, but `screencapture` doesn't create missing folders, so screenshots on a fresh machine silently saved nowhere
+- **`/usr/local` dropped from brew detection** (`ensure_brew_path` and `.zshenv` `HOMEBREW_PREFIX`) — only `/opt/homebrew` (macOS) and `/home/linuxbrew/.linuxbrew` (Linux) are probed
+- **Remote installers guarded** (Homebrew, Oh My Zsh) — a failed download no longer executes an empty script and reports success, and a failed install warns and continues instead of aborting the run under `set -e`
+- **`source nvm.sh` guarded and default-alias fallback added** — `install_ai_tools` and `update.sh -P` activate nvm's default node when the pinned version isn't active, restoring the npm/claude lookup that `--no-use` had removed on Linux failure paths
+- **`.zshenv` PATH no longer front-loads `/bin` and `/sbin`** when `HOMEBREW_PREFIX` is unset (the unset var made `$HOMEBREW_PREFIX/bin` expand to `/bin`)
+- **Cask migration check via Caskroom dir test** instead of `brew list --cask` — saves ~0.7s of Ruby startup on every `install.sh`/`update.sh -p` run
+- **`.defaults` hardening** — failed `sudo -v` degrades to no-sudo instead of re-prompting mid-run; a failed `~/Screenshots` mkdir is recorded and no longer lets the screencapture location point at an unusable path; `capture-setting.sh` errors instead of appending after the failure summary when its insertion mark is missing
+
 ### Repo Overhaul — 2026-07-13
 
 #### Fixed
