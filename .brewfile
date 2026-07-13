@@ -1,7 +1,7 @@
-# Homebrew Bundle file
-# Install with: brew bundle --file=~/dotfiles/.brewfile
-
-# Note: Most taps are no longer needed as they've been integrated into core Homebrew
+# Homebrew packages for the dotfiles setup.
+# Install with: brew bundle --file=.brewfile
+# casks are macOS-only and filtered out automatically on Linux (see lib/install.sh).
+# AI CLIs (Claude Code, Gemini) are NOT here — they live in lib/ai.sh.
 
 # Core utilities
 brew "coreutils"
@@ -17,6 +17,11 @@ brew "yq"           # YAML processor
 
 # Development tools
 brew "git"
+brew "nvm"
+brew "python@3.13"
+brew "poetry"
+brew "pipx"
+brew "pnpm"
 
 # Shell enhancements
 brew "zsh"
@@ -24,13 +29,6 @@ brew "zsh-completions"
 brew "zsh-autosuggestions"
 brew "zsh-syntax-highlighting"
 brew "starship"
-
-# Programming languages and tools
-brew "nvm"
-brew "python@3.13"
-brew "poetry"
-brew "pipx"
-brew "pnpm"
 
 # Docker orchestration
 brew "lazydocker"
@@ -40,7 +38,10 @@ brew "gnupg"
 brew "openssh"
 brew "openssl"
 
-# Fonts
+# Utilities
+brew "fileicon"              # custom macOS app icons
+
+# Fonts (macOS)
 cask "font-fira-code"
 cask "font-jetbrains-mono"
 cask "font-cascadia-code"
@@ -48,17 +49,11 @@ cask "font-hack-nerd-font"
 cask "font-meslo-for-powerline"
 cask "font-meslo-lg"
 
-# AI CLI tools
-cask "claude-code@latest"
-
-# Applications
+# Applications (macOS)
 cask "1password"
-# cask "dbeaver-community"     # Disabled: not currently needed, re-enable if required
+cask "dbeaver-community"
 cask "ghostty"
 cask "google-chrome"
+cask "vscodium"
 cask "spotify"
 cask "vlc"
-cask "vscodium"
-
-# Utilities
-brew "fileicon"              # CLI tool for managing custom macOS app icons

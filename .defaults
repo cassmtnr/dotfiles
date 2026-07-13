@@ -5,8 +5,8 @@ echo "Starting MacOS Settings"
 echo "========================================="
 
 # Record failing commands instead of aborting on the first one; the summary
-# at the end lists them and the exit status lets the caller (configure_macos)
-# warn. ||-guarded lines (e.g. killall ... || true) are not counted.
+# at the end lists them and the exit status lets the caller
+# (apply_macos_defaults) warn. ||-guarded lines (e.g. killall ... || true) are not counted.
 # No $LINENO: macOS system bash 3.2 reports 0 inside ERR traps.
 FAILED_ITEMS=()
 trap 'FAILED_ITEMS+=("$BASH_COMMAND")' ERR

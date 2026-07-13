@@ -13,7 +13,6 @@
 
 .history/
 node_modules/
-bun.lock
 package.json
 tsconfig.json
 
@@ -23,6 +22,7 @@ tsconfig.json
 *.local
 .env
 .env.local
+.claude/vps.env
 
 # SSH configs with personal info #
 ##################################

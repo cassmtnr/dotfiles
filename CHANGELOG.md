@@ -7,6 +7,49 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Menu-driven modular setup — 2026-07-14
+
+Reworked the installer into a modular, fully menu-driven, user-level-first
+setup. (Superseded, in the same unreleased batch, an intermediate tiered
+design and a standalone AI script — this entry reflects the final shape.)
+
+#### Changed
+
+- **`install.sh` runs four interactive steps, no flags** (only `--help`):
+  1. install software, 2. apply personal configuration (symlinks, user-level
+  defaults), 3. optional extras, 4. AI tools. Steps 3 and 4 are checkbox menus
+  with nothing pre-selected and are skipped without a terminal, so a plain or
+  non-interactive run (SSH pipe, CI) installs no extras and no AI. Menus are
+  pure bash (macOS bash 3.2, zero dependencies).
+- **`.utils.sh` split into `lib/`** — `common.sh` (OS detection, logging, brew
+  PATH, menu helper), `install.sh`, `configure.sh`, `extras.sh`, `ai.sh`. Step
+  drivers: `start_installation`, `start_configuration`, `install_extras`,
+  `install_ai_tools`.
+- **Single `.brewfile`** — casks (GUI apps) are automatically skipped on Linux,
+  so a VPS gets CLI tools only. `install.sh` prints the detected OS at the start.
+- **Sudo-needing perks are opt-in extras** (step 3) — custom app icons,
+  system-level macOS defaults, Linux MOTD — each labels its privilege need and
+  only runs if selected.
+- **AI tooling is opt-in step 4** — a checkbox of `claude-code` (Claude Code +
+  Codex config), `agent-reach`, and `claude-plugins`. Nothing is pre-selected.
+- **Homebrew adapts to admin availability** — official installer with admin
+  (bottles, fast); untar into `~/.homebrew` without admin (user-level, builds
+  from source). `ensure_brew_path` and `.zshenv` detect all three prefixes.
+- **`update.sh`** — no-arg refreshes symlinks + VSCodium extensions; `-p`
+  refreshes packages from `.brewfile`; `-d` re-applies user-level macOS defaults.
+
+#### Removed
+
+- **Bun** — redundant with the Node + pnpm stack; nothing depended on it
+  (`playwright-install` kept its npx fallback). Dropped `setup_bun`, `.bun`, and
+  its four global installs (yarn, typescript, eslint, nodemon).
+
+#### Added
+
+- **CI smoke test** (`.github/workflows/ci.yml`) — shellcheck + non-interactive
+  install, twice for idempotence, on ubuntu-latest and macos-latest.
+- **Design doc** — `docs/superpowers/plans/phase-01-modular-setup.md`.
+
 ### Install Failure Fixes — 2026-07-13
 
 #### Fixed
@@ -22,6 +65,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **`.zshenv` PATH no longer front-loads `/bin` and `/sbin`** when `HOMEBREW_PREFIX` is unset (the unset var made `$HOMEBREW_PREFIX/bin` expand to `/bin`)
 - **Cask migration check via Caskroom dir test** instead of `brew list --cask` — saves ~0.7s of Ruby startup on every `install.sh`/`update.sh -p` run
 - **`.defaults` hardening** — failed `sudo -v` degrades to no-sudo instead of re-prompting mid-run; a failed `~/Screenshots` mkdir is recorded and no longer lets the screencapture location point at an unusable path; `capture-setting.sh` errors instead of appending after the failure summary when its insertion mark is missing
+
+#### Changed
+
+- **`authorized_keys` handling scoped to Linux** — the chmod-600 upkeep and missing-file warning matter on the tars VPS (key logins for user + CI; sshd StrictModes rejects lax perms) but fired as noise on every macOS run, where no inbound SSH exists
 
 ### Repo Overhaul — 2026-07-13
 

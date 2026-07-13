@@ -4,17 +4,18 @@
 # Dotfiles Update Script
 # ============================================
 # Lightweight alternative to install.sh for day-to-day updates.
-# Default: recreate symlinks only. Use flags for more.
+# Default: symlinks + VSCodium extension sync. Flags for more.
+# AI tooling is separate — it's step 4 of ./install.sh (opt-in).
 
 set -euo pipefail
 
-# Load shared utilities (OS detection, logging, symlinks, packages, defaults)
-source "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/.utils.sh"
+source "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/lib/common.sh"
+source "$DOTFILES_ROOT/lib/install.sh"
+source "$DOTFILES_ROOT/lib/configure.sh"
 
 # Flags
 UPDATE_PACKAGES=false
 UPDATE_DEFAULTS=false
-UPDATE_PLUGINS=false
 
 show_help() {
     cat << EOF
@@ -23,17 +24,16 @@ Usage: $(basename "$0") [OPTIONS]
 Update dotfiles symlinks and optionally refresh packages or macOS defaults.
 
 Options:
-  -p, --packages    Also update Homebrew packages from .brewfile and pipx tools
-  -d, --defaults    Also re-apply macOS system defaults (macOS only)
-  -P, --plugins     Also install Claude Code plugins (needs authenticated CLI)
-  -a, --all         Run all update operations (symlinks + packages + defaults + plugins)
+  -p, --packages    Also update Homebrew packages from .brewfile
+  -d, --defaults    Also re-apply user-level macOS defaults (macOS only)
+  -a, --all         Run all update operations (symlinks + packages + defaults)
   -h, --help        Show this help message
 
-Default behavior (no flags): recreate symlinks + sync VSCodium extensions (bidirectional) + skill lint.
+Default behavior (no flags): recreate symlinks + sync VSCodium extensions (bidirectional).
 
 Examples:
-  $(basename "$0")              # Symlinks + sync extensions + skill lint
-  $(basename "$0") -p           # Also update brew packages + pipx tools
+  $(basename "$0")              # Symlinks + sync extensions
+  $(basename "$0") -p           # Also update brew packages
   $(basename "$0") --all        # Everything
 EOF
 }
@@ -47,13 +47,9 @@ parse_args() {
             -d|--defaults)
                 UPDATE_DEFAULTS=true
                 ;;
-            -P|--plugins)
-                UPDATE_PLUGINS=true
-                ;;
             -a|--all)
                 UPDATE_PACKAGES=true
                 UPDATE_DEFAULTS=true
-                UPDATE_PLUGINS=true
                 ;;
             -h|--help)
                 show_help
@@ -76,46 +72,26 @@ main() {
     echo "       Dotfiles Update Script         "
     echo "======================================"
     echo
+    log "Detected: $(os_label)"
+    echo
 
     # Fresh shells may not have brew's bin dir on PATH, hiding brew-installed
-    # binaries the steps below check for (codium, fileicon, jq)
+    # binaries the steps below check for (codium)
     ensure_brew_path || true
 
     # Always update symlinks and sync extensions (bidirectional)
     create_symlinks
     sync_vscodium_extensions
 
-    # Lint skills for rot: missing frontmatter, dead links, uninstalled commands
-    "$DOTFILES_ROOT/.ai/common/scripts/skill-lint.sh" || \
-        warning "Skill lint found issues (see above)"
-
-    # Conditionally update packages
+    # Conditionally update Homebrew packages (casks skipped on Linux)
     if $UPDATE_PACKAGES; then
         install_packages
-        # pipx tools (agent-reach + channel CLIs; rdt-cli stays at its pinned commit)
-        if command -v pipx &> /dev/null; then
-            log "Updating pipx tools..."
-            pipx upgrade-all || warning "Some pipx upgrades failed"
-        fi
-        hash -r  # Refresh PATH so newly installed binaries are found
     fi
 
-    # Apply custom icons once (after packages, if updated, so new installs get icons)
-    apply_custom_icons
-
-    # Conditionally apply macOS defaults
+    # Conditionally apply user-level macOS defaults (system-level ones are
+    # an install.sh extra: macos-admin)
     if $UPDATE_DEFAULTS; then
-        configure_macos
-    fi
-
-    # Conditionally install Claude Code plugins (deferred from install.sh
-    # when the CLI wasn't authenticated yet)
-    if $UPDATE_PLUGINS; then
-        # On Linux claude is npm-installed under nvm, invisible to fresh
-        # shells until a node is activated
-        source_nvm
-        command -v claude &> /dev/null || nvm use --silent default &> /dev/null || true
-        install_claude_plugins
+        apply_macos_defaults false
     fi
 
     echo

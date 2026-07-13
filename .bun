@@ -1,9 +1,0 @@
-# Bun runtime (https://bun.sh)
-
-export BUN_INSTALL="${BUN_INSTALL:-$HOME/.bun}"
-export PATH="$BUN_INSTALL/bin:$PATH"
-
-# Shell completions
-if [[ -s "$BUN_INSTALL/_bun" ]]; then
-    source "$BUN_INSTALL/_bun"
-fi

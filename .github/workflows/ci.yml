@@ -1,0 +1,29 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: shellcheck
+        run: shellcheck install.sh update.sh lib/*.sh .defaults capture-setting.sh
+
+  install:
+    # The real "new machine" test: without a terminal install.sh runs
+    # non-interactively (no extras), twice — the second run proves
+    # idempotence. Runners have Homebrew preinstalled.
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: install (safe defaults)
+        run: ./install.sh
+      - name: install again (idempotence)
+        run: ./install.sh

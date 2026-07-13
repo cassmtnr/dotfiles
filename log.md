@@ -215,3 +215,85 @@ findings right away when feasible instead of filing them to TODO.md.
 Oh My Zsh remote installers (empty-script false success + set -e abort),
 broken-brew-on-PATH detection, nvm default-alias fallback, .zshenv unset-prefix
 PATH leak, cask migration via dir test (0.7s/run saved).
+
+## [2026-07-13] decision | Modular three-step setup: one repo, plain bash, no manager
+
+Rework on branch `rework`. Researched holman/webpro/omakub layouts,
+chezmoi/dotbot/stow, and user-level installs (Linuxbrew bootstrap needs
+elevated rights — verified against Homebrew's installer source). Chose:
+single repo, lib/ step split, packages/ tier brewfiles, pure-bash menus,
+flags-first for SSH. Spec: docs/superpowers/plans/phase-01-modular-setup.md
+
+## [2026-07-13] analysis | Dotfiles state-of-the-art research filed in phase-01 spec
+
+Findings and citations embedded in the design doc (Decisions section) rather
+than a separate analyses file — they are load-bearing for the rework.
+
+## [2026-07-13] review | Two-lens review of the rework — 12 findings, all fixed
+
+Correctness lens (empirically verified): update.sh -p tier escalation → tier
+now recorded in ~/.config/dotfiles-tier; choose_one EOF infinite loop; real-
+directory symlink nesting (found live on this Mac: ~/.config/ghostty had been
+mis-linked for months — targeted migration added, self-heals); choose_many /
+plugin-prompt EOF; agent-reach PATH. Parity lens: exact package parity
+confirmed, no lost functionality; 6 doc/contract fixes (sudo-vs-extras
+wording, update.sh claims, .defaults comment, CI shellcheck scope). Re-
+verified after fixes: shellcheck clean, macOS full run, tars basic run +
+idempotence, update.sh.
+
+## [2026-07-14] review | Overhaul: removed sandbox, dead-code sweep, doc sync
+
+Removed the sandbox/ feature. Two-agent audit (correctness/dead-code + docs).
+No dead functions (all traced to callers). Fixes: .zshrc claude() wrapper
+swallowed claude's exit code; unguarded nvm use/alias could abort the install
+under set -e before config ran; aligned a BSD-incompatible `grep '\|'` to -Ev.
+Consolidated the churny CHANGELOG [Unreleased] sub-sections
+(tiers/Bun/sandbox/standalone-ai added-then-reversed) into one coherent entry.
+Synced README (4 steps, tree, AI menu). index.html fetches README from `main`
+— correct (live default branch). TODO.md pruned (dropped the fixed claude()
+item and the obsolete rm -rf migration nit).
+
+## [2026-07-14] decision | No-admin Homebrew installs to ~/.homebrew (untar)
+
+Cassiano wants Homebrew installable without admin (work Mac). install_homebrew:
+admin → official installer (bottles); no-admin → untar into ~/.homebrew
+(user-level, source builds, no bottles). ensure_brew_path + .zshenv detect the
+new prefix. Kept the fast official path where admin exists (Linux servers keep
+bottles). Verified: untar fetches a working brew, prefix detection finds
+~/.homebrew when standard prefixes absent. Tradeoff (source builds) is inherent
+to any non-standard prefix per Homebrew docs.
+
+## [2026-07-14] decision | AI is opt-in step 4 of install.sh; step drivers renamed
+
+Cassiano's call: fold AI back into install.sh as a 4th checkbox step
+(install_ai_tools: claude-code/agent-reach/claude-plugins) instead of a
+standalone ./lib/ai.sh — but still opt-in (nothing pre-selected, non-TTY
+skips), so plain installs stay AI-free. lib/ai.sh is now a sourced module.
+Renamed drivers: start_installation, start_configuration, install_extras,
+install_ai_tools. Verified: shellcheck clean, non-TTY install installs no AI.
+
+## [2026-07-13] decision | Removed Bun — redundant with Node+pnpm
+
+Nothing depended on it: globals (yarn/ts/eslint/nodemon) were installable via
+npm, playwright-install kept its npx fallback. Dropped setup_bun, .bun,
+.zshrc source line, .gitignore bun.lock, README tree entry. Left the vscodium
+lockfile-nesting rule (generic editor UX, not a bun install).
+
+## [2026-07-13] decision | Dry core + AI split into lib/ai.sh; tiers collapsed
+
+Cassiano's call: keep one repo but separate concerns. Regular ./install.sh
+installs NO AI (Claude/Codex/agent-reach/plugins) — all moved to standalone
+lib/ai.sh. Tier system removed: packages/{basic,standard,full} → single
+.brewfile (Linux cask-filter still gives CLI-only on a VPS). update.sh -P and
+tier logic dropped. Verified: shellcheck clean, macOS regular-install (no AI
+symlinks) + lib/ai.sh, tars regular-install (no AI) + lib/ai.sh (npm path).
+phase-01 spec marked partially superseded.
+
+## [2026-07-13] decision | install.sh has no flags — menus only
+
+Cassiano's call: "the user always have to be guessing what exists." All
+selection flags removed (--tier/--extras/--yes/--sudo/--no-sudo); a TTY gets
+the tier menu, one admin y/N question, and the extras checkboxes; no TTY
+gets safe defaults (basic, no extras). Verified on tars + audited all 21
+managed configs are live symlinks into ~/dotfiles (app changes land in the
+repo — the ghostty nesting bug was the one violation, now auto-migrated).

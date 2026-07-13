@@ -87,12 +87,10 @@ playwright-install() {
         echo "Usage: playwright-install <proxy-url>"
         return 1
     fi
-    if command -v bunx &> /dev/null; then
-        HTTPS_PROXY="http://$1" bunx playwright install
-    elif command -v npx &> /dev/null; then
+    if command -v npx &> /dev/null; then
         HTTPS_PROXY="http://$1" npx playwright install
     else
-        echo "Error: requires bunx or npx"
+        echo "Error: requires npx (install Node.js)"
         return 1
     fi
 }

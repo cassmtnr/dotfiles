@@ -23,11 +23,13 @@ export PAGER="${PAGER:-less}"
 export NODE_OPTIONS="--max-old-space-size=8192"
 
 # Homebrew paths (macOS and Linux)
-# Keep in sync with ensure_brew_path in .utils.sh
+# Keep in sync with ensure_brew_path in lib/common.sh
 if [[ -f "/opt/homebrew/bin/brew" ]]; then
     export HOMEBREW_PREFIX="/opt/homebrew"
 elif [[ -f "/home/linuxbrew/.linuxbrew/bin/brew" ]]; then
     export HOMEBREW_PREFIX="/home/linuxbrew/.linuxbrew"
+elif [[ -f "$HOME/.homebrew/bin/brew" ]]; then
+    export HOMEBREW_PREFIX="$HOME/.homebrew"
 fi
 
 # Path construction

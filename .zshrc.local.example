@@ -1,0 +1,24 @@
+# Machine-specific shell config — template.
+#
+# Copy to ~/.zshrc.local (which is gitignored and symlinked from the repo if
+# present) and edit. .zshrc sources it last, so anything here overrides the
+# tracked config. Keep real secrets in a separate untracked file you source,
+# not in the repo.
+#
+#   cp .zshrc.local.example .zshrc.local
+
+# --- Environment ---------------------------------------------------------
+# export WORK_API_KEY="..."            # prefer sourcing a secrets file below
+# export AWS_PROFILE="work"
+# export EDITOR="code --wait"
+
+# --- Secrets (never commit) ----------------------------------------------
+# Keep tokens in ~/.work-env (untracked) and load them here:
+# [[ -f "$HOME/.work-env" ]] && source "$HOME/.work-env"
+
+# --- Aliases -------------------------------------------------------------
+# alias vpn="open /Applications/VPN.app"
+# alias k="kubectl"
+
+# --- PATH additions ------------------------------------------------------
+# export PATH="$HOME/some-tool/bin:$PATH"

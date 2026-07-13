@@ -47,7 +47,6 @@ fi
 [[ -f "$DOTFILES_ROOT/.aliases" ]] && source "$DOTFILES_ROOT/.aliases"
 [[ -f "$DOTFILES_ROOT/.functions" ]] && source "$DOTFILES_ROOT/.functions"
 [[ -f "$DOTFILES_ROOT/.ssh-agent" ]] && source "$DOTFILES_ROOT/.ssh-agent"
-[[ -f "$DOTFILES_ROOT/.bun" ]] && source "$DOTFILES_ROOT/.bun"
 
 # Load Homebrew shell integrations
 if [[ -n "$HOMEBREW_PREFIX" ]]; then
@@ -100,7 +99,9 @@ bindkey '^[[B' history-search-forward
 # Prevents leftover escape sequences (e.g. '9;5u' on Ctrl+C)
 claude() {
     command claude "$@"
+    local exit_code=$?
     printf '\e[>0u'
+    return $exit_code
 }
 
 # Fix bracketed paste issues
