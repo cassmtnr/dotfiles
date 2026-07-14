@@ -241,6 +241,17 @@ wording, update.sh claims, .defaults comment, CI shellcheck scope). Re-
 verified after fixes: shellcheck clean, macOS full run, tars basic run +
 idempotence, update.sh.
 
+## [2026-07-14] decision | Arrow-key checkbox menu (choose_many) — pure bash
+
+Replaced the numbered-toggle menu with arrow-key navigation (↑/↓/j/k, space,
+a=all, enter, q/Esc). Researched frameworks: gum/fzf need bootstrap,
+whiptail/dialog absent on stock macOS — pure bash is the only fit for the
+zero-dep + bash-3.2 + fresh-machine constraint. Canonical multiselect.miu.io
+has three 3.2 breakers (namerefs, fractional read -t, ESC[6n query) — avoided
+all three. Verified via pty (macOS `script`): toggle, arrows, wrap, toggle-all,
+cancel, empty-confirm, terminal restore, set-e safety. Interactive core can't
+be unit-tested without a real TTY — inherent to zero-dep TUI.
+
 ## [2026-07-14] review | Overhaul: removed sandbox, dead-code sweep, doc sync
 
 Removed the sandbox/ feature. Two-agent audit (correctness/dead-code + docs).

@@ -46,6 +46,10 @@ design and a standalone AI script — this entry reflects the final shape.)
 
 #### Added
 
+- **Arrow-key checkbox menus** — the extras and AI-tools selectors use ↑/↓ (or
+  j/k) to move, space to toggle, `a` for all, enter to confirm, q/Esc to cancel,
+  replacing the numbered-toggle prompt. Pure bash 3.2, zero dependencies (no
+  gum/fzf/whiptail); restores the terminal on Ctrl-C.
 - **CI smoke test** (`.github/workflows/ci.yml`) — shellcheck + non-interactive
   install, twice for idempotence, on ubuntu-latest and macos-latest.
 - **Design doc** — `docs/superpowers/plans/phase-01-modular-setup.md`.
