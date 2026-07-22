@@ -39,7 +39,8 @@ brew "openssh"
 brew "openssl"
 
 # Utilities
-brew "fileicon"              # custom macOS app icons
+brew "fileicon" if OS.mac?   # custom macOS app icons (macOS-only)
+brew "mole" if OS.mac?       # macOS system maintenance CLI (macOS-only formula)
 
 # Fonts (macOS)
 cask "font-fira-code"
@@ -57,3 +58,4 @@ cask "google-chrome"
 cask "vscodium"
 cask "spotify"
 cask "vlc"
+cask "mos"                   # smooth scrolling + independent mouse scroll direction

@@ -11,6 +11,11 @@
 #   - optionally sets up Agent Reach and Claude Code plugins
 # ============================================
 
+# Read by post_install (install.sh) to print finish-later instructions when
+# plugins were skipped for lack of a logged-in CLI
+# shellcheck disable=SC2034
+CLAUDE_PLUGINS_PENDING=false
+
 # Symlink one source into place, replacing an existing symlink but never a
 # real file/dir (which would mean the app wrote its own config there)
 link() {
@@ -151,11 +156,39 @@ setup_agent_reach() {
     success "Agent Reach installed"
 }
 
-# Claude Code login state: OAuth login writes oauthAccount into ~/.claude.json;
-# API-key auth uses the environment instead
+# Claude Code login state. Preferred probe: `claude auth status` — grep, not
+# jq: the CLI appends terminal-escape bytes after the JSON that break jq.
+# Fallbacks: API key in the environment; oauthAccount in ~/.claude.json
+# (CLI versions predating `claude auth`).
 claude_authenticated() {
     [[ -n "${ANTHROPIC_API_KEY:-}" ]] && return 0
+    if claude auth status 2> /dev/null | grep -q '"loggedIn":[[:space:]]*true'; then
+        return 0
+    fi
     [[ -f "$HOME/.claude.json" ]] && jq -e '.oauthAccount' "$HOME/.claude.json" &> /dev/null
+}
+
+# Ensure the Claude CLI is logged in, offering the browser login inline —
+# install.sh owns the TTY, so `claude auth login` can run right here.
+# Nonzero = still unauthenticated; the caller skips and post_install prints
+# how to finish (via CLAUDE_PLUGINS_PENDING).
+ensure_claude_auth() {
+    claude_authenticated && return 0
+
+    [[ -t 0 ]] || return 1
+
+    log "Claude Code plugins need a logged-in Claude CLI."
+    # >&2: a stdout redirect (./install.sh > log) must not hide the question
+    printf '%b' "${BLUE}[INFO]${NC} Log in now? Opens Claude's browser login from this terminal. [Y/n] " >&2
+    local answer
+    # || answer=n: EOF (Ctrl-D) skips instead of killing the run under set -e
+    read -r answer || answer=n
+    case "$answer" in
+        [Nn]*) return 1 ;;
+    esac
+
+    claude auth login || warning "Login did not complete"
+    claude_authenticated
 }
 
 # Install Claude Code plugins listed in settings.json — user-level
@@ -170,24 +203,14 @@ setup_claude_plugins() {
         return
     fi
 
-    # Plugins only install once the CLI is authenticated — gate on it instead
-    # of failing every `claude plugin install` call on a fresh machine
-    while ! claude_authenticated; do
-        if [[ ! -t 0 ]]; then
-            warning "Claude Code not authenticated — log in, then re-run ./install.sh"
-            return
-        fi
-        log "Claude Code is not authenticated yet — plugins need a logged-in CLI."
-        log "Open another terminal, run 'claude' and complete the login."
-        printf "%b" "${BLUE}[INFO]${NC} Press Enter when done (or 's' to skip plugins): "
-        # || response=s: EOF (Ctrl-D) skips plugins instead of killing the
-        # whole run under set -e
-        read -r response || response=s
-        if [[ "$response" =~ ^[Ss]$ ]]; then
-            warning "Skipping plugin installation — re-run ./install.sh after authenticating"
-            return
-        fi
-    done
+    # Plugins only install once the CLI is authenticated — offer the login
+    # inline; on skip/failure, post_install prints how to finish
+    if ! ensure_claude_auth; then
+        CLAUDE_PLUGINS_PENDING=true
+        warning "Claude CLI not authenticated — skipping plugins"
+        warning "Finish later with: claude auth login && ./install.sh"
+        return
+    fi
 
     log "Installing Claude Code plugins..."
 

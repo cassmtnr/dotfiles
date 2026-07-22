@@ -76,7 +76,8 @@ confirm_sudo() {
     if [[ -t 0 ]]; then
         local hint answer
         if $RUN_SUDO; then hint="Y/n"; else hint="y/N"; fi
-        printf '%b' "${BLUE}[INFO]${NC} Allow steps that need admin rights (Homebrew bootstrap, system packages)? [$hint] "
+        # >&2: a stdout redirect (./install.sh > log) must not hide the question
+        printf '%b' "${BLUE}[INFO]${NC} Allow steps that need admin rights (Homebrew bootstrap, system packages)? [$hint] " >&2
         read -r answer || answer=""
         case "$answer" in
             [Yy]*) RUN_SUDO=true ;;
@@ -124,6 +125,12 @@ post_install() {
     echo "  • Re-run ./install.sh anytime to add extras or AI tools"
     echo
     echo "For more information, see: $DOTFILES_ROOT/README.md"
+
+    if ${CLAUDE_PLUGINS_PENDING:-false}; then
+        echo
+        warning "Claude Code plugins were skipped (CLI not logged in)."
+        echo "  Finish with: claude auth login && ./install.sh"
+    fi
 
     # Switch to zsh if not already running it (interactive sessions only)
     if [[ -t 0 && "$SHELL" != *"zsh"* ]] && command -v zsh &> /dev/null; then

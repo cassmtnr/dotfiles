@@ -95,32 +95,96 @@ ensure_brew_path() {
     return 1
 }
 
-# Checkbox menu. Args: prompt, then options as "value:label" pairs.
-# Toggle entries by number, press Enter to confirm. Prints the selected
-# values to stdout, one per line (menu itself goes to stderr).
-# Caller must ensure stdin is a TTY.
+# Restore the terminal after choose_many (echo/canonical mode + cursor).
+# Relies on dynamic scope: fires while choose_many (which owns saved_stty) is
+# still on the call stack, both directly and from its trap.
+_choose_restore() {
+    if [[ -n "${saved_stty:-}" ]]; then
+        stty "$saved_stty" < /dev/tty 2> /dev/null || true
+    fi
+    printf '\033[?25h' > /dev/tty 2> /dev/null || true   # show cursor
+}
+
+# Checkbox menu with arrow-key navigation. Args: prompt, then "value:label"
+# pairs. Keys: up/down (or k/j) move, Space toggles, 'a' toggles all, Enter
+# confirms, q/Esc cancels. Prints the selected VALUES to stdout, one per line
+# (the menu is drawn to /dev/tty — not stderr, which may be redirected — and
+# keys are read from /dev/tty). Cancel prints nothing. Caller must ensure a
+# TTY. Pure bash 3.2, zero dependencies: no namerefs, no fractional
+# `read -t`, no ESC[6n cursor query.
 choose_many() {
     local prompt="$1"; shift
-    local options=("$@") selected=() i num
-    for i in "${!options[@]}"; do selected[i]=""; done
+    local options=("$@") n=$# selected=() i cursor=0 first=1 cancelled=0
+
+    if [[ $n -eq 0 ]]; then return 0; fi
+    for ((i = 0; i < n; i++)); do selected[i]=0; done
+
+    # Labels must fit one physical row each — a wrapped line breaks the
+    # in-place redraw (the cursor-up count assumes one row per option)
+    local cols maxw
+    cols=$(stty size < /dev/tty 2> /dev/null | cut -d' ' -f2) || cols=80
+    case "$cols" in (*[!0-9]*|'') cols=80 ;; esac
+    maxw=$((cols - 8))
+    if [[ $maxw -lt 10 ]]; then maxw=10; fi
+
+    # Save terminal state; restore on normal return, Ctrl-C, or kill
+    local saved_stty
+    saved_stty=$(stty -g < /dev/tty)
+    trap '_choose_restore; exit 130' INT TERM
+    trap '_choose_restore' EXIT
+    stty -echo < /dev/tty
+    printf '\033[?25l' > /dev/tty   # hide cursor
+
+    printf '%s  \033[2m(up/down move · space toggle · a all · enter confirm · q cancel)\033[0m\n' \
+        "$prompt" > /dev/tty
+
+    local key rest label box
     while true; do
-        echo >&2
-        echo "$prompt (toggle by number, Enter to confirm)" >&2
-        for i in "${!options[@]}"; do
-            printf '  [%s] %d) %s\n' "${selected[$i]:- }" $((i + 1)) "${options[$i]#*:}" >&2
+        # Redraw the option lines in place (move the cursor back up after the
+        # first draw — no cursor-position query needed)
+        if [[ $first -eq 1 ]]; then first=0; else printf '\033[%dA' "$n" > /dev/tty; fi
+        for ((i = 0; i < n; i++)); do
+            label="${options[$i]#*:}"
+            label="${label:0:$maxw}"
+            if [[ ${selected[$i]} -eq 1 ]]; then box='x'; else box=' '; fi
+            if [[ $i -eq $cursor ]]; then
+                printf '\r\033[K\033[7m > [%s] %s \033[0m\n' "$box" "$label" > /dev/tty
+            else
+                printf '\r\033[K   [%s] %s\n' "$box" "$label" > /dev/tty
+            fi
         done
-        printf 'Toggle: ' >&2
-        # || break: treat EOF (Ctrl-D) as confirm so toggled selections
-        # aren't silently discarded
-        read -r num || break
-        [[ -z "$num" ]] && break
-        if [[ "$num" =~ ^[0-9]+$ ]] && (( num >= 1 && num <= ${#options[@]} )); then
-            i=$((num - 1))
-            if [[ -n "${selected[$i]}" ]]; then selected[i]=""; else selected[i]="x"; fi
-        fi
+
+        IFS= read -rsn1 key < /dev/tty || { cancelled=1; break; }
+        case "$key" in
+            ''|$'\n'|$'\r') break ;;                              # Enter = confirm
+            $'\x1b')                                              # arrow keys or bare Esc
+                # -t 1 (integer — bash 3.2 has no fractional timeout); arrows
+                # deliver their 2 bytes instantly, a bare Esc waits then cancels
+                read -rsn2 -t 1 rest < /dev/tty 2> /dev/null || rest=''
+                case "$rest" in
+                    '[A'|'OA') cursor=$(( (cursor - 1 + n) % n )) ;;  # up (normal/app mode)
+                    '[B'|'OB') cursor=$(( (cursor + 1) % n )) ;;      # down
+                    '')        cancelled=1; break ;;                  # bare Esc = cancel
+                esac ;;
+            k|K) cursor=$(( (cursor - 1 + n) % n )) ;;
+            j|J) cursor=$(( (cursor + 1) % n )) ;;
+            ' ') selected[cursor]=$(( 1 - ${selected[$cursor]} )) ;;
+            a|A)                                                  # toggle all on/off
+                local all=1
+                for ((i = 0; i < n; i++)); do
+                    if [[ ${selected[$i]} -eq 0 ]]; then all=0; fi
+                done
+                for ((i = 0; i < n; i++)); do selected[i]=$(( 1 - all )); done ;;
+            q|Q) cancelled=1; break ;;
+        esac
     done
-    for i in "${!options[@]}"; do
-        [[ -n "${selected[$i]}" ]] && echo "${options[$i]%%:*}"
+
+    _choose_restore
+    trap - INT TERM EXIT
+
+    if [[ $cancelled -eq 1 ]]; then return 0; fi
+    for ((i = 0; i < n; i++)); do
+        if [[ ${selected[$i]} -eq 1 ]]; then printf '%s\n' "${options[$i]%%:*}"; fi
     done
     return 0
 }

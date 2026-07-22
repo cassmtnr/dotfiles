@@ -241,6 +241,17 @@ wording, update.sh claims, .defaults comment, CI shellcheck scope). Re-
 verified after fixes: shellcheck clean, macOS full run, tars basic run +
 idempotence, update.sh.
 
+## [2026-07-14] decision | Arrow-key checkbox menu (choose_many) — pure bash
+
+Replaced the numbered-toggle menu with arrow-key navigation (↑/↓/j/k, space,
+a=all, enter, q/Esc). Researched frameworks: gum/fzf need bootstrap,
+whiptail/dialog absent on stock macOS — pure bash is the only fit for the
+zero-dep + bash-3.2 + fresh-machine constraint. Canonical multiselect.miu.io
+has three 3.2 breakers (namerefs, fractional read -t, ESC[6n query) — avoided
+all three. Verified via pty (macOS `script`): toggle, arrows, wrap, toggle-all,
+cancel, empty-confirm, terminal restore, set-e safety. Interactive core can't
+be unit-tested without a real TTY — inherent to zero-dep TUI.
+
 ## [2026-07-14] review | Overhaul: removed sandbox, dead-code sweep, doc sync
 
 Removed the sandbox/ feature. Two-agent audit (correctness/dead-code + docs).
@@ -297,3 +308,18 @@ the tier menu, one admin y/N question, and the extras checkboxes; no TTY
 gets safe defaults (basic, no extras). Verified on tars + audited all 21
 managed configs are live symlinks into ~/dotfiles (app changes land in the
 repo — the ghostty nesting bug was the one violation, now auto-migrated).
+
+## [2026-07-22] decision | Installer UI via vendored gum binaries
+
+Plan filed: docs/superpowers/plans/phase-02-gum-installer-ui.md. Gum v0.17.0
+vendored in bin/ (darwin-arm64 + linux-x86_64) so the UI needs no bootstrap;
+lib/ui.sh wrapper, run_step retry/skip/abort, quiet-by-default with --verbose.
+Note: partially reverses the 2026-07-13 "no flags" decision (adds --verbose).
+
+## [2026-07-22] decision | Inline Claude login for plugins (B) + finish-later hint (D)
+
+setup_claude_plugins wait-loop replaced: ensure_claude_auth offers `claude
+auth login` in-terminal (CLI owns the TTY); skips set CLAUDE_PLUGINS_PENDING
+so post_install prints the finish command. Auth probe now `claude auth
+status` via grep (its JSON has trailing escape bytes that break jq).
+Phase-02 plan Task 5 updated to match.

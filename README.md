@@ -6,8 +6,8 @@
 
 ## Installation
 
-Setup runs in four steps, all driven by interactive menus — there are no
-flags to remember:
+Setup runs in four steps, all driven by interactive menus (arrow keys to move,
+space to toggle, enter to confirm) — there are no flags to remember:
 
 1. **Install software** — shell, dev toolchain, and apps from `.brewfile`
 2. **Apply personal configuration** — symlinks, user-level defaults (always runs)
