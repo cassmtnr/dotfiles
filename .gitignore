@@ -55,3 +55,16 @@ Thumbs.db
 # .claude/
 .ai/common/skills/.system/
 .ai/codex/config.toml
+
+# Symlinks into ~/Work/web-banking-tooling/codex-setup (machine-specific)
+.ai/common/hooks/block-dangerous-commands
+.ai/common/skills/architect
+.ai/common/skills/cleanup
+.ai/common/skills/code-review
+.ai/common/skills/e2e
+.ai/common/skills/handover-prep
+.ai/common/skills/i18n
+.ai/common/skills/storybook
+.ai/common/skills/unit-tests
+# Work-internal skill content
+.ai/common/skills/feedback-review/
