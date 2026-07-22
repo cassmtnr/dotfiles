@@ -1,5 +1,4 @@
 # SSH Agent Management
-# Secure and efficient SSH key handling
 
 # Function to start ssh-agent if not running
 start_ssh_agent() {
@@ -32,8 +31,8 @@ add_ssh_keys() {
 
     # Define your SSH keys here
     local ssh_keys=(
-        "$HOME/.ssh/personal/github"  # Personal GitHub key
-        "$HOME/.ssh/work/gitlab"      # Work GitLab key
+        "$HOME/.ssh/personal/github"
+        "$HOME/.ssh/work/gitlab"
     )
 
     for key in "${ssh_keys[@]}"; do
@@ -47,7 +46,6 @@ add_ssh_keys() {
     fi
 }
 
-# Use standard ssh-agent (reliable across all systems)
 start_ssh_agent
 
 # Alias to list loaded SSH keys

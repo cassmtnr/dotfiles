@@ -35,11 +35,12 @@ fi
 # Path construction
 # :-/opt/homebrew fallback: with HOMEBREW_PREFIX unset, $HOMEBREW_PREFIX/bin
 # would expand to literal /bin and front-load it ahead of ~/.local/bin
+# brew before /usr/local/bin: stale Intel binaries must not shadow ARM brew
 typeset -U path
 path=(
-    /usr/local/bin
     ${HOMEBREW_PREFIX:-/opt/homebrew}/bin(N)
     ${HOMEBREW_PREFIX:-/opt/homebrew}/sbin(N)
+    /usr/local/bin
     $HOME/.local/bin(N)
     $path
 )

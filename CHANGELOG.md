@@ -7,6 +7,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### TODO closeout — 2026-07-22
+
+#### Removed
+
+- **`extract()`** — unused; deleted from `.functions` rather than fixing its
+  broken `.rar`/`.7z` branches (no tool for them was ever installed)
+
+#### Fixed
+
+- **`/usr/local/bin` preceded Homebrew in PATH** — on Apple Silicon a stale
+  Intel binary there would shadow its ARM brew twin; brew's bin/sbin now come
+  first in `.zshenv`
+- **`cc` alias compiler shadow accepted** — interactive shells only, no C
+  work happens here; TODO closed without changes
+
 ### Menu-driven modular setup — 2026-07-14
 
 Reworked the installer into a modular, fully menu-driven, user-level-first

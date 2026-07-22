@@ -85,7 +85,7 @@ dotfiles/
 ├── .zshrc                     # Shell configuration
 ├── .zshrc.local.example       # Template for machine-specific overrides
 ├── .zshenv                    # Environment variables
-├── .functions                 # Utility functions (mkd, killport, extract, weather)
+├── .functions                 # Utility functions (mkd, killport, weather)
 ├── .aliases                   # Shell aliases (25+)
 ├── .ssh-agent                 # SSH agent management
 ├── .completion                # Shell completions

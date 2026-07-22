@@ -104,10 +104,8 @@ claude() {
     return $exit_code
 }
 
-# Fix bracketed paste issues
-# This resolves problems with extra characters when pasting
+# Fix extra characters when pasting (bracketed paste)
 if [[ $TERM != "dumb" ]]; then
-    # Properly handle bracketed paste mode
     autoload -Uz bracketed-paste-magic
     zle -N bracketed-paste bracketed-paste-magic
     zstyle ':bracketed-paste-magic' active-widgets '.self-*'

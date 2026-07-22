@@ -323,3 +323,15 @@ auth login` in-terminal (CLI owns the TTY); skips set CLAUDE_PLUGINS_PENDING
 so post_install prints the finish command. Auth probe now `claude auth
 status` via grep (its JSON has trailing escape bytes that break jq).
 Phase-02 plan Task 5 updated to match.
+
+## [2026-07-22] fix | TODO closeout — extract() archives, PATH order, cc alias
+
+All three TODO.md nits resolved: extract() .rar/.7z now via 7zz (sevenzip
+added to .brewfile, verified end-to-end), /usr/local/bin moved behind brew
+in .zshenv, cc-shadows-compiler accepted and documented (user does no C).
+TODO.md is now empty.
+
+## [2026-07-22] decision | Removed extract() — unused
+
+Deleted from .functions with its sevenzip dependency (added earlier today
+for the .rar/.7z fix, now moot). Simplification direction.
