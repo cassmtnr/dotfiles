@@ -53,18 +53,13 @@ Thumbs.db
 # AI files #
 ############
 # .claude/
-.ai/common/skills/.system/
 .ai/codex/config.toml
 
-# Symlinks into ~/Work/web-banking-tooling/codex-setup (machine-specific)
+# Skills: ignore everything (work machine installs skills here via symlinks),
+# whitelist only the skills that belong to this repo
+.ai/common/skills/*
+!.ai/common/skills/agent-reach
+!.ai/common/skills/markdown-to-html
+
+# Symlinks from Work machine
 .ai/common/hooks/block-dangerous-commands
-.ai/common/skills/architect
-.ai/common/skills/cleanup
-.ai/common/skills/code-review
-.ai/common/skills/e2e
-.ai/common/skills/handover-prep
-.ai/common/skills/i18n
-.ai/common/skills/storybook
-.ai/common/skills/unit-tests
-# Work-internal skill content
-.ai/common/skills/feedback-review/

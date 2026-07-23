@@ -36,6 +36,7 @@ alias upstream="git push -u origin HEAD"
 alias rebase="git rebase origin/develop && yarn"
 alias develop="git checkout develop && git fetch --all && git pull"
 alias wth="git rev-parse HEAD"
+alias resetbase='git reset $(git merge-base origin/HEAD HEAD)'
 
 # Config file shortcuts
 alias zrc="code ~/dotfiles/.zshrc"
