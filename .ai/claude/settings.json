@@ -2,7 +2,10 @@
   "permissions": {
     "defaultMode": "default"
   },
-  "model": "claude-opus-4-8[1m]",
+  "env": {
+    "SHORTCUTS_PLAYGROUND_OUTPUT_DIR": "/Users/cassiano/Library/Mobile Documents/com~apple~CloudDocs/Shortcuts"
+  },
+  "model": "claude-fable-5[1m]",
   "hooks": {
     "PreToolUse": [
       {
@@ -24,7 +27,8 @@
     "code-simplifier@claude-plugins-official": true,
     "frontend-design@claude-plugins-official": true,
     "superpowers@claude-plugins-official": true,
-    "ponytail@ponytail": true
+    "ponytail@ponytail": true,
+    "shortcuts-playground@shortcuts-playground": true
   },
   "extraKnownMarketplaces": {
     "ponytail": {
@@ -32,8 +36,15 @@
         "source": "github",
         "repo": "DietrichGebert/ponytail"
       }
+    },
+    "shortcuts-playground": {
+      "source": {
+        "source": "git",
+        "url": "https://github.com/viticci/shortcuts-playground-plugin.git"
+      }
     }
   },
+  "effortLevel": "xhigh",
   "tui": "fullscreen",
   "voice": {
     "enabled": true,
