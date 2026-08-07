@@ -157,10 +157,10 @@ setup_nodejs() {
 
     # Install and activate Node.js. Guard each nvm call: an unguarded failure
     # would abort the whole install (set -e) before configuration runs.
-    log "Installing Node.js v22.19.0..."
-    nvm install 22.19.0 || { warning "Failed to install Node.js v22.19.0"; return; }
-    nvm use 22.19.0 || { warning "Failed to activate Node.js v22.19.0"; return; }
-    nvm alias default 22.19.0 || warning "Could not set default Node.js alias"
+    log "Installing Node.js v22.23.1..."
+    nvm install 22.23.1 || { warning "Failed to install Node.js v22.23.1"; return; }
+    nvm use 22.23.1 || { warning "Failed to activate Node.js v22.23.1"; return; }
+    nvm alias default 22.23.1 || warning "Could not set default Node.js alias"
 
     log "Node.js version: $(node --version)"
     log "NPM version: $(npm --version)"
