@@ -7,6 +7,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Node for AI hooks — 2026-08-10
+
+#### Fixed
+
+- **AI hooks failed with `node: not found`** — Claude/Codex hooks run under
+  `/bin/sh`, which never loads nvm, so the dangerous-command blocker and
+  plugin hooks silently failed; `ai_symlinks` now links a shim
+  (`.ai/common/scripts/node-default.sh`) as `~/.local/bin/node` that
+  resolves nvm's default alias at call time, falling back to the newest
+  installed version (a fixed versioned symlink would dangle after node
+  upgrades; `nvm which` hangs on uninstalled alias targets)
+- **`~/.local/bin` dropped from PATH on fresh machines** — `.zshenv`'s `(N)`
+  qualifier omitted the entry in shells started before `install.sh` created
+  the directory; the entry is now unconditional
+
 ### TODO closeout — 2026-07-22
 
 #### Removed

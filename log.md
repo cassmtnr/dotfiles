@@ -335,3 +335,19 @@ TODO.md is now empty.
 
 Deleted from .functions with its sevenzip dependency (added earlier today
 for the .rar/.7z fix, now moot). Simplification direction.
+
+## [2026-08-10] fix | AI hooks "node: not found" — link nvm default node into ~/.local/bin
+
+Hooks run under /bin/sh, which never loads nvm, so every node hook failed —
+including block-dangerous-commands.js (the git/credentials safety net) on
+each Bash call. ai_symlinks now links a shim (.ai/common/scripts/
+node-default.sh) as ~/.local/bin/node that resolves nvm's default alias at
+call time, falling back to the newest installed version. No-op without nvm.
+
+## [2026-08-10] review | node-for-hooks fix — 3 findings, all fixed
+
+Versioned symlink would go stale after node upgrades (→ runtime-resolving
+shim), .zshenv (N) dropped ~/.local/bin from PATH on fresh machines
+(→ unconditional entry), no cleanup path for a link into ~/.nvm (→ link
+targets the repo, orphan loop can manage it). Testing the shim exposed that
+`nvm which` hangs on uninstalled alias targets — avoided entirely.

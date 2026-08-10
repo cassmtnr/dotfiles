@@ -71,6 +71,16 @@ ai_symlinks() {
     # mcporter — global config so Exa search (agent-reach) works from any dir
     link "$DOTFILES_ROOT/config/mcporter.json"       "$HOME/.mcporter/mcporter.json"
 
+    # Hooks (block-dangerous-commands.js, plugin hooks) run under /bin/sh,
+    # which never loads nvm — they only see node if it's on the PATH Claude
+    # Code inherited from its launching shell. ~/.local/bin is on that PATH
+    # (.zshenv), so link a shim there that resolves nvm's current default at
+    # call time (a versioned symlink would dangle after node upgrades).
+    # No-op without nvm: brew/system node installs are already on PATH.
+    if [[ -s "${NVM_DIR:-$HOME/.nvm}/nvm.sh" ]]; then
+        link "$DOTFILES_ROOT/.ai/common/scripts/node-default.sh" "$HOME/.local/bin/node"
+    fi
+
     success "AI configuration linked"
 }
 
