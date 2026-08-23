@@ -14,7 +14,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `phase-02-gum-installer-ui.md` (757 lines). Its headline feature, vendoring
   `gum` binaries, was reverted before anything was committed, and its listings
   for the parts that did ship were five revisions stale.
-- `phase-02-ui-layer.md`. Written three days earlier and already wrong on
+- `phase-03-ui-library.md`. Written three days earlier and already wrong on
   four counts: it claimed a 9-function API against 12, documented a helper that
   had been deleted, listed the superseded colour block, and did not know about
   `ui_reset` or `ui_warn`.
@@ -273,6 +273,21 @@ Nine defects found reviewing the step-runner work before it landed.
 - `.gitignore` ignores `.ai/common/skills/*` and allowlists per skill, so a
   vendored skill stays untracked until it is named there. Added both new ones
   and noted the rule in the README tree.
+
+### Node for AI hooks — 2026-08-10
+
+#### Fixed
+
+- **AI hooks failed with `node: not found`** — Claude/Codex hooks run under
+  `/bin/sh`, which never loads nvm, so the dangerous-command blocker and
+  plugin hooks silently failed; `ai_symlinks` now links a shim
+  (`.ai/common/scripts/node-default.sh`) as `~/.local/bin/node` that
+  resolves nvm's default alias at call time, falling back to the newest
+  installed version (a fixed versioned symlink would dangle after node
+  upgrades; `nvm which` hangs on uninstalled alias targets)
+- **`~/.local/bin` dropped from PATH on fresh machines** — `.zshenv`'s `(N)`
+  qualifier omitted the entry in shells started before `install.sh` created
+  the directory; the entry is now unconditional
 
 ### Installer step runner UI — 2026-08-10
 

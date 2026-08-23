@@ -163,10 +163,10 @@ setup_nodejs() {
         return 0
     fi
 
-    log "Installing Node.js v22.19.0..."
-    nvm install 22.19.0 || { error "Failed to install Node.js v22.19.0"; return 1; }
-    nvm use 22.19.0 || { error "Failed to activate Node.js v22.19.0"; return 1; }
-    nvm alias default 22.19.0 || warning "Could not set default Node.js alias"
+    log "Installing Node.js v22.23.1..."
+    nvm install 22.23.1 || { error "Failed to install Node.js v22.23.1"; return 1; }
+    nvm use 22.23.1 || { error "Failed to activate Node.js v22.23.1"; return 1; }
+    nvm alias default 22.23.1 || warning "Could not set default Node.js alias"
 
     log "Node.js version: $(node --version)"
     log "NPM version: $(npm --version)"
