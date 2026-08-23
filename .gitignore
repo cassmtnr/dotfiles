@@ -60,6 +60,8 @@ Thumbs.db
 .ai/common/skills/*
 !.ai/common/skills/agent-reach
 !.ai/common/skills/markdown-to-html
+!.ai/common/skills/stop-slop
+!.ai/common/skills/humanizer
 
 # Symlinks from Work machine
 .ai/common/hooks/block-dangerous-commands

@@ -311,7 +311,7 @@ repo — the ghostty nesting bug was the one violation, now auto-migrated).
 
 ## [2026-07-22] decision | Installer UI via vendored gum binaries
 
-Plan filed: docs/superpowers/plans/phase-02-gum-installer-ui.md. Gum v0.17.0
+Plan filed: docs/superpowers/plans/phase-02-ui-layer.md. Gum v0.17.0
 vendored in bin/ (darwin-arm64 + linux-x86_64) so the UI needs no bootstrap;
 lib/ui.sh wrapper, run_step retry/skip/abort, quiet-by-default with --verbose.
 Note: partially reverses the 2026-07-13 "no flags" decision (adds --verbose).
@@ -335,3 +335,125 @@ TODO.md is now empty.
 
 Deleted from .functions with its sevenzip dependency (added earlier today
 for the .rar/.7z fix, now moot). Simplification direction.
+
+## [2026-08-03] review | Phase-02 gum installer UI — 3-agent pass, findings fixed
+
+Implemented phase-02 (vendored gum, lib/ui.sh, run_step retry/skip/abort,
+--verbose). Review agents found: menu cancel fell back to retry
+(uninterruptible loop) → cancel now aborts; ui_summary || true hid failures
+from CI → failed steps exit nonzero; failure output was deleted before the
+retry menu → temp file kept, path printed; stale CHANGELOG/README claims
+annotated; dead ui_spin deleted. Interactive acceptance + tars run pending.
+
+## [2026-08-03] unblock | Phase-02 tars verification passed pre-push
+
+Working tree tar-piped to a throwaway dir on tars (live checkout untouched):
+vendored gum-linux-x86_64 resolved, non-interactive contract held, install.sh
+ran twice idempotently (exit 0), update.sh clean. Remaining: user commit +
+interactive visual acceptance on the Mac.
+
+## [2026-08-10] decision | Gum reverted — pure-bash UI kept
+
+Interactive acceptance verdict: gum's menus look near-identical to the
+existing bash menu — not worth ~30 MB of vendored binaries. Removed bin/
+and all gum branches from lib/ui.sh before anything was committed (the
+repo never carries the binaries). Kept: ui.sh step runner (retry/skip/
+abort, summary, --verbose, exit codes), failure-signaling step functions,
+menu copy, CI contract test. Supersedes the 2026-07-22 "vendored gum"
+decision.
+
+## [2026-08-21] decision | vendor stop-slop + humanizer prose skills
+
+Both live in .ai/common/skills/, so Claude and Codex share one rule set.
+humanizer ships upstream as a Claude plugin; vendored its portable SKILL.md
+instead and dropped the plugin, trading manual version bumps for Codex parity.
+instructions.md makes stop-slop unconditional and scopes humanizer to text the
+user supplied.
+
+## [2026-08-22] review | installer step-runner review, 9 fixes applied
+
+Two independent passes over the staged UI refactor. Worst finding: --verbose
+piped each step into tee, subshelling it, so exported env (brew shellenv) was
+lost and Node silently skipped while reporting ✓. Also: run_step swallowed all
+21 ui_skip reasons, skill-lint's advisory exit 1 became a blocking retry menu,
+and exec zsh -l discarded the run's exit status. CI contract assertions were
+no-ops under errexit; rewritten and negative-tested against injected
+regressions. One reported finding withdrawn: the `|| cols=80` in choose_many
+guards errexit under pipefail, it is not dead code.
+
+## [2026-08-23] fix | animate running steps, sharpen failure output
+
+install.sh looked hung on a multi-minute brew bundle: quiet mode drew a static
+"… label" and captured all output. Added a background spinner echoing the
+capture file's tail, so progress (and any prompt waiting for input) is visible.
+Failure lines now carry the exit code and an indented, ruled excerpt.
+
+## [2026-08-23] fix | plugin step installs only what is missing
+
+Real install failed the plugin step with all five plugins already working:
+the official marketplace answered "not found" for frontend-design and
+superpowers while both sit in its own listing (stale cache), and
+shortcuts-playground ships a manifest the CLI rejects (userConfig key).
+setup_claude_plugins now skips anything already in installed_plugins.json.
+
+## [2026-08-23] decision | ui.sh reworked into a drop-in library, UI.md written
+
+Dropped the separate-repo + brew-tap plan: install.sh runs before anything is
+installed, so a brew dependency is a bootstrap cycle. Instead ui.sh is now
+self-contained (owns its colours, private _ui_log/_ui_warn, NO_COLOR support)
+and UI.md documents it standalone. run_step keeps its unprefixed name by
+request; the collision risk is documented rather than renamed. Spec:
+docs/superpowers/plans/phase-02-ui-layer.md
+
+## [2026-08-23] review | ui.sh overhaul against library conventions
+
+Six defects fixed. Worst: printf '%b' interpreted backslashes in caller text,
+so a label containing C:\new\table emitted a real newline and tab. Also:
+re-sourcing wiped recorded steps, ui_summary clobbered UI_SKIPPED, glyphs were
+mojibake outside UTF-8, ui_choose accepted zero options. Namespaced the state
+to _UI_*, added ui_run_step as canonical with run_step kept as an alias (no
+call-site churn), dropped eval, deduped width detection. The CI contract caught
+the STEP_STATUS rename, which is what it is for.
+
+## [2026-08-23] review | post-overhaul review of ui.sh, 3 defects
+
+Worst: mktemp -t ui-step works on BSD but GNU rejects a template with no X's,
+so every step would have failed on Linux and in CI. Introduced by the overhaul,
+caught before shipping. Also removed a dead _ui_log helper and documented
+ui_reset, which had shipped as undocumented public API. 16-point regression
+battery green; the 47 "stale reference" hits are all historical documents.
+
+## [2026-08-23] fix | palette table, stale-spec banners, untracked-skill note
+
+Colour definitions were duplicated across both branches of the NO_COLOR check:
+adding a colour needed two edits and missing one left a var unset under set -u.
+One name:sgr table drives both paths now. Left the old API names in CHANGELOG,
+log.md and phase-01/02 alone (they are records) but banner-ed both specs to
+point at UI.md. Documented that obsidian-second-brain is gitignored by size.
+
+## [2026-08-23] review | whole-repo review, 7 defects fixed
+
+Worst: Ctrl-C orphaned the spinner (async children ignore SIGINT in a
+non-interactive shell) so it kept redrawing over the user's prompt after
+install.sh died; it now watches its parent with kill -0. Also: successful steps
+deleted their warnings including an SSH-lockout one, xcode-select's expected
+exit 1 became a futile retry loop, post_install claimed success on failure,
+parse_args ignored every argument after the first, and privilege prompts inside
+a captured step were invisible. Corrected my own earlier claim that
+xcode-select exits 0 — that test piped through head and read head's status.
+
+## [2026-08-23] decision | gum plan removed, phase-02 record rewritten
+
+Deleted the 757-line phase-02 gum spec: its headline feature was reverted
+uncommitted and its listings for the shipped parts are five revisions stale.
+Replaced with phase-02-ui-layer.md, a short record of what shipped
+and why gum was dropped. Log entries about the gum decision and its reversal
+stay — they are the record, and the reversal prevents a repeat.
+
+## [2026-08-23] decision | one plan file for the UI layer, not three
+
+phase-02 (gum) deleted, phase-03 (library extraction) deleted, replaced by
+phase-02-ui-layer.md. phase-03 was three days old and already wrong on four
+counts because it duplicated API detail UI.md owns. The merged file records the
+arc and the binding decisions and lists no functions or variables, so nothing in
+it can drift. UI.md is the API reference; CHANGELOG carries the change record.

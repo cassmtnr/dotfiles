@@ -7,7 +7,7 @@
 ## Installation
 
 Setup runs in four steps, all driven by interactive menus (arrow keys to move,
-space to toggle, enter to confirm) — there are no flags to remember:
+space to toggle, enter to confirm):
 
 1. **Install software** — shell, dev toolchain, and apps from `.brewfile`
 2. **Apply personal configuration** — symlinks, user-level defaults (always runs)
@@ -24,11 +24,28 @@ cd ~/dotfiles
 ./install.sh
 ```
 
+While a step runs you get a spinner, its elapsed time once it passes three
+seconds, and the latest line of its output, so a long `brew bundle` shows what
+it's fetching instead of looking hung. Each finished step collapses to one
+status line — ✓ when it did the work, − when it had nothing to do (wrong
+platform, already installed, prerequisite missing) or you skipped it, ✗ when it
+failed — and the run ends with a summary table. A − line says why. A ✗ prints
+the exit code and the last 15 lines inline, and keeps the full output in a temp
+file whose path it shows. If a step fails you choose **retry** (fix the problem in another
+terminal first if needed), **skip**, or **abort** — a flaky download doesn't
+kill the run. Pass `-v`/`--verbose` to stream full command output instead of
+the one-line-per-step view.
+
+The whole UI is pure bash (macOS's stock bash 3.2, zero dependencies), so it
+works on a fresh machine, offline, with nothing installed.
+
 Steps 3 and 4 have nothing pre-selected and are skipped without a terminal, so
 a plain or non-interactive run (piped over SSH, CI) installs **no extras and no
-AI**. Use `ssh -t host` to get the menus remotely.
+AI**, never prompts, and records failures in the summary instead of stopping.
+Use `ssh -t host` to get the menus remotely.
 
-Idempotent — re-run anytime to add extras or AI tools.
+Idempotent — re-run anytime to add extras or AI tools; an aborted run resumes
+cleanly on the next run.
 
 The script prints the detected OS at the start and tailors itself to it: GUI
 apps are Homebrew casks and install on macOS only (skipped on Linux — a VPS
@@ -64,6 +81,7 @@ themselves and skip with a warning if it's unavailable.
 ./update.sh -p           # Also update Homebrew packages from .brewfile
 ./update.sh -d           # Also re-apply user-level macOS defaults
 ./update.sh -a           # All of the above
+./update.sh -v           # Full command output instead of one line per step
 ```
 
 AI tooling updates via `./install.sh` step 4 (re-select and re-run; idempotent).
@@ -76,7 +94,8 @@ dotfiles/
 ├── update.sh                  # Lightweight update (symlinks + optional packages/defaults)
 ├── .brewfile                  # Homebrew packages (casks skipped on Linux)
 ├── lib/
-│   ├── common.sh              # OS detection, logging, Homebrew PATH, menu helper
+│   ├── common.sh              # OS detection, logging, Homebrew PATH
+│   ├── ui.sh                  # Terminal UI: menus, confirms, step runner — see UI.md
 │   ├── install.sh             # Step 1: software installation
 │   ├── configure.sh           # Step 2: symlinks, VSCodium, user-level defaults, shell
 │   ├── extras.sh              # Step 3: optional perks (sudo/admin needs labeled)
@@ -97,7 +116,8 @@ dotfiles/
 ├── .ai/                       # AI CLI configuration (set up by install.sh step 4)
 │   ├── common/                # Shared by Claude Code & Codex CLI
 │   │   ├── instructions.md    # Global AI instructions
-│   │   ├── skills/            # AI CLI skills
+│   │   ├── skills/            # AI CLI skills (gitignored by default;
+│   │   │                      # allowlist a new one in .gitignore)
 │   │   ├── hooks/             # PreToolUse safety hooks (fail-closed)
 │   │   └── scripts/           # Helper scripts (vps-run.sh, skill-lint.sh)
 │   ├── claude/                # Claude Code only
@@ -138,6 +158,18 @@ default"). If more than 12 keys changed, nothing is appended — that's
 background noise; re-run and change only one thing. Captured settings apply
 to new machines via `install.sh` (some need logout/login to take effect).
 
+## Terminal UI
+
+`lib/ui.sh` is the installer's whole UI: the spinner, the ✓/−/✗ status lines,
+the arrow-key menus, the retry/skip/abort recovery, and the summary table that
+sets the exit code. It's one self-contained file in pure bash 3.2 with no
+libraries, so you can copy it into any project that runs a list of steps and
+wants to report them honestly.
+
+**[UI.md](UI.md)** is the full reference: quickstart, the step contract, every
+function, configuration, and a worked example. Drop both files into a project
+and point Claude at `UI.md`.
+
 ## Post-Install Configuration
 
 1. **SSH**: Edit `~/dotfiles/.ssh/config` with your key paths and hosts
@@ -177,7 +209,14 @@ Shared configuration for [Claude Code](https://claude.com/claude-code) and [Code
 - **High** (default): git write ops, elevated privileges, secrets exposure, publishing/deployment, database ops
 - **Strict**: cautionary patterns (`git checkout .`, `docker prune`)
 
-**Plugins** (Claude Code only) — installed from enabled entries in `.ai/claude/settings.json` (currently `code-simplifier`, `frontend-design`, `superpowers` from the official marketplace, plus `ponytail` from its own marketplace). Needs an authenticated CLI — `./install.sh` step 4 offers a `claude-plugins` option; run it again after logging in.
+**Plugins** (Claude Code only) — installed from enabled entries in `.ai/claude/settings.json` (currently `code-simplifier`, `frontend-design`, `superpowers` from the official marketplace, plus `ponytail` and `shortcuts-playground` from their own marketplaces). Needs an authenticated CLI — `./install.sh` step 4 offers a `claude-plugins` option; run it again after logging in. Only missing plugins get installed; bumping a version is `claude plugin update`.
+
+**Not in this repo:** `obsidian-second-brain` sits in `.ai/common/skills/` on
+this machine but is deliberately gitignored — 192 MB across ~4,900 files has no
+business in a dotfiles repo. It ships its own installer, so reinstall it from
+upstream on a new machine; `./install.sh` does not restore it.
+
+**Prose skills** — both vendored in `.ai/common/skills/`, so Claude and Codex apply the same rules. `stop-slop` ([hardikpandya/stop-slop](https://github.com/hardikpandya/stop-slop)) governs prose the AI writes and runs on all of it, unconditionally. `humanizer` ([blader/humanizer](https://github.com/blader/humanizer)) handles the other direction: rewriting text you wrote, preserving every claim. It ships upstream as a Claude plugin; vendoring its single portable `SKILL.md` buys Codex parity at the cost of manual version bumps. `.ai/common/instructions.md` § "Prose gets de-slopped" wires both up.
 
 ## VSCodium
 

@@ -257,6 +257,22 @@ refactor: remove dead useHeartbeat hook
 
 Most commits should be shorter than this — just the subject line.
 
+### Prose gets de-slopped
+
+Apply the `stop-slop` skill to every piece of prose you write, with no
+exceptions and without being asked: chat replies, READMEs, docs, changelogs,
+commit bodies, PR descriptions, issue comments, spec files, `log.md` entries.
+Invoke the skill the first time it applies in a session and hold its rules for
+the rest of the session.
+
+Not prose, so out of scope: code, code comments, log lines, JSON/YAML, test
+names, commit subject lines.
+
+`humanizer` is the companion skill for the other direction: text the user wrote
+or pasted in and wants rewritten. It preserves every claim, invents no facts,
+and matches a voice sample when given one. Reach for it on that job only.
+`stop-slop` still governs what you write yourself.
+
 ### Deploy approach
 
 Push toward full automation from GitHub for any deploy/infrastructure change — manual VPS steps are friction. When an approach hits a technical wall, present alternatives clearly and let the user choose direction. Never silently revert a design decision to a simpler approach without asking.

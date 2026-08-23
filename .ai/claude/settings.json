@@ -1,11 +1,11 @@
 {
-  "permissions": {
-    "defaultMode": "default"
-  },
   "env": {
     "SHORTCUTS_PLAYGROUND_OUTPUT_DIR": "/Users/cassiano/Library/Mobile Documents/com~apple~CloudDocs/Shortcuts"
   },
-  "model": "claude-fable-5[1m]",
+  "permissions": {
+    "defaultMode": "auto"
+  },
+  "model": "opus[1m]",
   "hooks": {
     "PreToolUse": [
       {

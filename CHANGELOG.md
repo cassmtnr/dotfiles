@@ -7,6 +7,299 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Plan files consolidated — 2026-08-23
+
+#### Removed
+
+- `phase-02-gum-installer-ui.md` (757 lines). Its headline feature, vendoring
+  `gum` binaries, was reverted before anything was committed, and its listings
+  for the parts that did ship were five revisions stale.
+- `phase-02-ui-layer.md`. Written three days earlier and already wrong on
+  four counts: it claimed a 9-function API against 12, documented a helper that
+  had been deleted, listed the superseded colour block, and did not know about
+  `ui_reset` or `ui_warn`.
+- The vendored-gum aside in the step-runner changelog entry — it described work
+  that never shipped.
+
+#### Added
+
+- `phase-02-ui-layer.md` replaces both. One record of why `lib/ui.sh` exists,
+  the three stages it went through, and the decisions that still bind (bash 3.2
+  and no dependencies, gum reverted and why, one file rather than modules,
+  `run_step` keeping its unprefixed name, the step contract, errexit
+  suppression inside steps).
+
+  It deliberately lists no functions, variables or colours. Both deleted files
+  drifted by duplicating detail that `UI.md` owns, so this one points there
+  instead and has nothing that can go stale.
+
+Kept deliberately: the five dated `log.md` entries covering the gum decision
+and its reversal. That is the decision record, and the reversal is what stops
+the idea being re-proposed later.
+
+### Repo review fixes — 2026-08-23
+
+Full-repository review after the `ui.sh` work. Seven confirmed defects.
+
+#### Fixed
+
+- **Ctrl-C orphaned the spinner, which then spammed the prompt forever**
+  (`lib/ui.sh`). Bash makes async children ignore SIGINT in a non-interactive
+  shell, so the signal killed `install.sh` and left the spinner redrawing over
+  the user's shell. Verified: a background loop kept ticking after SIGINT to
+  the process group. The spinner now watches its parent with `kill -0` and
+  exits when it disappears — no traps, so nothing of the caller's is clobbered.
+- **A successful step's warnings were deleted with its output** (`lib/ui.sh`).
+  `rm -f "$out"` on success discarded everything except a `ui_skip` reason, so
+  "authorized_keys does not exist — SSH key login will not work" and "target is
+  a real directory, config not linked" both rendered as a green ✓. New
+  `ui_warn` records like `ui_skip` and is replayed after the status line; the
+  affected warnings in `lib/configure.sh` now use it.
+- **`xcode-select --install || return 1` created a futile retry loop**
+  (`lib/install.sh`). It exits 1 when the Command Line Tools are already
+  installed, so the step failed and offered a retry that could only fail the
+  same way. It also returns as soon as the GUI dialog opens, so the old
+  "System dependencies installed" was unearned. Treated as skip-or-warn now.
+- **`post_install` printed "Setup complete!" on a failed run** (`install.sh`).
+  The status was computed and passed in but never consulted for that line.
+- **`parse_args` only inspected `$1`** (`install.sh`), so with two flags
+  advertised `--verbose --help` ran a verbose install instead of printing help,
+  and `-v --bogus` accepted the typo. Loops and shifts now, like `update.sh`.
+- **Privilege prompts inside a captured step looked like a hang**
+  (`lib/extras.sh`). The prompt goes to `/dev/tty`, which the capture never
+  sees and the spinner overwrites every interval. Both extras authenticate
+  before the step now. The comment claiming the spinner tail could surface such
+  a prompt was wrong and has been corrected.
+
+#### Documented
+
+- `set -e` does not apply inside a step function: capturing an exit code with
+  `|| rc=$?` suppresses errexit for its whole dynamic extent, so a failing
+  command mid-step does not abort it and only the final status is reported.
+  This is inherent to offering retry/skip/abort instead of dying, and `UI.md`
+  now says so with an example.
+
+### Palette table and stale-spec banners — 2026-08-23
+
+#### Changed
+
+- **Colours come from one table** (`lib/ui.sh`). The old block listed all eight
+  names twice, once per branch of the NO_COLOR check. Adding a colour meant two
+  edits, and missing the second left a variable set in colour mode but unset in
+  no-colour mode, which is a crash under `set -u`. A single `name:sgr` table now
+  drives both paths, so a colour is one line and the no-colour path needs no
+  edit. Palette widened to the eight ANSI colours plus bold/dim/underline/
+  reverse/reset, usable in a consumer's own `printf` calls.
+- `_ui_default` assigns only when unset, using `printf -v` rather than `eval`,
+  so caller overrides still win.
+
+#### Fixed
+
+- `docs/superpowers/plans/phase-01` and `phase-02` carried code listings whose API
+  has moved on through five rounds of changes. Both now open with a banner
+  pointing at `UI.md` as the current reference. The listings stay as written:
+  they are a record of that phase, not documentation.
+- README notes that `obsidian-second-brain` (192 MB, ~4,900 files) sits in
+  `.ai/common/skills/` but is gitignored and not restored by `./install.sh`.
+
+### ui.sh overhaul — 2026-08-23
+
+Audit of `lib/ui.sh` against library conventions. Six defects, plus namespace
+and DRY work. Public API and rendering are unchanged apart from the fixes.
+
+#### Fixed
+
+- **`printf '%b'` interpreted backslashes in caller-supplied text.** A label
+  like `backup C:\new\table` emitted a real newline and tab. Every status line
+  now separates format from data with `%s`. The colour variables hold real
+  escape bytes, so `%b` was never needed.
+- **Re-sourcing the file wiped recorded steps.** Two files in one project each
+  sourcing it is normal, and the second reset `STEP_NAMES=()`. A `UI_VERSION`
+  guard makes sourcing idempotent.
+- **`ui_summary` clobbered `UI_SKIPPED`** by reusing `ui_skip` to draw its
+  rows. It uses a pure print helper now; recording and rendering are separate.
+- **Glyphs were mojibake outside a UTF-8 locale.** `✓ ✗ − ─ ·` and the braille
+  spinner now fall back to `+ x - - :` and `| / - \` when the locale is not
+  UTF-8.
+- **`ui_choose` with no options** printed an empty line and returned 0. It
+  warns and returns 2.
+- Terminal-width detection was duplicated in two functions; one
+  `_ui_term_cols` now.
+
+Reviewed after the fact; three follow-up defects are folded in below.
+
+#### Changed
+
+- **Namespace.** State moved to `_UI_STEP_NAMES` / `_UI_STEP_STATUS`, and
+  `ui_run_step` is the canonical runner. `run_step` stays as a one-line alias,
+  so nothing in this repo changed. `VERBOSE` is still honoured, with
+  `UI_VERBOSE` preferred; both are read at call time, since callers set them
+  while parsing argv, after sourcing.
+- `eval` removed from `ui_choose` in favour of array indexing.
+- New: `ui_reset` for scripts wanting a summary per phase; `UI_TAIL_LINES`,
+  `UI_SPINNER_INTERVAL`, `UI_REVERSE` and the `UI_GLYPH_*` set as config.
+- Sourcing guard: running the file instead of sourcing it now says so rather
+  than failing obscurely.
+
+#### Fixed in review
+
+- **`mktemp -t ui-step` broke every step on Linux.** BSD `mktemp` treats a bare
+  argument as a filename prefix; GNU treats it as a template and rejects it for
+  having no `X` characters. Introduced by this overhaul and caught before it
+  shipped, but it would have failed the first step of every CI run and every
+  Linux install. Uses an explicit `"${TMPDIR:-/tmp}/ui-step.XXXXXX"` template,
+  which both accept.
+- `_ui_log` was added mirroring `_ui_warn` and never called. Removed.
+- `ui_reset` shipped as public API with no documentation. Documented.
+
+### ui.sh becomes a drop-in library — 2026-08-23
+
+#### Added
+
+- **`UI.md`** at the repo root — full documentation for `lib/ui.sh` as a
+  standalone library: quickstart, the step contract, all 9 public functions,
+  configuration, non-interactive behaviour, and a worked example. Written for
+  someone who has never seen this repo, so the file can be copied into another
+  project and handed to Claude. Linked from a new README section.
+- `UI_GREEN`, `UI_RED`, `UI_BLUE`, `UI_YELLOW`, `UI_DIM`, `UI_BOLD`, `UI_NC`
+  and `UI_INDENT`, all overridable, plus `NO_COLOR` support.
+
+#### Changed
+
+- **`lib/ui.sh` no longer depends on `lib/common.sh`.** It borrowed 4 colours
+  and `log`/`warning`/`error`, which made it unusable anywhere else. It now
+  owns its colours and uses private `_ui_log`/`_ui_warn`, so a host project's
+  own `log()` and `warning()` are untouched. Installer output is unchanged.
+- Internal helpers moved into the namespace: `choose_many` →
+  `_ui_choose_many`, `_choose_restore` → `_ui_choose_restore`. Neither had a
+  caller outside the file. `run_step` deliberately keeps its unprefixed name;
+  `UI.md` documents it as the one collision to check for.
+
+#### Fixed
+
+- Colour escapes in the failure rules were hardcoded, so `NO_COLOR` and
+  non-TTY runs got raw `\033[2m` bytes in their output. Everything routes
+  through the variables now.
+
+### Plugin step stops reinstalling — 2026-08-23
+
+#### Fixed
+
+- **`setup_claude_plugins` reinstalled every enabled plugin on every run**
+  (`lib/ai.sh`), and failed the step if any one of them errored. Two things it
+  cannot fix made that permanent: a marketplace mid-refresh answers "not found"
+  for a plugin that is right there in its own listing, and
+  `shortcuts-playground` currently ships a manifest the CLI rejects
+  (`Unrecognized key: "userConfig"`). Either one turned a machine with all five
+  plugins already working into a ✗ and a retry menu that could never clear.
+  It now installs only what is missing and reports `− N already installed`
+  otherwise. Version bumps stay a deliberate `claude plugin update`.
+
+### Step progress and failure output — 2026-08-23
+
+#### Added
+
+- **Spinner while a step runs** (`lib/ui.sh`). The static `… label` gave no sign
+  of life, so a multi-minute `brew bundle` read as a hang. `_ui_spinner` runs as
+  a background process (the step itself stays in the foreground of the current
+  shell, so it keeps the env it exports) and draws a braille frame, elapsed
+  seconds past the 3s mark, and the last line of the step's captured output.
+  That tail is the useful part: it turns `brew bundle` into visible progress and
+  surfaces a mid-step password prompt that would otherwise wait unseen inside
+  the capture file.
+
+#### Changed
+
+- **Failure output** (`lib/ui.sh`) now shows the exit code on the ✗ line and
+  indents the 15-line excerpt between rules, so it reads as the step's output
+  rather than as more status lines. A `--verbose` failure no longer leaves its
+  temp file behind, having already streamed everything.
+
+### Installer UI review fixes — 2026-08-22
+
+Nine defects found reviewing the step-runner work before it landed.
+
+#### Fixed
+
+- **`--verbose` ran every step in a subshell** (`lib/ui.sh`). The pipeline into
+  `tee` discarded environment a step exported, so `brew shellenv` never reached
+  `setup_nodejs` and Node was skipped while the step still reported ✓. It also
+  masked the step's exit code behind `tee`'s. Process substitution keeps the
+  step in the current shell and fixes both.
+- **Skips reported from inside a step were swallowed** (`lib/ui.sh`). `run_step`
+  captures step output, so 21 `ui_skip` reasons never printed and every skip
+  rendered as ✓. `ui_skip` now records into `UI_SKIPPED`, which `run_step` reads
+  after the capture ends and reports as − with the reason. Worst case fixed: a
+  Linux user declining sudo saw an all-green summary with nothing installed.
+- **Skill lint blocked a fresh install** (`lib/ai.sh`). It exits 1 for optional
+  tools it can't find, which `run_step` read as a failure worth retrying.
+  Advisory again, outside the step runner.
+- **`exec zsh -l` discarded the exit status** (`install.sh`). `post_install`
+  replaced the process before `main` could return, so failed steps exited 0.
+  The handoff now happens only on a clean run.
+- **Two CI contract assertions could not fail** (`ci.yml`). `errexit` is
+  suppressed inside `&&`/`||` lists, so a regression shipped green. Assertions
+  exit explicitly, and the contract now also covers skip reporting and the
+  `--verbose` subshell.
+- **`08` at any menu picked nothing** (`lib/ui.sh`). Bash rejects it as octal;
+  the bounds test errored and fell through, and in the failure menu the empty
+  result silently skipped the step. Parsed with `10#` now.
+- **Plugin setup offered a login for a CLI that wasn't installed**
+  (`lib/ai.sh`) — the `command -v claude` guard stayed behind when the auth call
+  moved out.
+- **One unwritable app aborted the rest of the icons** (`lib/extras.sh`) — flag
+  the failure, finish the loop.
+- **`choose_many` cleared traps it did not install** (`lib/ui.sh`) — saves and
+  restores the caller's `INT`/`TERM`/`EXIT` handlers.
+
+### Prose skills — 2026-08-21
+
+#### Added
+
+- **`stop-slop`** ([hardikpandya/stop-slop](https://github.com/hardikpandya/stop-slop))
+  vendored into `.ai/common/skills/`. Governs every piece of prose the AI
+  writes, unconditionally.
+- **`humanizer`** ([blader/humanizer](https://github.com/blader/humanizer))
+  vendored into `.ai/common/skills/` for the opposite job: rewriting text the
+  user supplied, preserving every claim. Upstream ships it as a Claude plugin,
+  but its `SKILL.md` is portable by design, so vendoring the file gives Codex
+  the same skill. Trade-off: version bumps are manual.
+- **`.ai/common/instructions.md` § "Prose gets de-slopped"** — makes `stop-slop`
+  always-on, scopes `humanizer` to user-supplied text, and lists what counts as
+  not-prose (code, comments, JSON/YAML, commit subject lines).
+
+#### Fixed
+
+- `.gitignore` ignores `.ai/common/skills/*` and allowlists per skill, so a
+  vendored skill stays untracked until it is named there. Added both new ones
+  and noted the rule in the README tree.
+
+### Installer step runner UI — 2026-08-10
+
+#### Added
+
+- **`lib/ui.sh`** — single UI layer (`ui_confirm`, `ui_choose`,
+  `ui_choose_many`, `ui_header`, step status lines; pure bash 3.2, zero
+  dependencies) plus a `run_step` runner: a "… step" line while running, one
+  ✓/−/✗ line per step, output captured (kept on failure, path printed),
+  retry/skip/abort menu on failure (cancelling the menu aborts), end-of-run
+  summary table. A run with failed steps exits nonzero. The arrow-key menus
+  moved from `lib/common.sh` into `ui.sh`.
+- **CI**: job timeouts and a non-interactive UI contract check (no TTY = no
+  prompts, defaults win) ahead of the install matrix.
+- **`--verbose`** on `install.sh` and `update.sh` — stream full command output
+  instead of the quiet one-line-per-step view.
+
+#### Changed
+
+- Step functions now signal real failures (`return 1`, retry-able) and
+  quiet-skip missing prerequisites, instead of warning and always succeeding.
+- Extras and AI menu labels rewritten in plain English (what it is + why
+  you'd want it).
+- Non-interactive runs keep the old contract: defaults win, steps 3–4 select
+  nothing, zero prompts; failures are recorded in the summary and don't stop
+  the run.
+
 ### TODO closeout — 2026-07-22
 
 #### Removed
@@ -30,16 +323,19 @@ design and a standalone AI script — this entry reflects the final shape.)
 
 #### Changed
 
-- **`install.sh` runs four interactive steps, no flags** (only `--help`):
-  1. install software, 2. apply personal configuration (symlinks, user-level
-  defaults), 3. optional extras, 4. AI tools. Steps 3 and 4 are checkbox menus
-  with nothing pre-selected and are skipped without a terminal, so a plain or
-  non-interactive run (SSH pipe, CI) installs no extras and no AI. Menus are
-  pure bash (macOS bash 3.2, zero dependencies).
+- **`install.sh` runs four interactive steps, no flags** (only `--help`;
+  superseded in the same unreleased batch: the step-runner entry above adds
+  `--verbose`): 1. install software, 2. apply personal configuration
+  (symlinks, user-level defaults), 3. optional extras, 4. AI tools. Steps 3
+  and 4 are checkbox menus with nothing pre-selected and are skipped without
+  a terminal, so a plain or non-interactive run (SSH pipe, CI) installs no
+  extras and no AI. Menus are pure bash (macOS bash 3.2, zero dependencies).
 - **`.utils.sh` split into `lib/`** — `common.sh` (OS detection, logging, brew
   PATH, menu helper), `install.sh`, `configure.sh`, `extras.sh`, `ai.sh`. Step
   drivers: `start_installation`, `start_configuration`, `install_extras`,
-  `install_ai_tools`.
+  `install_ai_tools` (all but `install_ai_tools` deleted in the same batch —
+  `main` now drives steps directly through `run_step`, see the step-runner
+  entry above).
 - **Single `.brewfile`** — casks (GUI apps) are automatically skipped on Linux,
   so a VPS gets CLI tools only. `install.sh` prints the detected OS at the start.
 - **Sudo-needing perks are opt-in extras** (step 3) — custom app icons,
@@ -64,7 +360,8 @@ design and a standalone AI script — this entry reflects the final shape.)
 - **Arrow-key checkbox menus** — the extras and AI-tools selectors use ↑/↓ (or
   j/k) to move, space to toggle, `a` for all, enter to confirm, q/Esc to cancel,
   replacing the numbered-toggle prompt. Pure bash 3.2, zero dependencies (no
-  gum/fzf/whiptail); restores the terminal on Ctrl-C.
+  gum/fzf/whiptail); restores the terminal on Ctrl-C. (Moved to `lib/ui.sh`
+  in the step-runner rework above.)
 - **CI smoke test** (`.github/workflows/ci.yml`) — shellcheck + non-interactive
   install, twice for idempotence, on ubuntu-latest and macos-latest.
 - **Design doc** — `docs/superpowers/plans/phase-01-modular-setup.md`.
@@ -135,8 +432,8 @@ design and a standalone AI script — this entry reflects the final shape.)
 - **Agent Reach** internet channel router for AI CLIs — `install_agent_reach()` in `install.sh` (pipx install + core channels + bilibili/twitter + rdt-cli for Reddit). Active channels: web pages, Exa search, YouTube, GitHub, RSS, V2EX, Bilibili (bili-cli), Twitter (twitter-cli), Reddit (rdt-cli). Twitter/Reddit logins are cookie-based, manual per machine
 - **`agent-reach` skill** (`.ai/common/skills/agent-reach/`) — platform routing rules and per-domain command references, auto-shared with Claude Code and Codex via the existing skills symlink. Trimmed to installed channels (upstream ships docs for 15 platforms incl. XiaoHongShu/Facebook/Instagram/LinkedIn — removed along with all OpenCLI references) and translated from Chinese to English; `career.md` is a stub because `agent-reach doctor` recreates deleted skill files
 - **`config/mcporter.json`** symlinked to `~/.mcporter/mcporter.json` — makes Exa search work from any directory (was project-local to the dotfiles repo only)
-- **`update.sh -p` now also runs `pipx upgrade-all`** — upgrades the channel CLIs alongside brew packages; agent-reach re-installs from its main.zip spec when upstream bumps its version; rdt-cli stays at its pinned commit
-- **`skill-lint.sh`** (`.ai/common/scripts/`) — structural health check for AI CLI skills, runs on every `update.sh`: missing SKILL.md/frontmatter, dead relative links, commands referenced in code blocks that aren't installed. Idea extracted from [ctx](https://github.com/stevesolun/ctx)'s skill-health without adopting its recommendation layer
+- **`update.sh -p` now also runs `pipx upgrade-all`** — upgrades the channel CLIs alongside brew packages; agent-reach re-installs from its main.zip spec when upstream bumps its version; rdt-cli stays at its pinned commit. (Since removed in the modular-setup rework: `update.sh -p` only runs `install_packages` now; AI tooling updates via `./install.sh` step 4.)
+- **`skill-lint.sh`** (`.ai/common/scripts/`) — structural health check for AI CLI skills: missing SKILL.md/frontmatter, dead relative links, commands referenced in code blocks that aren't installed. Idea extracted from [ctx](https://github.com/stevesolun/ctx)'s skill-health without adopting its recommendation layer. (Since moved: runs in `./install.sh` step 4, not `update.sh`.)
 
 ### AI/Editor Config Refresh — 2026-05-21
 

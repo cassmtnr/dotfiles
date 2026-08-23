@@ -1,5 +1,9 @@
 # Phase 01 — Modular three-step setup
 
+> **HISTORICAL (phase complete):** code listings here are a snapshot from this
+> phase. The menu helper shown below now lives in `lib/ui.sh` as
+> `_ui_choose_many`. See `UI.md` for the current API.
+
 Status: designed 2026-07-13 while Cassiano was away (pre-authorized: "brainstorm,
 then execute"). Approval deferred to the walkthrough on his return.
 

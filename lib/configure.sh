@@ -9,8 +9,6 @@
 
 # Create symbolic links
 create_symlinks() {
-    log "Creating symbolic links..."
-
     # Ensure target directories exist before symlinking
     mkdir -p "$HOME/.config"
     mkdir -p "$HOME/.config/1Password/ssh"
@@ -111,8 +109,8 @@ create_symlinks() {
             # ln -sf into an existing real directory would nest the link
             # inside it and "succeed" without ever linking the config —
             # app changes would then NOT land in the dotfiles repo
-            warning "Target is a real directory: $target"
-            warning "  Move it aside (mv \"$target\" \"$target.bak\") and re-run to link it"
+            ui_warn "Target is a real directory: $target"
+            ui_warn "  Move it aside (mv \"$target\" \"$target.bak\") and re-run to link it"
             continue
         fi
 
@@ -134,11 +132,9 @@ create_symlinks() {
             chmod 600 "$HOME/.ssh/authorized_keys"
         else
             warning "$HOME/.ssh/authorized_keys does not exist — SSH key login will not work!"
-            warning "Add your public key: cat your_key.pub >> ~/.ssh/authorized_keys && chmod 600 ~/.ssh/authorized_keys"
+            ui_warn "Add your public key: cat your_key.pub >> ~/.ssh/authorized_keys && chmod 600 ~/.ssh/authorized_keys"
         fi
     fi
-
-    success "Symbolic links created"
 }
 
 # Bidirectional sync of VSCodium extensions:
@@ -152,14 +148,12 @@ sync_vscodium_extensions() {
     local extensions_file="$DOTFILES_ROOT/.vscodium/extensions.txt"
 
     if ! command -v codium &> /dev/null; then
-        warning "VSCodium not installed — skipping extension sync"
-        return
+        ui_skip "VSCodium not installed"
+        return 0
     fi
 
     # Ensure the file exists
     [[ -f "$extensions_file" ]] || touch "$extensions_file"
-
-    log "Syncing VSCodium extensions..."
 
     # Sorted lowercase lists for comparison via comm
     local tracked_sorted installed_sorted
@@ -185,7 +179,7 @@ sync_vscodium_extensions() {
             if codium --install-extension "$ext" --force; then
                 install_count=$((install_count + 1))
             else
-                warning "Failed to install extension: $ext"
+                ui_warn "Failed to install extension: $ext"
                 failed=$((failed + 1))
             fi
         done <<< "$to_install"
@@ -229,21 +223,19 @@ apply_macos_defaults() {
     local with_sudo="${1:-false}"
 
     if ! $IS_MACOS; then
-        return
+        ui_skip "not macOS"
+        return 0
     fi
-
-    log "Applying macOS defaults..."
 
     # Run as a subprocess, not sourced: under install.sh's set -e, one failing
     # `defaults write` (e.g. a domain macOS has sandboxed away) would abort the
     # whole install and skip the remaining defaults.
     if [[ ! -f "$DOTFILES_ROOT/.defaults" ]]; then
-        warning ".defaults not found — skipping macOS defaults"
-        return
+        ui_skip ".defaults not found"
+        return 0
     fi
 
-    RUN_SUDO="$with_sudo" bash "$DOTFILES_ROOT/.defaults" || warning "Some macOS defaults failed to apply"
-    success "macOS defaults applied"
+    RUN_SUDO="$with_sudo" bash "$DOTFILES_ROOT/.defaults" || return 1
 }
 
 # Set zsh as default shell
@@ -251,22 +243,22 @@ set_default_shell() {
     # Any zsh counts — on macOS $SHELL is typically /bin/zsh while brew's
     # zsh isn't in /etc/shells, so chsh to it fails without admin rights
     if [[ "$SHELL" == *zsh ]]; then
-        log "Zsh is already the default shell"
-        return
+        ui_skip "zsh is already the default shell"
+        return 0
     fi
 
     local zsh_path
     zsh_path="$(which zsh || true)"
     if [[ -z "$zsh_path" ]]; then
-        warning "zsh not installed — cannot set it as default shell"
-        return
+        ui_skip "zsh not installed — cannot set it as default shell"
+        return 0
     fi
 
     # On Linux, ensure zsh is listed in /etc/shells (required by chsh)
     if $IS_LINUX && ! grep -qx "$zsh_path" /etc/shells 2>/dev/null; then
         if ! ${RUN_SUDO:-false}; then
-            warning "Cannot add $zsh_path to /etc/shells without admin rights — skipping shell change"
-            return
+            ui_skip "adding $zsh_path to /etc/shells needs admin rights"
+            return 0
         fi
         log "Adding $zsh_path to /etc/shells..."
         echo "$zsh_path" | sudo tee -a /etc/shells > /dev/null
@@ -276,16 +268,7 @@ set_default_shell() {
     if chsh -s "$zsh_path"; then
         success "Default shell changed to zsh (takes effect on next login)"
     else
-        warning "Failed to change default shell. Run manually: chsh -s $zsh_path"
+        error "Failed to change default shell. Run manually: chsh -s $zsh_path"
+        return 1
     fi
-}
-
-# Step driver — apply personal configuration (all user-level)
-start_configuration() {
-    log "── Step 2/4: apply personal configuration ──"
-    create_symlinks
-    sync_vscodium_extensions
-    apply_macos_defaults false
-    set_default_shell
-    return 0
 }

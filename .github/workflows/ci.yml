@@ -7,6 +7,7 @@ on:
 jobs:
   lint:
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     steps:
       - uses: actions/checkout@v4
       - name: shellcheck
@@ -15,14 +16,42 @@ jobs:
   install:
     # The real "new machine" test: without a terminal install.sh runs
     # non-interactively (no extras), twice — the second run proves
-    # idempotence. Runners have Homebrew preinstalled.
+    # idempotence. Runners have Homebrew preinstalled. timeout-minutes:
+    # a regression that reintroduces a prompt must fail, not hang for the
+    # 6-hour default.
     strategy:
       fail-fast: false
       matrix:
         os: [ubuntu-latest, macos-latest]
     runs-on: ${{ matrix.os }}
+    timeout-minutes: 30
     steps:
       - uses: actions/checkout@v4
+      - name: ui.sh non-interactive contract (no TTY = no prompts, defaults win)
+        run: |
+          bash -c 'set -euo pipefail
+            source lib/common.sh; source lib/ui.sh
+            fail() { echo "CONTRACT FAILED: $1" >&2; exit 1; }
+            # errexit is suppressed inside && / || lists, so these need an
+            # explicit exit — a bare `ui_confirm ... && echo` can never fail
+            ui_confirm "default yes?" y || fail "default y must return yes"
+            ! ui_confirm "default no?" n || fail "default n must return no"
+            test "$(ui_choose "pick" "first:Label A" "second:Label B")" = "first" \
+              || fail "ui_choose must pick the first value"
+            test -z "$(ui_choose_many "pick many" "a:One" "b:Two")" \
+              || fail "ui_choose_many must select nothing"
+            run_step "always ok" true
+            run_step "always bad" false
+            ! ui_summary || fail "summary must report a failed step"
+            # a step that skips itself is reported, not shown as ✓
+            skips() { ui_skip "no reason"; return 0; }
+            run_step "always skipped" skips
+            case "${_UI_STEP_STATUS[*]}" in *skipped*) ;; *) fail "skip not recorded" ;; esac
+            # --verbose must not run steps in a subshell
+            VERBOSE=true; MARK=lost
+            mutate() { MARK=kept; return 0; }
+            run_step "verbose keeps env" mutate
+            test "$MARK" = kept || fail "--verbose ran the step in a subshell"' < /dev/null
       - name: install (safe defaults)
         run: ./install.sh
       - name: install again (idempotence)

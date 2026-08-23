@@ -11,12 +11,14 @@
 # without a terminal — so a plain/non-interactive install sets up NO extras
 # and NO AI.
 #
-# No flags to remember: every choice is an interactive menu.
+# Every choice is an interactive menu; the only flag is --verbose (full
+# command output instead of one status line per step).
 # ============================================
 
 set -euo pipefail  # Exit on error, undefined variable, or pipe failure
 
 source "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/lib/common.sh"
+source "$DOTFILES_ROOT/lib/ui.sh"
 source "$DOTFILES_ROOT/lib/install.sh"
 source "$DOTFILES_ROOT/lib/configure.sh"
 source "$DOTFILES_ROOT/lib/extras.sh"
@@ -49,47 +51,43 @@ Steps 3 and 4 are skipped without a terminal, so a plain or non-interactive
 install (piped over SSH, CI) sets up no extras and no AI, and only asks for
 sudo where the platform default allows it (Linux yes, macOS no).
 
+Options:
+  -v, --verbose   Show full command output instead of one line per step
+
 All choices are interactive menus — nothing to memorize. Idempotent — re-run
 anytime.
 EOF
 }
 
-# Only --help exists; everything else errors — all choices are menus
 parse_args() {
-    case "${1:-}" in
-        "") ;;
-        -h|--help)
-            show_help
-            exit 0
-            ;;
-        *)
-            error "Unknown option: $1 (this script has no flags — just run it)"
-            show_help
-            exit 1
-            ;;
-    esac
+    # Loop, not a single case: with more than one flag advertised, `case "$1"`
+    # silently ignored everything after the first argument.
+    # VERBOSE is consumed by lib/ui.sh (run_step)
+    # shellcheck disable=SC2034
+    while [[ $# -gt 0 ]]; do
+        case "$1" in
+            -v|--verbose) VERBOSE=true ;;
+            -h|--help) show_help; exit 0 ;;
+            *) error "Unknown option: $1"; show_help; exit 1 ;;
+        esac
+        shift
+    done
 }
 
 # Confirm whether privileged steps may run (platform default), then prime
 # sudo; degrade to user-level mode if the prompt fails
 confirm_sudo() {
-    if [[ -t 0 ]]; then
-        local hint answer
-        if $RUN_SUDO; then hint="Y/n"; else hint="y/N"; fi
-        # >&2: a stdout redirect (./install.sh > log) must not hide the question
-        printf '%b' "${BLUE}[INFO]${NC} Allow steps that need admin rights (Homebrew bootstrap, system packages)? [$hint] " >&2
-        read -r answer || answer=""
-        case "$answer" in
-            [Yy]*) RUN_SUDO=true ;;
-            [Nn]*) RUN_SUDO=false ;;
-        esac
+    local def="n"
+    $RUN_SUDO && def="y"
+    if ui_confirm "Allow steps that need admin rights (Homebrew bootstrap, system packages)?" "$def"; then
+        RUN_SUDO=true
+    else
+        RUN_SUDO=false
     fi
-
     if ! $RUN_SUDO; then
         log "Running user-level — steps that need admin rights will be skipped"
         return
     fi
-
     if ! sudo -v; then
         warning "Could not obtain administrative privileges — continuing user-level"
         RUN_SUDO=false
@@ -115,9 +113,16 @@ check_prerequisites() {
     success "Prerequisites check passed"
 }
 
+# $1: the run's exit status — a nonzero run must not exec into zsh, because
+# exec replaces the process and throws that status away
 post_install() {
+    local status="${1:-0}"
     echo
-    success "Setup complete!"
+    if [[ "$status" -eq 0 ]]; then
+        success "Setup complete!"
+    else
+        warning "Setup finished with failures — see the summary above."
+    fi
     echo
     echo "Optional next steps:"
     echo "  • Configure your SSH keys in ~/.ssh/"
@@ -132,8 +137,8 @@ post_install() {
         echo "  Finish with: claude auth login && ./install.sh"
     fi
 
-    # Switch to zsh if not already running it (interactive sessions only)
-    if [[ -t 0 && "$SHELL" != *"zsh"* ]] && command -v zsh &> /dev/null; then
+    # Switch to zsh if not already running it (interactive, clean runs only)
+    if [[ "$status" -eq 0 && -t 0 && "$SHELL" != *"zsh"* ]] && command -v zsh &> /dev/null; then
         log "Switching to zsh..."
         exec zsh -l
     fi
@@ -142,41 +147,51 @@ post_install() {
 main() {
     parse_args "$@"
 
-    echo "======================================"
-    echo "        Dotfiles Setup Script         "
-    echo "======================================"
-    echo
-    log "Detected: $(os_label)"
+    ui_header "Dotfiles setup — $(os_label)"
     if $IS_LINUX; then
         log "GUI apps (VSCodium, Ghostty, Chrome, …) are macOS-only — skipped here"
     fi
-    echo
 
     confirm_sudo
     check_prerequisites || exit 1
 
-    start_installation
-    start_configuration
+    ui_header "Step 1/4 — install software"
+    run_step "System dependencies (zsh, git, curl, build tools)" install_deps
+    run_step "Homebrew (package manager)"                        install_homebrew
+    run_step "Oh My Zsh (shell framework)"                       install_oh_my_zsh
+    run_step "Apps and CLI tools from .brewfile"                 install_packages
+    run_step "Node.js via NVM"                                   setup_nodejs
 
-    # Step 3 choice — checkbox menu on a terminal, none without one
-    local extras=()
-    if [[ -t 0 ]]; then
-        local available=() line
-        while IFS= read -r line; do available+=("$line"); done < <(extras_available)
+    ui_header "Step 2/4 — personal configuration"
+    run_step "Symlink dotfiles into \$HOME"        create_symlinks
+    run_step "VSCodium extension sync"             sync_vscodium_extensions
+    run_step "macOS defaults (user-level)"         apply_macos_defaults false
+    run_step "Zsh as default shell"                set_default_shell
+
+    ui_header "Step 3/4 — optional extras"
+    local extras=() line available=()
+    while IFS= read -r line; do available+=("$line"); done < <(extras_available)
+    if [[ ${#available[@]} -gt 0 ]]; then
         while IFS= read -r line; do extras+=("$line"); done \
-            < <(choose_many "Step 3/4 — select extras:" "${available[@]}")
+            < <(ui_choose_many "Pick extras to set up (space toggles, enter confirms):" "${available[@]}")
     fi
-
     if [[ ${#extras[@]} -gt 0 ]]; then
-        install_extras "${extras[@]}"
+        local name
+        for name in "${extras[@]}"; do
+            run_step "Extra: $name" run_extra "$name"
+        done
     else
-        log "── Step 3/4: no extras selected (re-run ./install.sh to add them) ──"
+        ui_skip "No extras selected (re-run ./install.sh anytime to add them)"
     fi
 
-    # Step 4 — AI tools (opt-in; nothing selected on a non-terminal run)
+    ui_header "Step 4/4 — AI tools"
     install_ai_tools
 
-    post_install
+    # Failed steps must fail the run (CI, scripts) — but after post_install
+    local status=0
+    ui_summary || status=1
+    post_install "$status"
+    return $status
 }
 
 main "$@"
