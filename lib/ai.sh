@@ -71,6 +71,16 @@ ai_symlinks() {
     # mcporter — global config so Exa search (agent-reach) works from any dir
     link "$DOTFILES_ROOT/config/mcporter.json"       "$HOME/.mcporter/mcporter.json"
 
+    # Hooks (block-dangerous-commands.js, plugin hooks) run under /bin/sh,
+    # which never loads nvm — they only see node if it's on the PATH Claude
+    # Code inherited from its launching shell. ~/.local/bin is on that PATH
+    # (.zshenv), so link a shim there that resolves nvm's current default at
+    # call time (a versioned symlink would dangle after node upgrades).
+    # No-op without nvm: brew/system node installs are already on PATH.
+    if [[ -s "${NVM_DIR:-$HOME/.nvm}/nvm.sh" ]]; then
+        link "$DOTFILES_ROOT/.ai/common/scripts/node-default.sh" "$HOME/.local/bin/node"
+    fi
+
     success "AI configuration linked"
 }
 
@@ -79,8 +89,8 @@ ai_symlinks() {
 install_ai_clis() {
     if $IS_MACOS; then
         if ! ensure_brew_path; then
-            warning "Homebrew not found — skipping Claude Code install"
-            return
+            ui_skip "Homebrew not found — needed to install Claude Code"
+            return 0
         fi
         # One-time migration: the old claude-code cask ships the same binary
         # as claude-code@latest and conflicts on install until removed
@@ -89,18 +99,17 @@ install_ai_clis() {
             brew uninstall --cask claude-code || warning "Could not uninstall old claude-code cask"
         fi
         log "Installing Claude Code..."
-        brew install --cask claude-code@latest || warning "Claude Code cask install failed"
+        brew install --cask claude-code@latest || return 1
     elif $IS_LINUX; then
         source_nvm
         # source_nvm uses --no-use; fall back to the default alias for npm
         command -v npm &> /dev/null || nvm use --silent default &> /dev/null || true
         if ! command -v npm &> /dev/null; then
-            warning "npm not found — run ./install.sh first, then re-run this"
-            return
+            ui_skip "npm not found — run ./install.sh first, then re-run this"
+            return 0
         fi
         log "Installing Claude Code + Gemini via npm..."
-        npm install -g @anthropic-ai/claude-code @google/gemini-cli || \
-            warning "Some AI CLIs failed — retry: npm install -g @anthropic-ai/claude-code @google/gemini-cli"
+        npm install -g @anthropic-ai/claude-code @google/gemini-cli || return 1
     fi
     hash -r
     success "AI CLIs installed"
@@ -109,8 +118,8 @@ install_ai_clis() {
 # Install Agent Reach (internet channel router for AI CLIs) — user-level
 setup_agent_reach() {
     if ! command -v pipx &> /dev/null; then
-        warning "pipx not found — skipping Agent Reach (install it: brew install pipx)"
-        return
+        ui_skip "pipx not found — brew install pipx"
+        return 0
     fi
 
     # pipx installs to ~/.local/bin, which isn't on PATH yet during a
@@ -120,9 +129,8 @@ setup_agent_reach() {
     if ! command -v agent-reach &> /dev/null; then
         log "Installing Agent Reach..."
         pipx install https://github.com/Panniantong/agent-reach/archive/main.zip || {
-            # plain return: `return 1` would abort the whole script under set -e
-            warning "Agent Reach installation failed"
-            return
+            error "Agent Reach installation failed"
+            return 1
         }
     fi
 
@@ -178,14 +186,7 @@ ensure_claude_auth() {
     [[ -t 0 ]] || return 1
 
     log "Claude Code plugins need a logged-in Claude CLI."
-    # >&2: a stdout redirect (./install.sh > log) must not hide the question
-    printf '%b' "${BLUE}[INFO]${NC} Log in now? Opens Claude's browser login from this terminal. [Y/n] " >&2
-    local answer
-    # || answer=n: EOF (Ctrl-D) skips instead of killing the run under set -e
-    read -r answer || answer=n
-    case "$answer" in
-        [Nn]*) return 1 ;;
-    esac
+    ui_confirm "Log in now? Opens Claude's browser login from this terminal." y || return 1
 
     claude auth login || warning "Login did not complete"
     claude_authenticated
@@ -194,22 +195,13 @@ ensure_claude_auth() {
 # Install Claude Code plugins listed in settings.json — user-level
 setup_claude_plugins() {
     if ! command -v claude &> /dev/null; then
-        warning "Claude Code not found — skipping plugin installation"
-        return
+        ui_skip "Claude Code not found"
+        return 0
     fi
 
     if ! command -v jq &> /dev/null; then
-        warning "jq not found — skipping Claude Code plugin installation"
-        return
-    fi
-
-    # Plugins only install once the CLI is authenticated — offer the login
-    # inline; on skip/failure, post_install prints how to finish
-    if ! ensure_claude_auth; then
-        CLAUDE_PLUGINS_PENDING=true
-        warning "Claude CLI not authenticated — skipping plugins"
-        warning "Finish later with: claude auth login && ./install.sh"
-        return
+        ui_skip "jq not found — needed to read the plugin list"
+        return 0
     fi
 
     log "Installing Claude Code plugins..."
@@ -232,49 +224,80 @@ setup_claude_plugins() {
         return
     fi
 
-    for plugin in "${plugins[@]}"; do
-        log "Installing plugin: $plugin"
-        claude plugin install "$plugin" || warning "Failed to install plugin: $plugin"
-    done
+    # Plugins already on this machine are left alone. Reinstalling gains
+    # nothing and fails hard for reasons the installer can't fix: a marketplace
+    # mid-refresh reports "not found", and upstream sometimes ships a manifest
+    # this CLI rejects. Moving versions is `claude plugin update`, deliberately.
+    local installed=""
+    local state="$HOME/.claude/plugins/installed_plugins.json"
+    [[ -f "$state" ]] && installed="$(jq -r '.plugins // {} | keys[]' "$state" 2>/dev/null)"
 
-    success "Claude Code plugins installed"
+    local failed=0 added=0 present=0
+    for plugin in "${plugins[@]}"; do
+        if printf '%s\n' "$installed" | grep -qxF "$plugin"; then
+            present=$((present + 1))
+            continue
+        fi
+        log "Installing plugin: $plugin"
+        if claude plugin install "$plugin"; then
+            added=$((added + 1))
+        else
+            warning "Failed to install plugin: $plugin"
+            failed=1
+        fi
+    done
+    [[ $failed -eq 0 ]] || return 1
+
+    if [[ $added -eq 0 ]]; then
+        ui_skip "$present already installed"
+        return 0
+    fi
+    success "Claude Code plugins installed ($added added, $present already present)"
 }
 
 # Step driver — pick which AI tools to set up. Nothing is pre-selected and a
 # non-terminal run selects nothing, so a plain install stays AI-free.
 install_ai_tools() {
-    log "── Step 4/4: AI tools ──"
-
-    local selected=()
-    if [[ -t 0 ]]; then
-        local line
-        while IFS= read -r line; do selected+=("$line"); done < <(choose_many \
-            "Step 4/4 — select AI tools:" \
-            "claude-code:Claude Code + Codex config (symlinks + CLI install)" \
-            "agent-reach:Agent Reach internet channels (pipx; manual per-machine logins)" \
-            "claude-plugins:Claude Code plugins (needs a logged-in Claude CLI)")
-    fi
+    local selected=() line
+    while IFS= read -r line; do selected+=("$line"); done < <(ui_choose_many \
+        "Pick AI tools to set up (space toggles, enter confirms):" \
+        "claude-code:Claude Code — Anthropic's AI coding CLI, plus shared config for it and Codex" \
+        "agent-reach:Agent Reach — lets the AI read Twitter/Reddit/YouTube/web links" \
+        "claude-plugins:Claude Code plugins — extras listed in settings.json (needs a logged-in CLI)")
 
     if [[ ${#selected[@]} -eq 0 ]]; then
-        log "No AI tools selected (re-run ./install.sh to add them)"
+        ui_skip "No AI tools selected (re-run ./install.sh to add them)"
         return 0
     fi
 
     # Config symlinks are the foundation any selected tool relies on
-    ai_symlinks
+    run_step "AI config symlinks (~/.claude, ~/.codex)" ai_symlinks
 
     local tool
     for tool in "${selected[@]}"; do
         case "$tool" in
-            claude-code)    install_ai_clis ;;
-            agent-reach)    setup_agent_reach ;;
-            claude-plugins) setup_claude_plugins ;;
+            claude-code)    run_step "Claude Code CLI"        install_ai_clis ;;
+            agent-reach)    run_step "Agent Reach channels"   setup_agent_reach ;;
+            claude-plugins)
+                # The login prompt can't run under run_step's output capture —
+                # authenticate first, then run the capturable part as a step.
+                # Guard on the CLI existing: without it the login prompt offers
+                # a command that isn't there, and so does the advice on failure.
+                if ! command -v claude &> /dev/null; then
+                    ui_skip "Claude Code plugins — Claude Code not installed (select claude-code too)"
+                elif ensure_claude_auth; then
+                    run_step "Claude Code plugins" setup_claude_plugins
+                else
+                    CLAUDE_PLUGINS_PENDING=true
+                    ui_skip "Claude Code plugins — not logged in (claude auth login && ./install.sh)"
+                fi ;;
         esac
     done
 
-    # Validate the symlinked skills (frontmatter, dead links, missing commands)
-    "$DOTFILES_ROOT/.ai/common/scripts/skill-lint.sh" || warning "Skill lint found issues (see above)"
-
-    success "AI tools set up"
+    # Validate the symlinked skills (frontmatter, dead links, missing commands).
+    # Advisory, so deliberately not a run_step: lint exits 1 for optional tools
+    # it can't find, which is not an install failure and not worth retrying.
+    "$DOTFILES_ROOT/.ai/common/scripts/skill-lint.sh" || \
+        ui_skip "Skill lint found issues (see above)"
     return 0
 }

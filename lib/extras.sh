@@ -11,11 +11,11 @@
 # function below.
 extras_available() {
     if $IS_MACOS; then
-        echo "icons:Custom app icons (writes to /Applications — needs admin on managed Macs)"
-        echo "macos-admin:System-level macOS defaults (NEEDS ADMIN/SUDO)"
+        echo "icons:Custom app icons — nicer VSCodium icon in the Dock (admin on managed Macs)"
+        echo "macos-admin:System-wide macOS tweaks — settings that need admin/sudo"
     fi
     if $IS_LINUX; then
-        echo "motd:Custom MOTD scripts in /etc/update-motd.d (NEEDS SUDO)"
+        echo "motd:Server welcome screen — custom message on SSH login (sudo)"
     fi
 }
 
@@ -37,9 +37,8 @@ extra_icons() {
     fi
 
     if ! command -v fileicon &> /dev/null; then
-        warning "fileicon not installed — skipping custom icon application"
-        warning "Install with: brew install fileicon"
-        return
+        ui_skip "fileicon not installed — brew install fileicon"
+        return 0
     fi
 
     # Map: app path -> icon file in dotfiles
@@ -47,6 +46,9 @@ extra_icons() {
         "/Applications/VSCodium.app:$DOTFILES_ROOT/.vscodium/icon.icns"
     )
 
+    # Flag rather than an early return: one unwritable bundle on a managed Mac
+    # must not cost every app after it in the list
+    local failed=0
     for pair in "${icon_pairs[@]}"; do
         local app="${pair%:*}"
         local icon="${pair#*:}"
@@ -55,10 +57,12 @@ extra_icons() {
             if fileicon set "$app" "$icon"; then
                 log "Applied custom icon to $(basename "$app")"
             else
-                warning "Failed to apply custom icon to $(basename "$app") — this usually needs admin rights"
+                error "Failed to apply custom icon to $(basename "$app") — this usually needs admin rights"
+                failed=1
             fi
         fi
     done
+    return $failed
 }
 
 # System-level macOS defaults — NEEDS ADMIN (sudo defaults write)
@@ -67,9 +71,12 @@ extra_macos_admin() {
         return
     fi
 
-    if ! sudo -v; then
-        warning "System-level macOS defaults need admin rights — skipped"
-        return
+    # Authenticate before the capture starts: a password prompt goes to
+    # /dev/tty, which the step runner does not capture and the spinner
+    # overwrites, so prompting inside a step looks like a hang.
+    if ! sudo -v < /dev/tty > /dev/tty 2>&1; then
+        ui_skip "needs admin rights"
+        return 0
     fi
 
     apply_macos_defaults true
@@ -81,15 +88,18 @@ extra_motd() {
         return
     fi
 
-    if ! sudo -v; then
-        warning "MOTD scripts need sudo to install into /etc/update-motd.d — skipped"
-        return
+    # Authenticate before the capture starts: a password prompt goes to
+    # /dev/tty, which the step runner does not capture and the spinner
+    # overwrites, so prompting inside a step looks like a hang.
+    if ! sudo -v < /dev/tty > /dev/tty 2>&1; then
+        ui_skip "needs admin rights"
+        return 0
     fi
 
     local motd_dir="$DOTFILES_ROOT/.motd"
     if [[ ! -d "$motd_dir" ]]; then
-        warning "MOTD directory not found: $motd_dir"
-        return
+        ui_skip "MOTD directory not found: $motd_dir"
+        return 0
     fi
 
     # Disable default Ubuntu MOTD scripts that conflict with custom ones
@@ -105,21 +115,11 @@ extra_motd() {
     for script in "$motd_dir"/*; do
         local name
         name="$(basename "$script")"
-        sudo cp "$script" "/etc/update-motd.d/$name"
-        sudo chmod 750 "/etc/update-motd.d/$name"
-        sudo chown root:root "/etc/update-motd.d/$name"
+        sudo cp "$script" "/etc/update-motd.d/$name" || return 1
+        sudo chmod 750 "/etc/update-motd.d/$name" || return 1
+        sudo chown root:root "/etc/update-motd.d/$name" || return 1
         log "Installed MOTD script: $name"
     done
 
     success "Custom MOTD scripts installed"
-}
-
-# Step driver — run the selected extras (names as arguments)
-install_extras() {
-    log "── Step 3/4: extras ──"
-    local name
-    for name in "$@"; do
-        run_extra "$name"
-    done
-    return 0
 }
