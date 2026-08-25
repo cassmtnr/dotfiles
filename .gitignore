@@ -59,6 +59,7 @@ Thumbs.db
 # whitelist only the skills that belong to this repo
 .ai/common/skills/*
 !.ai/common/skills/agent-reach
+!.ai/common/skills/candidate-analysis
 !.ai/common/skills/markdown-to-html
 
 # Symlinks from Work machine
