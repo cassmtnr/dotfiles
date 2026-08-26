@@ -5,7 +5,7 @@ description: Use when preparing to interview an engineering candidate — review
 
 # Candidate Analysis
 
-Prepare frontend interview material grounded in the interviewer's real codebases, not generic question banks. Three workflows — resume review, question building, online research — and one combined prep output.
+Prepare frontend interview material grounded in the interviewer's real codebases, not generic question banks. Three workflows — resume review, question building, online research — combined into one styled HTML prep page (see Output).
 
 ## Repo ground truth
 
@@ -60,29 +60,14 @@ Search (WebSearch, then WebFetch promising hits):
 
 Summarize per source: what was found, date, one-line takeaway. Note explicitly when nothing was found (common, not a red flag). Contradictions with the resume go in the prep notes as questions to ask, not accusations.
 
-## Full candidate prep template
+## Output — always a styled HTML page
 
-```markdown
-# Candidate Prep — <Name> (<role>)
+The full candidate prep is a single self-contained HTML file built from [references/prep-template.html](references/prep-template.html). The template ships with all CSS inlined (light + dark palette, theme toggle, Fraunces/DM Sans/IBM Plex Mono via Google Fonts) — never regenerate or restyle it, only fill it in.
 
-## Resume summary
-<one paragraph>
-- Strengths: …
-- Gaps vs role: …
-- Red flags / to verify: …
+1. Copy `references/prep-template.html` to `candidate-prep-<kebab-name>.html` next to the CV.
+2. Replace every `{{…}}` placeholder with real content. Duplicate the single sample `<tr>`/`<li>` rows as many times as needed; the HTML comments above each section say what goes there — delete them once filled.
+3. Structure is fixed: article header (eyebrow · name · lead · meta) → Resume summary → Timeline table → Strengths → Gaps → warn-callout "To verify in the room" → Online research table → cross-check callout (`success` if clean, `warn` if discrepancies) → Questions (Screening / Deep-dive / Architecture, repo pills via `<code class="pill">`) → Verdict guidance table (Signal / Strong / Weak) → note-callout "Overall read" → Sources.
+4. Leave the theme toggle, inlined `<style>`, and scripts untouched. No `{{` may survive in the output (`grep -c '{{' file` must return 0).
+5. Verify with `open <file>`, then give a condensed summary in chat — the HTML file is the deliverable, don't paste the whole prep as text.
 
-## Online research
-- GitHub: … | npm: … | Talks/blog: …
-- Resume cross-check: <matches / discrepancies to probe>
-
-## Questions
-### Screening
-1. …
-### Deep-dive
-1. … (maps to: <repo/tech>)
-### Architecture
-1. … (maps to: <repo/tech>)
-
-## Verdict guidance
-What a strong vs weak answer looks like for the 2–3 highest-signal questions.
-```
+Never invent metadata (dates, reading time); use the real prep date and CV filename or drop the field.

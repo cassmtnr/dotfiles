@@ -1,0 +1,709 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="color-scheme" content="light dark" />
+<title>Candidate Prep — {{CANDIDATE_NAME}}</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght,SOFT,WONK@0,9..144,300..900,0..100,0..1;1,9..144,300..900,0..100,0..1&family=DM+Sans:opsz,wght@9..40,300..700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+
+<!-- Set theme before paint to avoid flash. Reads localStorage > prefers-color-scheme. -->
+<script>
+  (function () {
+    try {
+      var saved = localStorage.getItem('theme');
+      var sys = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+      document.documentElement.dataset.theme = saved || sys;
+    } catch (e) {
+      document.documentElement.dataset.theme = 'light';
+    }
+  })();
+</script>
+
+<!-- ╔══════════════════════════════════════════════════════════════════════╗ -->
+<!-- ║ At generation time, replace this block with:                         ║ -->
+<!-- ║   <style>{contents of style.css}</style>                             ║ -->
+<!-- ║ Loaded from ~/.claude/skills/markdown-to-html/style.css              ║ -->
+<!-- ║ Keeps CSS as a single source of truth; output stays portable.        ║ -->
+<!-- ╚══════════════════════════════════════════════════════════════════════╝ -->
+<style>
+/* ╔═══════════════════════════════════════════════════════════════════╗
+   ║  style.css — canonical style library for the markdown-to-html skill ║
+   ║  Inlined into an HTML style block at page generation time.          ║
+   ║                                                                     ║
+   ║  WARNING: do not put the literal closing-style-tag string anywhere  ║
+   ║  in this file. The HTML parser closes the surrounding style element ║
+   ║  on that exact substring even inside a CSS comment.                 ║
+   ╚═══════════════════════════════════════════════════════════════════╝ */
+
+:root {
+  --font-sans: 'DM Sans', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --font-display: 'Fraunces', 'DM Sans', Georgia, 'Times New Roman', serif;
+  --font-mono: 'IBM Plex Mono', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  --max-width: 720px;
+  --radius-sm: 4px;
+  --radius: 8px;
+
+  /* Light mode (default) */
+  --bg: #fafafa;
+  --bg-elevated: #ffffff;
+  --bg-code: #f4f4f5;
+  --bg-callout: #f9fafb;
+  --text: #18181b;
+  --text-muted: #52525b;
+  --text-faint: #a1a1aa;
+  --border: #e4e4e7;
+  --border-strong: #d4d4d8;
+  --accent: #2563eb;
+  --accent-soft: #dbeafe;
+  --shadow: 0 1px 2px rgba(0, 0, 0, 0.04), 0 1px 3px rgba(0, 0, 0, 0.06);
+  --selection-bg: #2563eb;
+  --selection-fg: #ffffff;
+}
+
+[data-theme="dark"] {
+  --bg: #09090b;
+  --bg-elevated: #18181b;
+  --bg-code: #1f1f23;
+  --bg-callout: #18181b;
+  --text: #fafafa;
+  --text-muted: #a1a1aa;
+  --text-faint: #71717a;
+  --border: #27272a;
+  --border-strong: #3f3f46;
+  --accent: #60a5fa;
+  --accent-soft: rgba(96, 165, 250, 0.15);
+  --shadow: 0 1px 2px rgba(0, 0, 0, 0.3), 0 1px 3px rgba(0, 0, 0, 0.4);
+  --selection-bg: #60a5fa;
+  --selection-fg: #09090b;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  scroll-behavior: smooth;
+  scroll-padding-top: 2rem;
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font-sans);
+  font-size: 17px;
+  line-height: 1.65;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  transition: background 0.2s ease, color 0.2s ease;
+  min-height: 100vh;
+}
+
+::selection {
+  background: var(--selection-bg);
+  color: var(--selection-fg);
+}
+
+/* ─── page header (top bar with theme toggle) ─── */
+.page-header {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 5vw;
+  background: color-mix(in srgb, var(--bg) 80%, transparent);
+  backdrop-filter: saturate(180%) blur(12px);
+  -webkit-backdrop-filter: saturate(180%) blur(12px);
+  border-bottom: 1px solid transparent;
+  transition: border-color 0.2s ease;
+}
+.page-header.scrolled {
+  border-bottom-color: var(--border);
+}
+
+.breadcrumb {
+  font-family: var(--font-mono);
+  font-size: 12.5px;
+  color: var(--text-muted);
+  letter-spacing: 0.02em;
+}
+.breadcrumb a {
+  color: var(--text-muted);
+  text-decoration: none;
+  transition: color 0.15s ease;
+}
+.breadcrumb a:hover {
+  color: var(--text);
+}
+.breadcrumb .sep {
+  margin: 0 0.5em;
+  color: var(--text-faint);
+}
+
+/* ─── theme toggle ─── */
+.theme-toggle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border: 1px solid var(--border);
+  background: var(--bg-elevated);
+  color: var(--text-muted);
+  border-radius: var(--radius);
+  cursor: pointer;
+  transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease, transform 0.15s ease;
+  padding: 0;
+}
+.theme-toggle:hover {
+  color: var(--text);
+  border-color: var(--border-strong);
+}
+.theme-toggle:active {
+  transform: scale(0.94);
+}
+.theme-toggle svg {
+  width: 16px;
+  height: 16px;
+}
+.theme-toggle .icon-sun { display: none; }
+.theme-toggle .icon-moon { display: block; }
+[data-theme="dark"] .theme-toggle .icon-sun { display: block; }
+[data-theme="dark"] .theme-toggle .icon-moon { display: none; }
+
+/* ─── main content layout ─── */
+.content {
+  max-width: var(--max-width);
+  margin: 0 auto;
+  padding: 4rem 5vw 8rem;
+}
+
+/* ─── article header ─── */
+.article-header {
+  margin-bottom: 4rem;
+}
+.eyebrow {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--text-faint);
+  margin-bottom: 1.2rem;
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+.eyebrow::before {
+  content: '';
+  display: inline-block;
+  width: 24px;
+  height: 1px;
+  background: var(--border-strong);
+}
+.article-header h1 {
+  font-family: var(--font-display);
+  font-variation-settings: 'opsz' 144, 'SOFT' 50, 'WONK' 1;
+  font-size: clamp(2.6rem, 5.5vw, 3.8rem);
+  font-weight: 480;
+  letter-spacing: -0.022em;
+  line-height: 1.04;
+  margin-bottom: 1.2rem;
+  color: var(--text);
+}
+.article-header h1 em {
+  font-style: italic;
+  font-variation-settings: 'opsz' 144, 'SOFT' 100, 'WONK' 1;
+  font-weight: 380;
+}
+.lead {
+  font-size: 1.2rem;
+  color: var(--text-muted);
+  line-height: 1.55;
+  max-width: 60ch;
+  font-weight: 400;
+  margin-bottom: 1.5rem;
+}
+.article-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.5rem;
+  font-family: var(--font-mono);
+  font-size: 12.5px;
+  color: var(--text-faint);
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--border);
+}
+.article-meta span {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+/* ─── article body — markdown rendering ─── */
+.article-body {
+  font-size: 17px;
+  line-height: 1.7;
+  color: var(--text);
+}
+
+.article-body > * + * { margin-top: 1.4em; }
+.article-body > h2 + *,
+.article-body > h3 + *,
+.article-body > h4 + * { margin-top: 0.8em; }
+
+.article-body h2 {
+  font-family: var(--font-display);
+  font-variation-settings: 'opsz' 144, 'SOFT' 50, 'WONK' 1;
+  font-size: 1.85rem;
+  font-weight: 460;
+  letter-spacing: -0.018em;
+  line-height: 1.2;
+  margin-top: 3.5rem;
+  padding-top: 2rem;
+  border-top: 1px solid var(--border);
+  scroll-margin-top: 4rem;
+}
+.article-body h2 em {
+  font-style: italic;
+  font-variation-settings: 'opsz' 144, 'SOFT' 100, 'WONK' 1;
+  font-weight: 380;
+}
+.article-body > h2:first-child {
+  margin-top: 0;
+  padding-top: 0;
+  border-top: none;
+}
+
+.article-body h3 {
+  font-size: 1.25rem;
+  font-weight: 600;
+  letter-spacing: -0.012em;
+  line-height: 1.3;
+  margin-top: 2.2rem;
+  scroll-margin-top: 4rem;
+}
+
+.article-body h4 {
+  font-size: 1.05rem;
+  font-weight: 600;
+  letter-spacing: -0.005em;
+  margin-top: 1.8rem;
+  color: var(--text);
+}
+
+.article-body p {
+  color: var(--text);
+}
+
+.article-body strong {
+  font-weight: 600;
+  color: var(--text);
+}
+
+.article-body em {
+  font-style: italic;
+}
+
+.article-body a {
+  color: var(--accent);
+  text-decoration: underline;
+  text-decoration-color: color-mix(in srgb, var(--accent) 35%, transparent);
+  text-underline-offset: 3px;
+  transition: text-decoration-color 0.15s ease;
+}
+.article-body a:hover {
+  text-decoration-color: var(--accent);
+}
+
+.article-body ul, .article-body ol {
+  padding-left: 1.5rem;
+}
+.article-body ul li,
+.article-body ol li {
+  padding-left: 0.4rem;
+  margin-top: 0.4em;
+}
+.article-body ul li::marker {
+  color: var(--text-faint);
+}
+.article-body ol li::marker {
+  color: var(--text-faint);
+  font-family: var(--font-mono);
+  font-size: 0.9em;
+}
+.article-body li > ul,
+.article-body li > ol {
+  margin-top: 0.4em;
+}
+
+.article-body blockquote {
+  border-left: 3px solid var(--border-strong);
+  padding: 0.5rem 0 0.5rem 1.4rem;
+  color: var(--text-muted);
+  font-style: italic;
+}
+.article-body blockquote p {
+  color: inherit;
+}
+.article-body blockquote > * + * {
+  margin-top: 0.8em;
+}
+
+.article-body code {
+  font-family: var(--font-mono);
+  font-size: 0.88em;
+  background: var(--bg-code);
+  padding: 0.15em 0.4em;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border);
+  color: var(--text);
+}
+
+.article-body pre {
+  font-family: var(--font-mono);
+  font-size: 14px;
+  line-height: 1.6;
+  background: var(--bg-code);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1.2rem 1.4rem;
+  overflow-x: auto;
+  scrollbar-width: thin;
+  scrollbar-color: var(--border-strong) transparent;
+}
+.article-body pre code {
+  background: transparent;
+  padding: 0;
+  border: none;
+  border-radius: 0;
+  font-size: inherit;
+  color: var(--text);
+}
+
+.article-body hr {
+  border: none;
+  border-top: 1px solid var(--border);
+  margin: 3rem 0;
+}
+
+.article-body table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.94rem;
+  display: block;
+  overflow-x: auto;
+  white-space: nowrap;
+}
+@media (min-width: 720px) {
+  .article-body table {
+    display: table;
+    white-space: normal;
+  }
+}
+.article-body th {
+  font-family: var(--font-mono);
+  font-size: 11.5px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--text-faint);
+  text-align: left;
+  font-weight: 500;
+  padding: 0.7rem 1rem;
+  border-bottom: 1px solid var(--border-strong);
+}
+.article-body td {
+  padding: 0.85rem 1rem;
+  border-bottom: 1px solid var(--border);
+  vertical-align: top;
+}
+.article-body tr:last-child td {
+  border-bottom: none;
+}
+
+.article-body img {
+  max-width: 100%;
+  height: auto;
+  border-radius: var(--radius);
+  border: 1px solid var(--border);
+  margin: 0.5rem 0;
+}
+
+.article-body figure {
+  margin: 1.5em 0;
+}
+.article-body figcaption {
+  font-size: 0.88rem;
+  color: var(--text-faint);
+  text-align: center;
+  margin-top: 0.6rem;
+}
+
+.article-body kbd {
+  font-family: var(--font-mono);
+  font-size: 0.85em;
+  background: var(--bg-elevated);
+  border: 1px solid var(--border-strong);
+  border-bottom-width: 2px;
+  border-radius: var(--radius-sm);
+  padding: 0.15em 0.45em;
+  color: var(--text);
+  box-shadow: var(--shadow);
+}
+
+/* Callouts (use <aside class="callout note|warn|info|success">…</aside>) */
+.article-body .callout {
+  border: 1px solid var(--border);
+  background: var(--bg-callout);
+  border-radius: var(--radius);
+  padding: 1rem 1.2rem;
+  margin: 1.4em 0;
+  border-left-width: 3px;
+}
+.article-body .callout > * + * { margin-top: 0.6em; }
+.article-body .callout-title {
+  font-weight: 600;
+  font-size: 0.92rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+.article-body .callout.note { border-left-color: var(--accent); }
+.article-body .callout.warn { border-left-color: #f59e0b; }
+.article-body .callout.info { border-left-color: #06b6d4; }
+.article-body .callout.success { border-left-color: #22c55e; }
+
+/* Inline pill (highlighted term) */
+.article-body .pill {
+  font-family: var(--font-mono);
+  font-size: 0.85em;
+  background: var(--accent-soft);
+  color: var(--accent);
+  padding: 0.1em 0.5em;
+  border-radius: var(--radius-sm);
+  font-weight: 500;
+}
+
+/* ─── footer ─── */
+.page-footer {
+  max-width: var(--max-width);
+  margin: 0 auto;
+  padding: 2rem 5vw 3rem;
+  border-top: 1px solid var(--border);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 1rem;
+  font-family: var(--font-mono);
+  font-size: 11.5px;
+  letter-spacing: 0.04em;
+  color: var(--text-faint);
+}
+.page-footer a {
+  color: var(--text-muted);
+  text-decoration: none;
+  transition: color 0.15s ease;
+}
+.page-footer a:hover {
+  color: var(--text);
+}
+
+/* ─── responsive ─── */
+@media (max-width: 600px) {
+  .content { padding: 2.5rem 1.2rem 5rem; }
+  .article-header { margin-bottom: 2.5rem; }
+  .article-header h1 { font-size: 2rem; }
+  .lead { font-size: 1.08rem; }
+  .article-body { font-size: 16px; }
+  .article-body h2 { font-size: 1.45rem; margin-top: 2.4rem; padding-top: 1.4rem; }
+  .article-body h3 { font-size: 1.15rem; }
+  .page-header { padding: 0.8rem 1.2rem; }
+  .page-footer { padding: 1.5rem 1.2rem 2.5rem; }
+}
+
+/* ─── reduced motion ─── */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+  html { scroll-behavior: auto; }
+}
+</style>
+</head>
+<body>
+
+<header class="page-header" id="page-header">
+  <nav class="breadcrumb">
+    <span>interviews</span>
+    <span class="sep">/</span>
+    <span>{{candidate}}</span>
+  </nav>
+  <button class="theme-toggle" type="button" aria-label="Toggle theme" id="theme-toggle">
+    <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+      <circle cx="12" cy="12" r="4"/>
+      <path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/>
+    </svg>
+    <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+      <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+    </svg>
+  </button>
+</header>
+
+<main class="content">
+  <article>
+
+    <header class="article-header">
+      <p class="eyebrow">Candidate Prep · {{ROLE}}</p>
+      <h1>{{CANDIDATE_NAME}}</h1>
+      <p class="lead">{{LEAD — two sentences: years of experience + center of gravity, then the main risk axis the interview should push on.}}</p>
+      <div class="article-meta">
+        <span>prepared · {{YYYY-MM-DD}}</span>
+        <span>source · {{CV_FILENAME}}</span>
+      </div>
+    </header>
+
+    <div class="article-body">
+
+      <h2>Resume summary</h2>
+      <p>{{ONE_PARAGRAPH — center of gravity, depth signals (numbers, ownership verbs), relevance to the platform, and what the CV does NOT cover that the platform needs.}}</p>
+
+      <h3>Timeline</h3>
+      <!-- One row per role, newest first. Compute tenure. After the table, state whether any gap exceeds 6 months and whether the total-years claim checks out. -->
+      <table>
+        <thead><tr><th>Role</th><th>Company</th><th>Dates</th><th>Tenure</th></tr></thead>
+        <tbody>
+          <tr><td>{{TITLE}}</td><td>{{COMPANY}}</td><td>{{FROM}} – {{TO}}</td><td>{{TENURE}}</td></tr>
+        </tbody>
+      </table>
+      <p>{{GAP_AND_TOTAL_YEARS_NOTE}}</p>
+
+      <h3>Strengths</h3>
+      <ul>
+        <li>{{STRENGTH — tie each to evidence in the CV, not to the skills list}}</li>
+      </ul>
+
+      <h3>Gaps vs the role</h3>
+      <ul>
+        <li>{{GAP — compare against the repo ground-truth table in SKILL.md}}</li>
+      </ul>
+
+      <!-- Red flags and open questions go in a warn callout, phrased as things to ASK, not conclusions. -->
+      <aside class="callout warn">
+        <p class="callout-title">To verify in the room</p>
+        <ul>
+          <li>{{RED_FLAG_OR_PROBE}}</li>
+        </ul>
+      </aside>
+
+      <h2>Online research</h2>
+      <!-- One row per source checked. Include sources where nothing was found ("Nothing found. Not a red flag"). -->
+      <table>
+        <thead><tr><th>Source</th><th>Finding</th></tr></thead>
+        <tbody>
+          <tr><td><a href="{{URL}}">{{SOURCE}}</a></td><td>{{ONE_LINE_TAKEAWAY}}</td></tr>
+        </tbody>
+      </table>
+
+      <!-- Use callout success if everything matches, callout warn if there are discrepancies to probe. -->
+      <aside class="callout success">
+        <p class="callout-title">Resume cross-check</p>
+        <p>{{MATCHES_OR_DISCREPANCIES — discrepancies become questions to ask, not accusations.}}</p>
+      </aside>
+
+      <h2>Questions</h2>
+      <!-- Tag each question with the repo/tech it maps to using pills: <code class="pill">web-banking</code>.
+           Bold the highest-signal questions and mark them, e.g. <strong>State (top signal).</strong>
+           Parenthetical grading notes go in <em>…</em>. -->
+
+      <h3>Screening <span style="color: var(--text-muted); font-size: 0.65em; font-weight: 400;">(~2 min each)</span></h3>
+      <ol>
+        <li>{{QUESTION}} <code class="pill">{{REPO_OR_TECH}}</code></li>
+      </ol>
+
+      <h3>Deep-dive <span style="color: var(--text-muted); font-size: 0.65em; font-weight: 400;">(5–10 min each)</span></h3>
+      <ol>
+        <li>{{QUESTION — a decision they made and its trade-offs, mappable to a real pattern in the repos}} <code class="pill">{{REPO}}</code></li>
+      </ol>
+
+      <h3>Architecture <span style="color: var(--text-muted); font-size: 0.65em; font-weight: 400;">(10–15 min each)</span></h3>
+      <ol>
+        <li>{{QUESTION — open scenario drawn from the platform's actual shape; for tech the candidate never claimed, probe adjacent experience and grade the reasoning}} <code class="pill">{{REPO}}</code></li>
+      </ol>
+
+      <h2>Verdict guidance</h2>
+      <!-- Only the 2–3 highest-signal questions. -->
+      <table>
+        <thead><tr><th>Signal</th><th>Strong answer</th><th>Weak answer</th></tr></thead>
+        <tbody>
+          <tr><td>{{SIGNAL}}</td><td>{{STRONG}}</td><td>{{WEAK}}</td></tr>
+        </tbody>
+      </table>
+
+      <aside class="callout note">
+        <p class="callout-title">Overall read</p>
+        <p>{{TWO_SENTENCES — strongest axes, risk axis, and what would constitute the best senior signal.}}</p>
+      </aside>
+
+      <h2>Sources</h2>
+      <ul>
+        <li><a href="{{URL}}">{{SOURCE}}</a></li>
+      </ul>
+
+    </div>
+
+  </article>
+</main>
+
+<footer class="page-footer">
+  <span>Source · candidate-analysis skill</span>
+  <span>Press <kbd>D</kbd> to toggle theme</span>
+</footer>
+
+<script>
+  // Theme toggle
+  (function () {
+    var html = document.documentElement;
+    var btn = document.getElementById('theme-toggle');
+
+    function setTheme(theme) {
+      html.dataset.theme = theme;
+      try { localStorage.setItem('theme', theme); } catch (e) {}
+      btn.setAttribute('aria-label', theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode');
+    }
+
+    btn.addEventListener('click', function () {
+      setTheme(html.dataset.theme === 'dark' ? 'light' : 'dark');
+    });
+
+    // Keyboard shortcut: D to toggle
+    window.addEventListener('keydown', function (e) {
+      if (e.target instanceof HTMLInputElement || e.target instanceof HTMLTextAreaElement) return;
+      if (e.metaKey || e.ctrlKey || e.altKey) return;
+      if (e.key === 'd' || e.key === 'D') {
+        setTheme(html.dataset.theme === 'dark' ? 'light' : 'dark');
+      }
+    });
+
+    // Initial label
+    btn.setAttribute('aria-label', html.dataset.theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode');
+
+    // Header shadow on scroll
+    var header = document.getElementById('page-header');
+    var apply = function () {
+      header.classList.toggle('scrolled', window.scrollY > 8);
+    };
+    apply();
+    window.addEventListener('scroll', apply, { passive: true });
+  })();
+</script>
+
+</body>
+</html>
