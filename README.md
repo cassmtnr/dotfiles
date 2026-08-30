@@ -113,18 +113,8 @@ dotfiles/
 ├── capture-setting.sh         # Capture a changed macOS setting into .defaults
 ├── .ghostty/                  # Ghostty terminal (Nord theme, custom keybindings)
 ├── .ssh/config                # SSH configuration template
-├── .ai/                       # AI CLI configuration (set up by install.sh step 4)
-│   ├── common/                # Shared by Claude Code & Codex CLI
-│   │   ├── instructions.md    # Global AI instructions
-│   │   ├── skills/            # AI CLI skills (gitignored by default;
-│   │   │                      # allowlist a new one in .gitignore)
-│   │   ├── hooks/             # PreToolUse safety hooks (fail-closed)
-│   │   └── scripts/           # Helper scripts (vps-run.sh, skill-lint.sh)
-│   ├── claude/                # Claude Code only
-│   │   ├── settings.json      # Settings (plugins, permissions, statusline)
-│   │   └── config/            # Custom statusline script
-│   └── codex/                 # Codex CLI only
-│       └── hooks.json         # Hook configuration
+├── .ai/                       # AI CLI config (separate private repo,
+│                              # cloned here by install.sh step 4)
 ├── config/                    # mcporter config for AI search (→ ~/.mcporter, via step 4)
 ├── .1password/                # 1Password SSH agent config
 ├── .vscodium/                 # VSCodium settings, extensions, custom icon
@@ -188,35 +178,32 @@ what you want in the AI step:
 
 - **`claude-code`** — links AI config into `~/.claude/` and `~/.codex/` and
   installs Claude Code (plus Gemini on Linux)
-- **`agent-reach`** — internet channels (see below)
+- **`agent-reach`** — internet access channels for AI CLIs
 - **`claude-plugins`** — Claude Code plugins (needs a logged-in CLI)
 
 It's all user-level (no sudo) and idempotent — re-run to update or add more.
 
-Shared configuration for [Claude Code](https://claude.com/claude-code) and [Codex CLI](https://github.com/openai/codex):
+The configuration itself lives in a separate private repo,
+`cassmtnr/ai-config`, cloned to `.ai/` and gitignored here. Step 4 offers to
+clone it and skips cleanly when it can't, so an install without access to it
+still finishes. That repo's README covers the instructions file, skills,
+Agent Reach channels and the plugin list.
 
-- `.ai/common/` contains only assets that are intended to work for both CLIs
-- `.ai/claude/` contains Claude-only settings
-- `.ai/codex/` contains Codex-only settings (`hooks.json`; the former
-  `config.toml` was removed — Codex hooks stay dormant until a machine-local
-  config enables the `codex_hooks` feature)
+**Migrating a machine that predates the split.** Pulling the split deletes the
+tracked files under `.ai/` but leaves everything that was gitignored, so `.ai/`
+stays behind holding no repo and step 4 tells you to move it aside. Run
+`mv .ai .ai.bak`, then `./install.sh`. Afterwards copy back what only lived
+there: `codex/config.toml`, and any skills the machine installed into
+`common/skills/` as symlinks.
 
-**Agent Reach** — internet access channels for AI CLIs ([Panniantong/agent-reach](https://github.com/Panniantong/agent-reach)). Offered in `./install.sh` step 4 (select `agent-reach`) via pipx, activating: web pages (Jina Reader), Exa web search (via mcporter, config in `config/mcporter.json`), YouTube (yt-dlp), GitHub (gh), RSS, V2EX, Bilibili (bili-cli), Twitter (twitter-cli), Reddit (rdt-cli). The skill lives in `.ai/common/skills/agent-reach/` — trimmed to these channels; upgrades regenerate it with upstream's full 15-platform Chinese docs, so the AI step auto-restores the trimmed version from git afterwards. Manual per-machine steps (cookie logins, no browser needed at runtime): Twitter — log into x.com in Chrome, then `agent-reach configure --from-browser chrome`; Reddit — log into reddit.com in Chrome, then `rdt login`. Don't log out of those sites afterwards; that invalidates the tokens. Credentials live in `~/.agent-reach/` — never in this repo. Health check: `agent-reach doctor`.
+One caveat: `git clean -xfd` in this repo deletes the `.ai/` clone, because
+ignored files are what `-x` removes.
 
 **Safety hooks** — `block-dangerous-commands.js` blocks dangerous Bash commands via PreToolUse hooks at three levels (fails closed on malformed input):
 
 - **Critical**: filesystem destruction, disk operations, fork bombs, git history rewriting
 - **High** (default): git write ops, elevated privileges, secrets exposure, publishing/deployment, database ops
 - **Strict**: cautionary patterns (`git checkout .`, `docker prune`)
-
-**Plugins** (Claude Code only) — installed from enabled entries in `.ai/claude/settings.json` (currently `code-simplifier`, `frontend-design`, `superpowers` from the official marketplace, plus `ponytail` and `shortcuts-playground` from their own marketplaces). Needs an authenticated CLI — `./install.sh` step 4 offers a `claude-plugins` option; run it again after logging in. Only missing plugins get installed; bumping a version is `claude plugin update`.
-
-**Not in this repo:** `obsidian-second-brain` sits in `.ai/common/skills/` on
-this machine but is deliberately gitignored — 192 MB across ~4,900 files has no
-business in a dotfiles repo. It ships its own installer, so reinstall it from
-upstream on a new machine; `./install.sh` does not restore it.
-
-**Prose skills** — both vendored in `.ai/common/skills/`, so Claude and Codex apply the same rules. `stop-slop` ([hardikpandya/stop-slop](https://github.com/hardikpandya/stop-slop)) governs prose the AI writes and runs on all of it, unconditionally. `humanizer` ([blader/humanizer](https://github.com/blader/humanizer)) handles the other direction: rewriting text you wrote, preserving every claim. It ships upstream as a Claude plugin; vendoring its single portable `SKILL.md` buys Codex parity at the cost of manual version bumps. `.ai/common/instructions.md` § "Prose gets de-slopped" wires both up.
 
 ## VSCodium
 

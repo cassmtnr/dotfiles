@@ -480,3 +480,9 @@ Design agreed: cassmtnr/ai-config (private), cloned to dotfiles/.ai and
 gitignored there, so all eleven symlink targets in lib/ai.sh stay put. Chosen
 over a submodule, which would cost a two-repo commit for every skill edit.
 Spec and six-task plan in docs/superpowers/plans/phase-03-ai-config-repo.md.
+
+## [2026-08-30] decision | .ai extracted to private cassmtnr/ai-config
+
+Nested gitignored clone at dotfiles/.ai, so every symlink target in
+lib/ai.sh stayed put. install.sh step 4 offers the clone; update.sh
+fast-forwards it.

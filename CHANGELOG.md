@@ -7,6 +7,25 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### obsidian-second-brain removed — 2026-08-30
+
+#### Removed
+
+- The skill is gone from this machine, so the notes explaining why it sat
+  gitignored in `common/skills/` are gone from both READMEs. It was never
+  tracked, so nothing else changes.
+
+### AI config split into a private repo — 2026-08-30
+
+#### Changed
+
+- **`.ai/` moved to a separate private repo**, `cassmtnr/ai-config`, cloned in
+  place at `dotfiles/.ai` and gitignored. Every symlink target in `lib/ai.sh`
+  stayed put. `install.sh` step 4 gained `ensure_ai_repo`, which offers the
+  clone and skips cleanly without it. `update.sh` gained `update_ai_repo`,
+  which fast-forwards it. The public README now points at the private repo
+  instead of documenting it.
+
 ### Plan files consolidated — 2026-08-23
 
 #### Removed
