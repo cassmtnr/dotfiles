@@ -516,3 +516,17 @@ carried a comment describing this exact hazard, sitting above a call inside the
 step it warned about. The step-3 loop moved to install_extras in lib/extras.sh,
 which authenticates before run_step; extra_needs_sudo declares who needs it. A
 CI contract step pins the ordering, the skip-on-refusal, and label agreement.
+
+## [2026-08-30] fix | harden ~/.ssh configs, decouple the CLI from .ai
+
+Same Ubuntu install, next failure: the ai-config clone died on "Bad owner or
+permissions on ~/.ssh/config.local". The file was a hand-written local one at
+664 under a umask-002 shell, and create_symlinks only chmods the repo copies,
+so it never touched what ssh actually reads. One refused include breaks every
+ssh call on the box, and the step still went green. Now the loop covers
+~/.ssh/config* too and warns when a chmod fails.
+
+That clone failure also cost the Claude CLI, because install_ai_tools returned
+early on a missing .ai/. Reversed a phase-03 decision: install_ai_clis needs
+nothing from .ai/, so only the steps that read it (symlinks, agent-reach,
+plugins, skill lint) skip now. Both changes have tests that fail against HEAD.

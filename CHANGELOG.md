@@ -7,6 +7,26 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### A hand-written SSH config no longer breaks ssh — 2026-08-30
+
+#### Fixed
+
+- **`~/.ssh/config*` is hardened, not just the repo copies.** `create_symlinks`
+  ran `chmod 600` over `$DOTFILES_ROOT/.ssh/config*`, which covers a machine
+  whose configs are symlinks into the repo. It never touched a real file in
+  `~/.ssh/`. The README tells you to write `~/.ssh/config.local` by hand for
+  machine-specific settings, and where `umask` is 002 that lands as 664 —
+  group-writable, which `ssh` refuses. One rejected include file breaks every
+  `ssh` call on the machine, and the step still reported ✓. Found on an Ubuntu
+  server where it broke the `ai-config` clone. A failed `chmod` now warns
+  instead of passing silently.
+- **A missing AI config repo no longer costs the Claude CLI.** `install_ai_tools`
+  returned early when `ensure_ai_repo` failed, skipping all of step 4 including
+  `install_ai_clis`, which needs nothing from `.ai/`. Ticking `claude-code` and
+  getting no CLI because an unrelated SSH permission problem blocked a clone is
+  what made the all-or-nothing behaviour wrong. Only the steps that read `.ai/`
+  are skipped now: symlinks, Agent Reach, plugins and the skill lint.
+
 ### Password prompts no longer hide under the spinner — 2026-08-30
 
 #### Fixed

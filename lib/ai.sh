@@ -320,25 +320,38 @@ install_ai_tools() {
         return 0
     fi
 
-    # Config symlinks are the foundation any selected tool relies on, and
-    # they all point into .ai/ — a missing repo means there is no step to run
-    if ! ensure_ai_repo; then
+    # Installing the CLIs needs nothing from .ai/, so a repo that won't clone
+    # costs only the parts that read it. Losing the CLI to an unrelated SSH
+    # problem is what made the all-or-nothing version wrong.
+    local have_ai_repo=true
+    if ensure_ai_repo; then
+        run_step "AI config symlinks (~/.claude, ~/.codex)" ai_symlinks
+    else
+        have_ai_repo=false
         ui_skip "AI config repo not available (see README: cassmtnr/ai-config)"
-        return 0
     fi
-    run_step "AI config symlinks (~/.claude, ~/.codex)" ai_symlinks
 
     local tool
     for tool in "${selected[@]}"; do
         case "$tool" in
             claude-code)    run_step "Claude Code CLI"        install_ai_clis ;;
-            agent-reach)    run_step "Agent Reach channels"   setup_agent_reach ;;
+            agent-reach)
+                # agent-reach writes its skill into ~/.claude/skills, which is
+                # a symlink into .ai/ — without it the install lands in a real
+                # directory the repo never sees
+                if ! $have_ai_repo; then
+                    ui_skip "Agent Reach — needs the AI config repo"
+                else
+                    run_step "Agent Reach channels" setup_agent_reach
+                fi ;;
             claude-plugins)
                 # The login prompt can't run under run_step's output capture —
                 # authenticate first, then run the capturable part as a step.
                 # Guard on the CLI existing: without it the login prompt offers
                 # a command that isn't there, and so does the advice on failure.
-                if ! command -v claude &> /dev/null; then
+                if ! $have_ai_repo; then
+                    ui_skip "Claude Code plugins — needs the AI config repo (settings.json lists them)"
+                elif ! command -v claude &> /dev/null; then
                     ui_skip "Claude Code plugins — Claude Code not installed (select claude-code too)"
                 elif ensure_claude_auth; then
                     run_step "Claude Code plugins" setup_claude_plugins
@@ -352,7 +365,9 @@ install_ai_tools() {
     # Validate the symlinked skills (frontmatter, dead links, missing commands).
     # Advisory, so deliberately not a run_step: lint exits 1 for optional tools
     # it can't find, which is not an install failure and not worth retrying.
-    "$DOTFILES_ROOT/.ai/common/scripts/skill-lint.sh" || \
-        ui_skip "Skill lint found issues (see above)"
+    if $have_ai_repo; then
+        "$DOTFILES_ROOT/.ai/common/scripts/skill-lint.sh" || \
+            ui_skip "Skill lint found issues (see above)"
+    fi
     return 0
 }

@@ -120,9 +120,18 @@ create_symlinks() {
     done
 
 
-    # Fix SSH file permissions (SSH refuses files with group/world access)
-    for ssh_file in "$DOTFILES_ROOT/.ssh/config" "$DOTFILES_ROOT/.ssh/config.local" "$DOTFILES_ROOT/.ssh/config.work"; do
-        [[ -f "$ssh_file" ]] && chmod 600 "$ssh_file"
+    # SSH refuses a config file with group/world access, and refusing one
+    # breaks every ssh call on the machine, not just the config it names.
+    # ~/.ssh is covered as well as the repo: a machine-local config.local is
+    # hand-written, so it arrives with the user's umask (664 where umask is
+    # 002). chmod follows symlinks, so repo-backed files are reached twice
+    # harmlessly. An unglobbed pattern fails -f and drops out.
+    local ssh_file
+    for ssh_file in "$DOTFILES_ROOT"/.ssh/config "$DOTFILES_ROOT"/.ssh/config.* \
+                    "$HOME"/.ssh/config "$HOME"/.ssh/config.*; do
+        [[ -f "$ssh_file" ]] || continue
+        chmod 600 "$ssh_file" \
+            || ui_warn "Could not set 600 on $ssh_file — ssh will refuse it"
     done
     chmod 700 "$HOME/.ssh"
 

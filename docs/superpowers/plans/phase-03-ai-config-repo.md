@@ -86,12 +86,20 @@ the public repo, which is the thing this phase exists to prevent.
 across, at the cost of an extra step during a cutover that touches two repos at
 once. The old history stays readable in `dotfiles`.
 
-**A missing `.ai/` skips all of step 4.** When the clone is declined or fails,
+**A missing `.ai/` skips all of step 4.** ~~When the clone is declined or fails,
 the step prints one message and stops rather than running in a degraded mode.
 Partial operation would need branching in `ai_symlinks`, in
 `setup_claude_plugins` (which reads `.ai/claude/settings.json`), and around the
 agent-reach restore, all to serve someone who can install the Claude CLI with
-one brew command.
+one brew command.~~
+
+**Reversed 2026-08-30.** The decision above weighed the branching cost against
+a hypothetical stranger. The person it actually cost was the repo's owner: on
+tars a group-writable `~/.ssh/config.local` made `ssh` refuse its config, the
+clone failed, and ticking `claude-code` installed no CLI at all. `install_ai_clis`
+reads nothing from `.ai/`, so it now runs regardless, and only the steps that do
+read it skip — symlinks, Agent Reach, plugins, skill lint. The branching came to
+three `if` statements, not the sprawl this decision predicted.
 
 **`config/mcporter.json` stays in dotfiles.** It holds a public Exa URL and no
 credentials, and `lib/ai.sh` already links it from `config/` rather than `.ai/`.
