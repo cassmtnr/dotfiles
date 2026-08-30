@@ -473,3 +473,10 @@ phase-02-ui-layer.md. phase-03 was three days old and already wrong on four
 counts because it duplicated API detail UI.md owns. The merged file records the
 arc and the binding decisions and lists no functions or variables, so nothing in
 it can drift. UI.md is the API reference; CHANGELOG carries the change record.
+
+## [2026-08-26] ingest | phase-03 spec + plan: .ai to a private repo
+
+Design agreed: cassmtnr/ai-config (private), cloned to dotfiles/.ai and
+gitignored there, so all eleven symlink targets in lib/ai.sh stay put. Chosen
+over a submodule, which would cost a two-repo commit for every skill edit.
+Spec and six-task plan in docs/superpowers/plans/phase-03-ai-config-repo.md.

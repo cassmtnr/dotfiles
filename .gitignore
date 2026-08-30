@@ -52,17 +52,6 @@ Thumbs.db
 
 # AI files #
 ############
-# .claude/
-.ai/codex/config.toml
-
-# Skills: ignore everything (work machine installs skills here via symlinks),
-# whitelist only the skills that belong to this repo
-.ai/common/skills/*
-!.ai/common/skills/agent-reach
-!.ai/common/skills/candidate-analysis
-!.ai/common/skills/markdown-to-html
-!.ai/common/skills/stop-slop
-!.ai/common/skills/humanizer
-
-# Symlinks from Work machine
-.ai/common/hooks/block-dangerous-commands
+# .ai/ is a separate private repo (cassmtnr/ai-config) cloned in place by
+# ./install.sh step 4. Ignored here, so `git clean -xfd` would delete it.
+/.ai/

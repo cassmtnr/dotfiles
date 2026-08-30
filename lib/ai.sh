@@ -35,6 +35,24 @@ link() {
     log "Linked: $dst -> $src"
 }
 
+# The AI configuration is a separate private repo cloned in place at .ai/,
+# which .gitignore keeps out of this one. Every link below points into it, so
+# without it there is nothing for this step to do.
+AI_CONFIG_REPO="git@github.com:cassmtnr/ai-config.git"
+
+ensure_ai_repo() {
+    [[ -d "$DOTFILES_ROOT/.ai" ]] && return 0
+
+    log "AI configuration lives in a separate private repo."
+    ui_confirm "Clone $AI_CONFIG_REPO into .ai now?" y || return 1
+
+    git clone "$AI_CONFIG_REPO" "$DOTFILES_ROOT/.ai" || {
+        warning "Clone failed — check your GitHub SSH access to cassmtnr/ai-config"
+        return 1
+    }
+    success "AI config repo cloned"
+}
+
 # Symlink AI config into ~/.claude and ~/.codex
 ai_symlinks() {
     log "Linking AI configuration..."
@@ -153,8 +171,8 @@ setup_agent_reach() {
     # agent-reach regenerates its skill with upstream content (Chinese docs,
     # all 15 platforms incl. uninstalled ones) — restore our trimmed English
     # version from git. No-op when the files already match.
-    if ! git -C "$DOTFILES_ROOT" diff --quiet -- .ai/common/skills/agent-reach/ 2>/dev/null; then
-        if git -C "$DOTFILES_ROOT" checkout -- .ai/common/skills/agent-reach/; then
+    if ! git -C "$DOTFILES_ROOT/.ai" diff --quiet -- common/skills/agent-reach/ 2>/dev/null; then
+        if git -C "$DOTFILES_ROOT/.ai" checkout -- common/skills/agent-reach/; then
             log "Restored trimmed agent-reach skill (installer had overwritten it)"
         else
             warning "Could not restore trimmed agent-reach skill from git"
@@ -270,7 +288,12 @@ install_ai_tools() {
         return 0
     fi
 
-    # Config symlinks are the foundation any selected tool relies on
+    # Config symlinks are the foundation any selected tool relies on, and
+    # they all point into .ai/ — a missing repo means there is no step to run
+    if ! ensure_ai_repo; then
+        ui_skip "AI config repo not available (see README: cassmtnr/ai-config)"
+        return 0
+    fi
     run_step "AI config symlinks (~/.claude, ~/.codex)" ai_symlinks
 
     local tool
