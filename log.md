@@ -573,3 +573,22 @@ Decision: the tars key drops its passphrase. It has to work unattended for
 cron and boot-time pulls, and a passphrase that a human types once per boot
 does not survive the case it exists for. File mode 600 plus host access is the
 posture; reversible with `ssh-keygen -p`.
+
+## [2026-08-30] fix | ssh config rejected whole-file by OpenSSH before 9.8
+
+The CI step added earlier the same day failed on its first run. The
+`Match ... exec "test -S \"$HOME/...\""` lines use a backslash-escaped quote
+inside a quoted token, which OpenSSH before 9.8 does not accept: it split the
+macOS socket path on the space in "Group Containers" and terminated on the
+whole file. Replaced with a `?` glob over the space, so no nested quotes remain
+and the shell still gets one path. Quoting it would have stopped $HOME
+expanding and killed 1Password detection on macOS; both local machines run
+10.5 and parsed the old form fine, so only CI could have caught this.
+
+## [2026-08-30] lint | phase-03 verification narrowed to one untested function
+
+CI now runs install.sh twice on ubuntu and macOS and both pass. On a clean
+checkout it genuinely installs apt deps, Oh My Zsh, the full brewfile and Node
+via NVM. Combined with ensure_ai_repo's real clone on tars, the only path never
+executed anywhere is install_homebrew's Linux bootstrap: both runners and tars
+ship Homebrew preinstalled. TODO.md narrowed to exactly that.

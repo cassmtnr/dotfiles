@@ -7,6 +7,23 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### The ssh config parses on older OpenSSH — 2026-08-30
+
+#### Fixed
+
+- **The `Match ... exec` strings carry no nested quotes.** They used
+  `exec "test -S \"$HOME/...\""`, and OpenSSH before 9.8 does not accept a
+  backslash-escaped quote inside a quoted token: it split the macOS socket path
+  on the space in `Group Containers` and rejected the *whole file*
+  (`Bad Match condition`, `terminating, 2 bad configuration options`). Any
+  machine on that version had every ssh call broken. `?` now globs the space,
+  so the shell still receives one path. Quoting it instead would have stopped
+  `$HOME` expanding and silently disabled 1Password detection on macOS;
+  escaping the space behaves differently on either side of 9.8.
+- Caught by the CI step added hours earlier, on its first run. Both local
+  machines run OpenSSH 10.5 and parse the old form happily, so nothing short of
+  CI would have found it.
+
 ### The ssh agent actually loads keys — 2026-08-30
 
 #### Fixed
