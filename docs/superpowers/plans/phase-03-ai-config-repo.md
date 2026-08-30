@@ -139,9 +139,27 @@ wait for the new server.
 
 ## Risks
 
+Any checkout in `dotfiles` that crosses the commit untracking `.ai/` deletes
+those 26 files from the nested checkout. Git still sees them as tracked files
+being removed and has no idea another repo owns the path. This is the risk that
+actually fired: a `rebase` starts by checking out the pre-split base, then
+replays the split, so it empties `.ai/` every time. `git checkout` of a
+pre-split commit, `bisect` and a backwards `reset --hard` do the same. Recovery
+is `git -C ~/dotfiles/.ai restore .`, and nothing is lost because `ai-config`
+holds it all. This was missed at design time, when only the `clean` case below
+was written down.
+
 `git clean -xfd` inside `dotfiles` deletes the `.ai` clone, because ignored
 files are what `-x` removes. Nothing in the repo's scripts runs it; the README
 pointer should say so anyway.
+
+A file added under `.ai/` between the split commit being written and it being
+replayed stays tracked in `dotfiles`, because `git rm` records paths rather
+than a rule. `.ai/common/skills/candidate-analysis/references/prep-template.html`
+did exactly that during the rebase, which left one AI-config file public and a
+fresh clone materialising a non-empty `.ai/` that `ensure_ai_repo`'s own guard
+then refuses. `git ls-files .ai` must return 0 after any rebase touching this
+phase.
 
 `.ai/common/instructions.md` line 3 cites the hook as
 `.ai/common/hooks/block-dangerous-commands.js`, which reads correctly from

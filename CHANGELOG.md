@@ -7,6 +7,63 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Password prompts no longer hide under the spinner — 2026-08-30
+
+#### Fixed
+
+- **An extra that needs `sudo` now authenticates before its step starts.**
+  `run_step` sends a step's output to a file and paints a spinner over the
+  terminal, so `sudo`'s prompt — which goes straight to `/dev/tty` — was
+  repainted every 100ms and read as a hang. On an Ubuntu server this cost
+  three runs to diagnose: the step sat at 90s, then burned all three password
+  attempts on input nobody could see. `extra_motd` and `extra_macos_admin`
+  carried a comment describing exactly this hazard, above a call that was
+  itself inside the step it warned about.
+- **The startup `sudo` prompt is no longer assumed to still be warm.** Step 1
+  takes minutes on a fresh machine, so `ensure_extra_sudo` re-primes with
+  `sudo -n true` and only prompts when the timestamp has expired.
+
+#### Added
+
+- **`install_extras`** in `lib/extras.sh` now owns the step-3 loop, moved out
+  of `install.sh`, so authentication ordering is testable. `extra_needs_sudo`
+  declares which extras need admin rights.
+- **A CI contract step** pinning three invariants: auth precedes `run_step`, a
+  refused auth skips rather than half-runs, and an extra's menu label and its
+  `extra_needs_sudo` entry agree in both directions. The label is the only
+  warning before someone picks an extra.
+
+### CI back to green, AI step made non-blocking — 2026-08-30
+
+#### Fixed
+
+- **`lint` job passes again.** The three findings were all deliberate code,
+  so they carry `# shellcheck disable=` comments rather than rewrites:
+  SC2024 twice in `lib/extras.sh`, where the redirect is the prompt's terminal
+  and not a file `sudo` writes, and SC1003 in `lib/ui.sh`, where the backslash
+  is a spinner frame.
+- **`install` job passes again on both runners.** `set_default_shell` ran
+  `chsh` with no terminal to prompt on, and reported the missing prompt as a
+  failed step. It now skips when stdin is not a TTY, per the `run_step`
+  contract in `UI.md`.
+
+#### Changed
+
+- **Nothing about `.ai/` can turn `./update.sh` red.** The repo is optional, so
+  `update_ai_repo` now skips on a dirty worktree (routine: agent-reach rewrites
+  its own skill on upgrade) and on a failed pull (offline, or diverged) instead
+  of failing the run. A missing clone already skipped.
+
+#### Documented
+
+- **The hazard that actually fired.** Any checkout in `dotfiles` crossing the
+  commit that untracked `.ai/` empties the nested checkout, and `rebase` does
+  it every time by checking out the pre-split base first. Recorded in both
+  READMEs and in the phase-03 spec, with `git -C ~/dotfiles/.ai restore .` as
+  the recovery. A related rebase artefact left one AI-config file tracked in
+  the public repo; the spec now says to check `git ls-files .ai` after any
+  rebase touching that phase.
+
 ### obsidian-second-brain removed — 2026-08-30
 
 #### Removed

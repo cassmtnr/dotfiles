@@ -52,6 +52,38 @@ jobs:
             mutate() { MARK=kept; return 0; }
             run_step "verbose keeps env" mutate
             test "$MARK" = kept || fail "--verbose ran the step in a subshell"' < /dev/null
+      - name: extras contract (admin auth happens outside run_step)
+        run: |
+          bash -c 'set -uo pipefail
+            source lib/common.sh; source lib/ui.sh
+            IS_MACOS=false; IS_LINUX=true; RUN_SUDO=true
+            source lib/extras.sh
+            fail() { echo "CONTRACT FAILED: $1" >&2; exit 1; }
+            ORDER=$(mktemp)
+            # A password prompt under run_step is repainted by the spinner and
+            # reads as a hang, so auth must be ordered before the step starts.
+            sudo() { echo "auth" >> "$ORDER"; return 0; }
+            run_step() { echo "run_step" >> "$ORDER"; }
+            ui_choose_many() { echo "motd"; }
+            install_extras > /dev/null 2>&1
+            head -1 "$ORDER" | grep -qx auth || fail "auth did not precede run_step"
+            # An extra that authenticates must say so in its menu label, and
+            # one that says so must authenticate: the label is the only warning.
+            IS_MACOS=true
+            while IFS= read -r line; do
+              name=${line%%:*}; label=${line#*:}
+              case "$label" in
+                *sudo*) extra_needs_sudo "$name" || fail "$name: label says sudo, not declared" ;;
+                *)      extra_needs_sudo "$name" && fail "$name: declared, but label never says so" ;;
+              esac
+            done < <(extras_available)
+            # Refusing admin skips the step instead of running it half-privileged
+            : > "$ORDER"; IS_MACOS=false
+            sudo() { return 1; }
+            install_extras > /dev/null 2>&1
+            grep -q run_step "$ORDER" && fail "step ran despite refused auth"
+            rm -f "$ORDER"' < /dev/null
+
       - name: install (safe defaults)
         run: ./install.sh
       - name: install again (idempotence)

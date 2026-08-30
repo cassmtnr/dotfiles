@@ -169,20 +169,7 @@ main() {
     run_step "Zsh as default shell"                set_default_shell
 
     ui_header "Step 3/4 — optional extras"
-    local extras=() line available=()
-    while IFS= read -r line; do available+=("$line"); done < <(extras_available)
-    if [[ ${#available[@]} -gt 0 ]]; then
-        while IFS= read -r line; do extras+=("$line"); done \
-            < <(ui_choose_many "Pick extras to set up (space toggles, enter confirms):" "${available[@]}")
-    fi
-    if [[ ${#extras[@]} -gt 0 ]]; then
-        local name
-        for name in "${extras[@]}"; do
-            run_step "Extra: $name" run_extra "$name"
-        done
-    else
-        ui_skip "No extras selected (re-run ./install.sh anytime to add them)"
-    fi
+    install_extras
 
     ui_header "Step 4/4 — AI tools"
     install_ai_tools

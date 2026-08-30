@@ -254,6 +254,13 @@ set_default_shell() {
         return 0
     fi
 
+    # chsh prompts for a password, so it needs a terminal. Without one it fails
+    # for want of a prompt rather than for a real problem, which is a skip.
+    if [[ ! -t 0 ]]; then
+        ui_skip "changing the default shell needs a terminal (chsh -s $zsh_path)"
+        return 0
+    fi
+
     # On Linux, ensure zsh is listed in /etc/shells (required by chsh)
     if $IS_LINUX && ! grep -qx "$zsh_path" /etc/shells 2>/dev/null; then
         if ! ${RUN_SUDO:-false}; then

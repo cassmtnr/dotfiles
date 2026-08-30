@@ -74,6 +74,8 @@ case "${LC_ALL:-${LC_CTYPE:-${LANG:-}}}" in
         : "${UI_GLYPH_OK:=+}" "${UI_GLYPH_FAIL:=x}" "${UI_GLYPH_SKIP:=-}"
         : "${UI_GLYPH_RULE:=-}" "${UI_GLYPH_BULLET:=:}"
         : "${UI_CAP_L:=}" "${UI_CAP_R:=}"
+        # SC1003: the backslash is a spinner frame, not an escape
+        # shellcheck disable=SC1003
         _UI_FRAMES=('|' '/' '-' '\') ;;
 esac
 

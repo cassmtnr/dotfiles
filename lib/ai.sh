@@ -63,14 +63,26 @@ ensure_ai_repo() {
     success "AI config repo cloned"
 }
 
-# Day-to-day refresh of the .ai clone. Skips rather than fails when the repo
-# isn't there: on a machine that never ran step 4 this is not an error.
+# Day-to-day refresh of the .ai clone. The repo is optional, so every outcome
+# here is a skip: an update that reports red because a machine has no AI config,
+# no network, or a skill mid-edit is reporting a failure that isn't one.
 update_ai_repo() {
     if [[ ! -d "$DOTFILES_ROOT/.ai/.git" ]]; then
         ui_skip "AI config repo not cloned (./install.sh step 4)"
         return 0
     fi
-    git -C "$DOTFILES_ROOT/.ai" pull --ff-only
+
+    # agent-reach rewrites its own skill on upgrade and step 4 restores it, so
+    # a dirty worktree here is routine. --ff-only would refuse it anyway.
+    if ! git -C "$DOTFILES_ROOT/.ai" diff --quiet HEAD; then
+        ui_skip "AI config repo has local changes — pull it yourself"
+        return 0
+    fi
+
+    if ! git -C "$DOTFILES_ROOT/.ai" pull --ff-only; then
+        ui_skip "AI config repo not pulled (offline or diverged) — pull it yourself"
+        return 0
+    fi
 }
 
 # Symlink AI config into ~/.claude and ~/.codex

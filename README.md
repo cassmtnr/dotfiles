@@ -196,8 +196,19 @@ stays behind holding no repo and step 4 tells you to move it aside. Run
 there: `codex/config.toml`, and any skills the machine installed into
 `common/skills/` as symlinks.
 
-One caveat: `git clean -xfd` in this repo deletes the `.ai/` clone, because
-ignored files are what `-x` removes.
+**Two ways this repo can empty the clone.** Git does not know `.ai/` holds
+another repo, so ordinary operations here reach inside it.
+
+- Any checkout that crosses the commit which untracked `.ai/` deletes those 26
+  files from disk, because git still sees them as tracked files being removed.
+  A `rebase` does it every time: it checks out the pre-split base first, then
+  replays the split. So do `git checkout <pre-split-commit>`, `bisect`, and
+  `reset --hard` backwards past it.
+- `git clean -xfd` deletes the whole clone, because ignored files are what
+  `-x` removes.
+
+Neither loses anything, since `ai-config` holds it all. Recover the first with
+`git -C ~/dotfiles/.ai restore .`, the second by re-running `./install.sh`.
 
 **Safety hooks** — `block-dangerous-commands.js` blocks dangerous Bash commands via PreToolUse hooks at three levels (fails closed on malformed input):
 

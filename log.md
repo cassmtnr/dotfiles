@@ -486,3 +486,33 @@ Spec and six-task plan in docs/superpowers/plans/phase-03-ai-config-repo.md.
 Nested gitignored clone at dotfiles/.ai, so every symlink target in
 lib/ai.sh stayed put. install.sh step 4 offers the clone; update.sh
 fast-forwards it.
+
+## [2026-08-30] analysis | rebase empties the nested .ai checkout
+
+Diagnosed from the reflog after .ai/ lost all 26 tracked files. A rebase checks
+out the pre-split base, then replays the commit that untracked them, and git
+deletes them because it still sees them as tracked files being removed.
+Recovery is `git -C ~/dotfiles/.ai restore .`; nothing is lost. The same rebase
+left candidate-analysis/references/prep-template.html tracked in the public
+repo, because the untracking commit records paths and not a rule. Both written
+into the phase-03 spec Risks section and both READMEs.
+
+## [2026-08-30] fix | CI green again, .ai step can no longer fail an update
+
+Closed two of the three TODO items. The three shellcheck findings were all
+deliberate code and took disable comments; set_default_shell now skips without
+a TTY instead of reporting chsh's missing prompt as a failure. update_ai_repo
+skips on a dirty worktree or a failed pull, so an optional repo cannot turn a
+daily update red. Remaining: the from-scratch Linux run, which needs the server
+replacing tars.
+
+## [2026-08-30] fix | sudo prompts moved out from under the step spinner
+
+Reported from a real Ubuntu install: "Extra: motd" sat at 90s, then failed
+three password attempts on input the user could not see. run_step writes step
+output to a file and paints a spinner on the terminal, while sudo prompts
+straight to /dev/tty, so the prompt was repainted every 100ms. Both sudo extras
+carried a comment describing this exact hazard, sitting above a call inside the
+step it warned about. The step-3 loop moved to install_extras in lib/extras.sh,
+which authenticates before run_step; extra_needs_sudo declares who needs it. A
+CI contract step pins the ordering, the skip-on-refusal, and label agreement.

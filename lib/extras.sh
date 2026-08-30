@@ -28,6 +28,54 @@ run_extra() {
     esac
 }
 
+# Which extras need admin rights, so install_extras can authenticate before
+# the step starts. Keep in sync with the "(sudo)"/"admin" menu labels above.
+extra_needs_sudo() {
+    case "$1" in
+        macos-admin|motd) return 0 ;;
+        *)                return 1 ;;
+    esac
+}
+
+# Prime sudo for one extra. The startup prompt in confirm_sudo can have expired
+# by the time extras run — Step 1 alone takes minutes on a fresh machine — so
+# re-prime rather than assume the timestamp is still warm.
+ensure_extra_sudo() {
+    ${RUN_SUDO:-false} || return 1
+    sudo -n true 2> /dev/null && return 0
+    log "$1 needs admin rights."
+    sudo -v
+}
+
+# Step driver. Authentication happens HERE, never inside an extra: run_step
+# sends the step's output to a file and paints a spinner over the terminal, so
+# a password prompt underneath it is invisible and reads as a hang.
+install_extras() {
+    local extras=() line available=()
+    while IFS= read -r line; do available+=("$line"); done < <(extras_available)
+    if [[ ${#available[@]} -eq 0 ]]; then
+        ui_skip "No extras available on this platform"
+        return 0
+    fi
+
+    while IFS= read -r line; do extras+=("$line"); done \
+        < <(ui_choose_many "Pick extras to set up (space toggles, enter confirms):" "${available[@]}")
+
+    if [[ ${#extras[@]} -eq 0 ]]; then
+        ui_skip "No extras selected (re-run ./install.sh anytime to add them)"
+        return 0
+    fi
+
+    local name
+    for name in "${extras[@]}"; do
+        if extra_needs_sudo "$name" && ! ensure_extra_sudo "Extra: $name"; then
+            ui_skip "Extra: $name (needs admin rights)"
+            continue
+        fi
+        run_step "Extra: $name" run_extra "$name"
+    done
+}
+
 # Apply custom macOS application icons — needs write access to the app
 # bundles in /Applications (admin on managed Macs). The brew() wrapper in
 # .functions re-applies icons after upgrades once this has run.
@@ -71,14 +119,6 @@ extra_macos_admin() {
         return
     fi
 
-    # Authenticate before the capture starts: a password prompt goes to
-    # /dev/tty, which the step runner does not capture and the spinner
-    # overwrites, so prompting inside a step looks like a hang.
-    if ! sudo -v < /dev/tty > /dev/tty 2>&1; then
-        ui_skip "needs admin rights"
-        return 0
-    fi
-
     apply_macos_defaults true
 }
 
@@ -86,14 +126,6 @@ extra_macos_admin() {
 extra_motd() {
     if ! $IS_LINUX; then
         return
-    fi
-
-    # Authenticate before the capture starts: a password prompt goes to
-    # /dev/tty, which the step runner does not capture and the spinner
-    # overwrites, so prompting inside a step looks like a hang.
-    if ! sudo -v < /dev/tty > /dev/tty 2>&1; then
-        ui_skip "needs admin rights"
-        return 0
     fi
 
     local motd_dir="$DOTFILES_ROOT/.motd"
