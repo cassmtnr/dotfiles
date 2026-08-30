@@ -41,7 +41,17 @@ link() {
 AI_CONFIG_REPO="git@github.com:cassmtnr/ai-config.git"
 
 ensure_ai_repo() {
-    [[ -d "$DOTFILES_ROOT/.ai" ]] && return 0
+    [[ -d "$DOTFILES_ROOT/.ai/.git" ]] && return 0
+
+    # A machine that pulled this split while sitting at the pre-split commit
+    # keeps everything .gitignore excluded (vendored skills, codex/config.toml,
+    # a work-machine symlink), so .ai/ can exist and be non-empty with no repo
+    # inside. `git clone` refuses that target, and its failure message below
+    # would blame SSH access instead of the real problem.
+    if [[ -d "$DOTFILES_ROOT/.ai" && -n "$(ls -A "$DOTFILES_ROOT/.ai" 2> /dev/null)" ]]; then
+        warning ".ai/ exists but isn't a git repo — move it aside (mv .ai .ai.bak) and re-run"
+        return 1
+    fi
 
     log "AI configuration lives in a separate private repo."
     ui_confirm "Clone $AI_CONFIG_REPO into .ai now?" y || return 1
@@ -51,6 +61,16 @@ ensure_ai_repo() {
         return 1
     }
     success "AI config repo cloned"
+}
+
+# Day-to-day refresh of the .ai clone. Skips rather than fails when the repo
+# isn't there: on a machine that never ran step 4 this is not an error.
+update_ai_repo() {
+    if [[ ! -d "$DOTFILES_ROOT/.ai/.git" ]]; then
+        ui_skip "AI config repo not cloned (./install.sh step 4)"
+        return 0
+    fi
+    git -C "$DOTFILES_ROOT/.ai" pull --ff-only
 }
 
 # Symlink AI config into ~/.claude and ~/.codex

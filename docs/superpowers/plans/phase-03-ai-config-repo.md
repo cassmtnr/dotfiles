@@ -1,7 +1,7 @@
 # Phase 03 — Extracting `.ai/` into a private repo
 
-**Status: planned.** Design agreed 2026-08-26; implementation plan appended
-below once written.
+**Status: shipped.** Design agreed 2026-08-26; all six tasks in the
+implementation plan below are done.
 
 ## Why
 
@@ -119,15 +119,23 @@ gh repo create cassmtnr/ai-config --private --source=. --push
 ## Verification
 
 Shellcheck the two changed shell files with the static binary in the session
-scratchpad. Then run the fake-HOME install on tars: tar the working tree
-through `vps-run.sh` into `~/dotfiles-rework`, run it with
-`HOME=/home/tars/rework-home`, twice, to prove idempotence.
+scratchpad. Then run the three cases against a throwaway `HOME` on this Mac.
+tars was shut down during this phase and its replacement is not up yet, so the
+Linux from-scratch run moves to that server.
 
-Three cases have to pass. With `.ai/` present, step 4 behaves as it does today
-and `readlink ~/.claude/CLAUDE.md` resolves to a real file. With `.ai/` absent
-and the clone declined, step 4 skips and the rest of the install finishes
-green. `./update.sh` with `.ai/` present fast-forwards the inner repo and
-leaves the symlinks intact.
+Three cases have to pass. With `.ai/` present, `ai_symlinks` links twice
+without warning and `readlink $HOME/.claude/CLAUDE.md` resolves to a real file.
+With `.ai/` absent and no TTY, `install_ai_tools` never reaches
+`ensure_ai_repo`: `ui_choose_many` selects nothing without a TTY, so its
+empty-selection guard returns first. Called directly, `ensure_ai_repo` also
+doesn't hang on a prompt: `ui_confirm` takes its `y` default without a TTY and
+reaches a real clone attempt instead of declining. `update_ai_repo`
+fast-forwards when the clone is there and `ui_skip`s with status 0 when it is
+not.
+
+What this does not cover: a from-scratch `./install.sh` on a machine with
+nothing preinstalled, and `ensure_ai_repo` actually performing a clone. Both
+wait for the new server.
 
 ## Risks
 
@@ -537,71 +545,108 @@ git commit -m "docs: point README at private AI config repo"
 
 ---
 
-### Task 6: Verify on a clean machine
+### Task 6: Verify locally against a fake HOME
 
-The three cases from the spec, on tars, in a fake `HOME`. This is the task
-that catches a broken split, so run it before calling the phase done.
+tars was shut down mid-phase and its replacement is not up yet, so the three
+cases run on this Mac instead, against a throwaway `HOME`. That covers symlink
+resolution and the skip path. It does not cover a from-scratch install on a
+machine with nothing preinstalled, which moves to the new server.
 
 **Files:**
-- Test only. No repo files change.
+- Modify: `README.md:116` (one style fix, below)
+- Otherwise test only.
 
-- [ ] **Step 1: Ship the working tree to tars**
-
-```bash
-tar cz --exclude .git --exclude .ai . | \
-  .ai/common/scripts/vps-run.sh 'mkdir -p ~/dotfiles-rework && tar xz -C ~/dotfiles-rework'
-```
-
-The `.ai` exclude is deliberate: case B needs it absent, and case A clones it
-back the way a new machine would. First connection sometimes fails
-transiently — retry once.
-
-- [ ] **Step 2: Case B first, `.ai/` absent and the clone declined**
-
-Non-interactive, so `ui_choose_many` selects nothing and step 4 returns
-before `ensure_ai_repo`. Run it twice for idempotence.
+- [ ] **Step 1: Make the throwaway HOME**
 
 ```bash
-.ai/common/scripts/vps-run.sh 'cd ~/dotfiles-rework && HOME=/home/tars/rework-home ./install.sh && HOME=/home/tars/rework-home ./install.sh'
+FAKE=$SCRATCH/fake-home && rm -rf "$FAKE" && mkdir -p "$FAKE"
 ```
 
-Expected: both runs finish with a green summary and exit 0. No warning
-mentioning `.ai`.
-
-- [ ] **Step 3: Case A, `.ai/` present**
+Every command below sets `HOME="$FAKE"` inline. Before running any of them,
+prove the override works, because a leaked real `HOME` would rewrite the live
+`~/.claude` symlinks:
 
 ```bash
-.ai/common/scripts/vps-run.sh 'cd ~/dotfiles-rework && git clone git@github.com:cassmtnr/ai-config.git .ai && HOME=/home/tars/rework-home bash -c "source lib/common.sh; source lib/ui.sh; source lib/ai.sh; ai_symlinks && readlink /home/tars/rework-home/.claude/CLAUDE.md"'
+HOME="$FAKE" bash -c 'echo "$HOME"'
 ```
 
-Expected: the linked lines, then a path ending
-`dotfiles-rework/.ai/common/instructions.md` that `test -f` finds. `ai_symlinks`
-is called directly because the menu can't be driven over ssh.
+Expected: the fake path, not `/Users/cassiano`.
 
-- [ ] **Step 4: Case C, `update.sh` with the clone present**
+- [ ] **Step 2: Case A, `.ai/` present, run twice**
 
 ```bash
-.ai/common/scripts/vps-run.sh 'cd ~/dotfiles-rework && HOME=/home/tars/rework-home ./update.sh -v 2>&1 | tail -20'
+HOME="$FAKE" bash -c 'source lib/common.sh; source lib/ui.sh; source lib/ai.sh; ai_symlinks; ai_symlinks'
+readlink "$FAKE/.claude/CLAUDE.md" && test -f "$FAKE/.claude/CLAUDE.md" && echo RESOLVES
 ```
 
-Expected: the "AI config repo (.ai)" step reports up to date, and the summary
-is green.
+Expected: both passes report the same links with no warning, and the readlink
+target ends `dotfiles/.ai/common/instructions.md` and exists. The second pass is
+the idempotence check: `link()` replaces its own symlinks and must not start
+warning "Target exists and is not a symlink".
 
-- [ ] **Step 5: Clean up both test directories**
+- [ ] **Step 3: Case B, `.ai/` absent**
+
+**Do not run this step on a machine that can reach GitHub over SSH.** With
+`.ai` moved aside and no TTY, `ui_confirm` takes its `y` default and
+`ensure_ai_repo` performs a real clone into `$DOTFILES_ROOT/.ai`. Overriding
+`HOME` does not move `$DOTFILES_ROOT`, so the clone lands on the live path and
+races the restoring `mv` below. It would also replace a working tree holding
+193 MB of installed skills and work-machine symlinks that exist in no repo,
+and a fresh clone cannot bring those back. Run this case only where outbound
+SSH is blocked, or verify the same assertion by reading the function.
+
+Move the clone aside and put it back in the same command, so an error cannot
+strand this machine's live AI configuration:
 
 ```bash
-.ai/common/scripts/vps-run.sh 'rm -rf ~/dotfiles-rework /home/tars/rework-home'
+mv .ai ../ai-aside && HOME="$FAKE" bash -c 'source lib/common.sh; source lib/ui.sh; source lib/ai.sh; ensure_ai_repo; echo "exit=$?"' < /dev/null; mv ../ai-aside .ai
 ```
 
-- [ ] **Step 6: Code review pass, then fix every finding**
+Expected: `ensure_ai_repo` returns nonzero without prompting, because the clone
+it attempts cannot reach GitHub. `ui_confirm` returns its `y` default without a
+TTY, so this reaches a real `git clone` rather than declining; `< /dev/null`
+only guarantees nothing hangs waiting for input. The guard against an unattended clone lives upstream, in
+`install_ai_tools`: `ui_choose_many` selects nothing without a TTY, so that
+caller never reaches `ensure_ai_repo` at all. Confirm `.ai` is back afterwards.
 
-Review the diff across both repos before the phase closes. Anything left
-unfixed goes in `TODO.md` with its file path and the reason.
+- [ ] **Step 4: Case C, `update_ai_repo` both ways**
 
-- [ ] **Step 7: Log it**
+```bash
+HOME="$FAKE" bash -c 'source lib/common.sh; source lib/ui.sh; source lib/ai.sh; update_ai_repo; echo "exit=$?"'
+mv .ai ../ai-aside && HOME="$FAKE" bash -c 'source lib/common.sh; source lib/ui.sh; source lib/ai.sh; update_ai_repo; echo "exit=$?"'; mv ../ai-aside .ai
+```
 
-Append to `log.md`, with the date from `date -u` rather than the session
-header:
+Expected: with `.ai` present, up to date and `exit=0`; with it absent, the
+`ui_skip` line and still `exit=0`, per the `run_step` contract.
+
+- [ ] **Step 5: Fix the tree comment's em dash**
+
+`README.md:116` reads `# AI CLI config — separate private repo,`. Every
+neighbouring tree comment uses a parenthetical instead, so match them:
+
+```
+├── .ai/                       # AI CLI config (separate private repo,
+│                              # cloned here by install.sh step 4)
+```
+
+Keep the `#` comment column where it is.
+
+- [ ] **Step 6: Remove the throwaway HOME**
+
+```bash
+rm -rf "$FAKE"
+```
+
+- [ ] **Step 7: Record what local testing did not cover**
+
+Append to `TODO.md`: phase-03 was verified against a fake `HOME` on macOS only.
+A from-scratch `./install.sh` on a clean Linux machine, run twice for
+idempotence, still needs doing on the server replacing tars, and that run is
+also the first test of `ensure_ai_repo` offering its clone for real.
+
+- [ ] **Step 8: Log it**
+
+Append to `log.md`, with the date from `date -u`:
 
 ```
 ## [YYYY-MM-DD] decision | .ai extracted to private cassmtnr/ai-config

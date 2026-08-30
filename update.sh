@@ -13,6 +13,7 @@ source "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/lib/common.sh"
 source "$DOTFILES_ROOT/lib/ui.sh"
 source "$DOTFILES_ROOT/lib/install.sh"
 source "$DOTFILES_ROOT/lib/configure.sh"
+source "$DOTFILES_ROOT/lib/ai.sh"
 
 # Flags
 UPDATE_PACKAGES=false
@@ -82,6 +83,7 @@ main() {
 
     # Always update symlinks and sync extensions (bidirectional)
     run_step "Symlink dotfiles into \$HOME"  create_symlinks
+    run_step "AI config repo (.ai)"          update_ai_repo
     run_step "VSCodium extension sync"       sync_vscodium_extensions
 
     # Conditionally update Homebrew packages (casks skipped on Linux)
