@@ -93,5 +93,21 @@ jobs:
 
       - name: install (safe defaults)
         run: ./install.sh
+
+      # npm -g binaries land in nvm's default-version bin, and sourcing nvm.sh
+      # leaves `nvm current` at "system" — without the PATH entry in .zshenv
+      # every global install is unreachable and looks like it failed.
+      - name: zshenv exposes nvm's default-version bin
+        run: |
+          zsh -c 'set -e
+            NVM_DIR="${NVM_DIR:-$HOME/.nvm}"
+            [[ -r "$NVM_DIR/alias/default" ]] || { echo "no nvm default alias; nothing to assert"; exit 0; }
+            v=$(<"$NVM_DIR/alias/default")
+            [[ -d "$NVM_DIR/versions/node/v${v#v}/bin" ]] || { echo "default v$v not installed"; exit 0; }
+            source ./.zshenv
+            case "$PATH" in
+              *"$NVM_DIR/versions/node/v${v#v}/bin"*) echo "nvm default bin is on PATH" ;;
+              *) echo "FAILED: nvm default bin missing from PATH" >&2; exit 1 ;;
+            esac'
       - name: install again (idempotence)
         run: ./install.sh

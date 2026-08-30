@@ -544,3 +544,15 @@ shared and this class of bug is invisible on macOS.
 Not a repo problem, recorded for the next machine: the tars key is registered
 on GitHub (fingerprints match) but is passphrase-protected, and the persistent
 agent had no identities, so `ssh-add ~/.ssh/github` is a per-machine step.
+
+## [2026-08-30] fix | nvm's default bin on PATH, so npm -g binaries exist
+
+Fourth failure in the tars chain. Step 4 reported "✓ Claude Code CLI" and
+`claude` was still not found. npm -g installs into nvm's default-version bin,
+and `nvm current` is "system" on both platforms even after .zshrc sources
+nvm.sh, so that directory never joined PATH. node only worked because ai.sh
+shims it into ~/.local/bin; every other global was invisible. .zshenv now
+appends the bin, resolving the alias with one file read rather than an
+`nvm use`. Appended, not prepended, so brew still wins on the Mac. Verified on
+both machines. CI asserts it after install; a local test covers the alias
+forms, an uninstalled version, and no nvm at all.

@@ -47,4 +47,17 @@ path=(
     $path
 )
 
+# nvm's default-version bin. `npm install -g` puts its binaries here (claude,
+# gemini on Linux), and nothing else reaches them: sourcing nvm.sh leaves
+# `nvm current` at "system" on both platforms, so the directory never joins
+# PATH and every global install looks like it failed. Read the alias file
+# rather than sourcing nvm — one read per shell instead of an `nvm use`.
+# Appended, so it cannot shadow brew. (N) drops it when the alias names a
+# version that is not installed, or points at another alias.
+if [[ -r "$NVM_DIR/alias/default" ]]; then
+    _nvm_default="$(<"$NVM_DIR/alias/default")"
+    path=($path $NVM_DIR/versions/node/v${_nvm_default#v}/bin(N))
+    unset _nvm_default
+fi
+
 export PATH

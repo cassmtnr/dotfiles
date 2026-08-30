@@ -7,6 +7,26 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### npm global binaries are reachable on Linux — 2026-08-30
+
+#### Fixed
+
+- **`.zshenv` puts nvm's default-version bin on PATH.** `npm install -g` places
+  its binaries there, and nothing reached them: sourcing `nvm.sh` leaves
+  `nvm current` at `system` on both platforms, so the directory never joined
+  PATH. Step 4 reported `✓ Claude Code CLI` on a server while `claude` was
+  unreachable — `node` only worked because `lib/ai.sh` shims it into
+  `~/.local/bin`. The alias file is read directly rather than sourcing nvm, so
+  this costs one file read per shell instead of an `nvm use`, and the entry is
+  appended so it cannot shadow Homebrew. Verified on both machines: the server
+  now resolves `claude` to the nvm path, the Mac still resolves it to the cask.
+
+#### Added
+
+- **A CI step asserting the PATH entry exists** after `./install.sh`, on both
+  runners. Also a local test covering the bare and `v`-prefixed alias forms, an
+  alias naming an uninstalled version, and a machine with no nvm at all.
+
 ### A macOS-only ssh option no longer breaks Linux — 2026-08-30
 
 #### Fixed
