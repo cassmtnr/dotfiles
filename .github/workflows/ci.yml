@@ -13,6 +13,13 @@ jobs:
       - name: shellcheck
         run: shellcheck install.sh update.sh lib/*.sh .defaults capture-setting.sh
 
+      # Linux OpenSSH terminates on an unknown keyword rather than warning, so
+      # a macOS-only option reaching a server breaks every ssh call on it.
+      - name: ssh config parses on Linux
+        run: |
+          chmod 600 .ssh/config
+          ssh -F .ssh/config -G github.com > /dev/null
+
   install:
     # The real "new machine" test: without a terminal install.sh runs
     # non-interactively (no extras), twice — the second run proves

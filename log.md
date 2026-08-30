@@ -530,3 +530,17 @@ That clone failure also cost the Claude CLI, because install_ai_tools returned
 early on a missing .ai/. Reversed a phase-03 decision: install_ai_clis needs
 nothing from .ai/, so only the steps that read it (symlinks, agent-reach,
 plugins, skill lint) skip now. Both changes have tests that fail against HEAD.
+
+## [2026-08-30] fix | IgnoreUnknown UseKeychain, so Linux can read the config
+
+Third failure in the same chain on tars, found over vps-run. After the 664 fix,
+ssh still died: `Bad configuration option: usekeychain`. UseKeychain is Apple's
+patch, and portable OpenSSH terminates on an unknown keyword rather than
+warning, so a Mac-authored config.local breaks every ssh call on a server.
+IgnoreUnknown now precedes the Include; verified with a control on the box.
+CI gained `ssh -F .ssh/config -G github.com` on ubuntu, since the file is
+shared and this class of bug is invisible on macOS.
+
+Not a repo problem, recorded for the next machine: the tars key is registered
+on GitHub (fingerprints match) but is passphrase-protected, and the persistent
+agent had no identities, so `ssh-add ~/.ssh/github` is a per-machine step.

@@ -7,6 +7,24 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### A macOS-only ssh option no longer breaks Linux — 2026-08-30
+
+#### Fixed
+
+- **`IgnoreUnknown UseKeychain` now precedes the `Include`** in `.ssh/config`.
+  `UseKeychain` comes from Apple's ssh patch and does not exist in portable
+  OpenSSH, which terminates on an unknown keyword instead of warning. Copying a
+  Mac's `~/.ssh/config.local` to a server therefore broke every ssh call on it,
+  reported as `Bad configuration option: usekeychain`. Verified against a
+  control on the server: with the directive the included file parses, without
+  it the parse fails.
+
+#### Added
+
+- **A CI step parsing `.ssh/config` on Linux** (`ssh -F .ssh/config -G
+  github.com`). The file is shared across both platforms, and a macOS-only
+  option in it is invisible on macOS and fatal on Linux.
+
 ### A hand-written SSH config no longer breaks ssh — 2026-08-30
 
 #### Fixed
