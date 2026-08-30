@@ -556,3 +556,20 @@ appends the bin, resolving the alias with one file read rather than an
 `nvm use`. Appended, not prepended, so brew still wins on the Mac. Verified on
 both machines. CI asserts it after install; a local test covers the alias
 forms, an uninstalled version, and no nvm at all.
+
+## [2026-08-30] fix | the ssh agent never loaded any key, on any machine
+
+Chasing why tars needed a manual ssh-add found two defects in .ssh-agent, both
+long-standing. add_ssh_keys named ~/.ssh/personal/github and
+~/.ssh/work/gitlab, paths from an old layout that exist nowhere, so it loaded
+nothing everywhere. And start_ssh_agent only called it when `ssh-add -l` exited
+2 (no agent); exit 1 means the agent is up and empty, the normal state after a
+reboot, and that branch did nothing. Keys are now discovered by having a .pub
+beside them, and both agent states load them. Test covers both states and
+asserts config/known_hosts/agent.env/.pub are never offered; it fails against
+the committed version. Verified against tars' real ~/.ssh over vps-run.
+
+Decision: the tars key drops its passphrase. It has to work unattended for
+cron and boot-time pulls, and a passphrase that a human types once per boot
+does not survive the case it exists for. File mode 600 plus host access is the
+posture; reversible with `ssh-keygen -p`.

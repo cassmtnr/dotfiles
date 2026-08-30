@@ -12,8 +12,10 @@ start_ssh_agent() {
     # Check if agent is running: ssh-add exits 2 when no agent is reachable,
     # 1 when the agent runs but holds no identities — only start on 2, or
     # every shell spawns a fresh agent when no keys get added (process leak)
-    ssh-add -l &>/dev/null
-    if [[ $? -eq 2 ]]; then
+    ssh-add -l &> /dev/null
+    local agent_status=$?
+
+    if [[ $agent_status -eq 2 ]]; then
         # Start new agent
         echo "Starting new SSH agent..."
         ssh-agent > "$ssh_env"
@@ -22,23 +24,28 @@ start_ssh_agent() {
 
         # Add keys if they exist
         add_ssh_keys
+    elif [[ $agent_status -eq 1 ]]; then
+        # Agent is up but holds nothing. Keys do not survive a reboot, so this
+        # is the normal state of the first shell after one, and doing nothing
+        # here leaves every git push failing as "Permission denied (publickey)"
+        # with no sign that no key was ever offered.
+        add_ssh_keys
     fi
 }
 
 # Function to add SSH keys
 add_ssh_keys() {
-    local keys_added=0
+    local key keys_added=0
 
-    # Define your SSH keys here
-    local ssh_keys=(
-        "$HOME/.ssh/personal/github"
-        "$HOME/.ssh/work/gitlab"
-    )
-
-    for key in "${ssh_keys[@]}"; do
-        if [[ -f "$key" ]]; then
-            ssh-add -q "$key" 2>/dev/null && ((keys_added++))
-        fi
+    # Discover keys rather than list them: a hardcoded list silently loads
+    # nothing on a machine that names its keys differently, and an agent with
+    # no identities fails as "Permission denied (publickey)" with no hint that
+    # the key was never offered. A private key is a file with a matching .pub
+    # beside it, which excludes config, known_hosts, agent.env and the .pub
+    # files themselves. One level down is searched too (~/.ssh/work/gitlab).
+    for key in "$HOME"/.ssh/*(.N) "$HOME"/.ssh/*/*(.N); do
+        [[ -f "$key.pub" ]] || continue
+        ssh-add -q "$key" 2>/dev/null && ((keys_added++))
     done
 
     if [[ $keys_added -gt 0 ]]; then

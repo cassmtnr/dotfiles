@@ -7,6 +7,24 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### The ssh agent actually loads keys — 2026-08-30
+
+#### Fixed
+
+- **`add_ssh_keys` discovers keys instead of naming two that don't exist.** It
+  listed `~/.ssh/personal/github` and `~/.ssh/work/gitlab`, paths from an
+  earlier layout, so on every machine it loaded nothing and the agent sat
+  empty. A private key is now any file with a matching `.pub` beside it, in
+  `~/.ssh` or one level down, which excludes `config`, `known_hosts`,
+  `agent.env` and the `.pub` files themselves.
+- **An agent that is up but holds nothing now gets the keys.** `start_ssh_agent`
+  only called `add_ssh_keys` when `ssh-add -l` exited 2 (no agent at all).
+  Exit 1 means the agent is running and empty, which is the normal state of the
+  first shell after a reboot, and that path did nothing. The symptom is
+  `Permission denied (publickey)` with no sign that no key was ever offered —
+  it cost a debugging session on a server whose key was correctly registered
+  with GitHub the whole time.
+
 ### npm global binaries are reachable on Linux — 2026-08-30
 
 #### Fixed
