@@ -1,100 +1,44 @@
 #!/usr/bin/env bash
 
-# ============================================
-# Dotfiles Update Script
-# ============================================
-# Lightweight alternative to install.sh for day-to-day updates.
-# Default: symlinks + VSCodium extension sync. Flags for more.
-# AI tooling is separate — it's step 4 of ./install.sh (opt-in).
+# Pull the dotfiles repo, then the .ai config repo on main.
+# Replaces the old update.sh: symlink/extension/package refresh lives in
+# install.sh (steps 1-2), so updating is pull here, then ./install.sh when
+# symlinks or packages changed. Safe to re-run: a dirty tree is skipped
+# instead of touched, and --ff-only means a diverged branch stops with an
+# error instead of auto-merging.
 
-set -euo pipefail
+set -uo pipefail
 
-source "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/lib/common.sh"
-source "$DOTFILES_ROOT/lib/ui.sh"
-source "$DOTFILES_ROOT/lib/install.sh"
-source "$DOTFILES_ROOT/lib/configure.sh"
-source "$DOTFILES_ROOT/lib/ai.sh"
+ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+failed=0
 
-# Flags
-UPDATE_PACKAGES=false
-UPDATE_DEFAULTS=false
+pull_repo() {
+    local name="$1" dir="$2" checkout_main="$3"
 
-show_help() {
-    cat << EOF
-Usage: $(basename "$0") [OPTIONS]
-
-Update dotfiles symlinks and optionally refresh packages or macOS defaults.
-
-Options:
-  -p, --packages    Also update Homebrew packages from .brewfile
-  -d, --defaults    Also re-apply user-level macOS defaults (macOS only)
-  -a, --all         Run all update operations (symlinks + packages + defaults)
-  -v, --verbose     Show full command output instead of one line per step
-  -h, --help        Show this help message
-
-Default behavior (no flags): recreate symlinks + sync VSCodium extensions (bidirectional).
-
-Examples:
-  $(basename "$0")              # Symlinks + sync extensions
-  $(basename "$0") -p           # Also update brew packages
-  $(basename "$0") --all        # Everything
-EOF
+    if [[ ! -d "$dir/.git" ]]; then
+        echo "-- $name: no git repo at $dir, skipped"
+        return 0
+    fi
+    if ! git -C "$dir" diff --quiet HEAD 2> /dev/null; then
+        echo "!! $name: local changes — commit or stash them, then re-run"
+        failed=1
+        return 0
+    fi
+    if [[ "$checkout_main" == "yes" ]]; then
+        git -C "$dir" checkout -q main || { echo "!! $name: checkout main failed"; failed=1; return 0; }
+    elif [[ "$(git -C "$dir" branch --show-current)" != "main" ]]; then
+        # Not switching under you: pull updates the branch you're on
+        echo "-- $name: on branch $(git -C "$dir" branch --show-current), not main"
+    fi
+    if git -C "$dir" pull --ff-only; then
+        echo "ok $name updated"
+    else
+        echo "!! $name: pull failed (offline, or diverged from remote)"
+        failed=1
+    fi
 }
 
-parse_args() {
-    while [[ $# -gt 0 ]]; do
-        case $1 in
-            -p|--packages)
-                UPDATE_PACKAGES=true
-                ;;
-            -d|--defaults)
-                UPDATE_DEFAULTS=true
-                ;;
-            -a|--all)
-                UPDATE_PACKAGES=true
-                UPDATE_DEFAULTS=true
-                ;;
-            -v|--verbose)
-                # shellcheck disable=SC2034
-                VERBOSE=true
-                ;;
-            -h|--help)
-                show_help
-                exit 0
-                ;;
-            *)
-                error "Unknown option: $1"
-                show_help
-                exit 1
-                ;;
-        esac
-        shift
-    done
-}
+pull_repo "dotfiles"  "$ROOT"     "no"
+pull_repo "ai-config" "$ROOT/.ai" "yes"
 
-main() {
-    parse_args "$@"
-
-    ui_header "Dotfiles update — $(os_label)"
-
-    # Fresh shells may not have brew's bin dir on PATH, hiding brew-installed
-    # binaries the steps below check for (codium)
-    ensure_brew_path || true
-
-    # Always update symlinks and sync extensions (bidirectional)
-    run_step "Symlink dotfiles into \$HOME"  create_symlinks
-    run_step "AI config repo (.ai)"          update_ai_repo
-    run_step "VSCodium extension sync"       sync_vscodium_extensions
-
-    # Conditionally update Homebrew packages (casks skipped on Linux)
-    if $UPDATE_PACKAGES; then run_step "Homebrew packages" install_packages; fi
-
-    # Conditionally apply user-level macOS defaults (system-level ones are
-    # an install.sh extra: macos-admin)
-    if $UPDATE_DEFAULTS; then run_step "macOS defaults (user-level)" apply_macos_defaults false; fi
-
-    # Last command on purpose: failed steps fail the run
-    ui_summary
-}
-
-main "$@"
+exit "$failed"

@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 # ============================================
-# Shared foundation for install.sh and update.sh
+# Shared foundation for install.sh
 # OS detection, logging, Homebrew PATH, NVM
 # ============================================
 

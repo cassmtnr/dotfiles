@@ -601,3 +601,11 @@ HEAD), ai_symlinks from that fresh clone twice with no warnings, update_ai_repo,
 the safety hook denying and failing closed under /bin/sh, and the node shim
 resolving v22.19.0. shellcheck clean, CI green on 6ee25d8. One stale artifact
 on this Mac only: ~/.local/bin/node was missing until step 4 recreated it.
+
+## [2026-09-01] decision | update.sh becomes the pull script
+
+Old update.sh deleted: its refresh work duplicated install.sh steps 1-2.
+The pull script takes its name — pulls dotfiles, then .ai on main
+(--ff-only, dirty trees skipped). update_ai_repo() removed from lib/ai.sh
+(only caller was the old script). README, CHANGELOG, lib comments updated;
+index.html has no script docs, so the GitHub page needed nothing.

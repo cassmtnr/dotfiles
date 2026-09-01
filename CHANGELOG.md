@@ -7,6 +7,23 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### update.sh only pulls; refreshing is install.sh's job — 2026-09-01
+
+#### Changed
+
+- **`update.sh` replaced.** The old script (symlink refresh, VSCodium sync,
+  `-p`/`-d`/`-a` flags) only re-ran what `install.sh` steps 1–2 already do,
+  while nothing pulled the repos themselves. The new `update.sh` does exactly
+  that: pulls dotfiles, then `.ai` on main — `--ff-only`, dirty trees skipped
+  instead of touched. Update flow is now `./update.sh`, then `./install.sh`
+  when symlinks or packages changed.
+
+#### Removed
+
+- **`update_ai_repo()`** from `lib/ai.sh` — its only caller was the old
+  `update.sh`, and the new one pulls `.ai` itself (with a `checkout main`
+  the old function never did).
+
 ### The ssh config parses on older OpenSSH — 2026-08-30
 
 #### Fixed

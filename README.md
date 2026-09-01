@@ -77,21 +77,19 @@ themselves and skip with a warning if it's unavailable.
 ### Updating
 
 ```bash
-./update.sh              # Refresh symlinks + VSCodium extension sync
-./update.sh -p           # Also update Homebrew packages from .brewfile
-./update.sh -d           # Also re-apply user-level macOS defaults
-./update.sh -a           # All of the above
-./update.sh -v           # Full command output instead of one line per step
+./update.sh              # Pull this repo, then .ai on main (--ff-only, skips dirty trees)
+./install.sh             # Re-run after pulling when symlinks or packages changed
 ```
 
-AI tooling updates via `./install.sh` step 4 (re-select and re-run; idempotent).
+`update.sh` only pulls — symlink, extension, package, and defaults refresh all
+live in `install.sh` (idempotent; re-select step 4 for AI tooling).
 
 ## Project Structure
 
 ```
 dotfiles/
 ├── install.sh                 # Setup in four steps: install / configure / extras / ai-tools
-├── update.sh                  # Lightweight update (symlinks + optional packages/defaults)
+├── update.sh                  # Pull this repo + .ai on main (refresh via install.sh)
 ├── .brewfile                  # Homebrew packages (casks skipped on Linux)
 ├── lib/
 │   ├── common.sh              # OS detection, logging, Homebrew PATH
@@ -220,7 +218,7 @@ Neither loses anything, since `ai-config` holds it all. Recover the first with
 
 [VSCodium](https://vscodium.com/) (open-source VS Code without Microsoft telemetry). Settings, extensions, and a custom icon are managed in `.vscodium/`:
 
-- `install.sh` / `update.sh` handle symlinks and extensions automatically
+- `install.sh` handles symlinks and extensions automatically
 - Custom icon is an extra (re-run `./install.sh`, select `icons`) — writing
   to /Applications bundles needs admin rights on managed Macs
 - `brew()` wrapper in `.functions` re-applies the icon after upgrades
