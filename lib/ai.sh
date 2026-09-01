@@ -5,8 +5,8 @@
 # Sourced by install.sh; run as the final, opt-in step. Nothing here runs
 # unless you pick it from the menu, so a plain/non-interactive install stays
 # AI-free. All user-level (no sudo):
-#   - symlinks AI config into ~/.claude and ~/.codex (instructions, skills,
-#     safety hooks, settings)
+#   - symlinks AI config into ~/.claude, ~/.codex and ~/.agents (AGENTS.md
+#     rules, skills, safety hooks, settings)
 #   - installs Claude Code (+ Gemini on Linux)
 #   - optionally sets up Agent Reach and Claude Code plugins
 # ============================================
@@ -88,35 +88,61 @@ update_ai_repo() {
 # Symlink AI config into ~/.claude and ~/.codex
 ai_symlinks() {
     log "Linking AI configuration..."
-    mkdir -p "$HOME/.claude" "$HOME/.codex" "$HOME/.mcporter"
+    mkdir -p "$HOME/.claude" "$HOME/.codex" "$HOME/.codex/rules" "$HOME/.mcporter"
 
     # Remove orphaned symlinks from older layouts — paths that no longer have a
     # link below, so the loop wouldn't otherwise touch them. Only symlinks into
     # this repo are removed (never real files/dirs — link() warns on those).
+    # instructions.md: Codex reads only $CODEX_HOME/AGENTS.md now.
+    # .codex/skills: replaced by ~/.agents/skills — keeping both would list
+    # every skill twice (Codex dedupes skill roots by path, not target).
     local orphan
     for orphan in "$HOME/.claude/commands" "$HOME/.claude/statusline-command.sh" \
-                  "$HOME/.codex/prompts" "$HOME/.codex/config.toml"; do
+                  "$HOME/.codex/prompts" "$HOME/.codex/config.toml" \
+                  "$HOME/.codex/instructions.md" "$HOME/.codex/skills"; do
         if [[ -L "$orphan" && "$(readlink "$orphan")" == *"/dotfiles/"* ]]; then
             rm "$orphan"
             log "Removed orphaned symlink (old layout): $orphan"
         fi
     done
 
-    # Shared content (Claude Code + Codex) — only assets both CLIs support
-    link "$DOTFILES_ROOT/.ai/common/instructions.md" "$HOME/.claude/CLAUDE.md"
-    link "$DOTFILES_ROOT/.ai/common/instructions.md" "$HOME/.codex/instructions.md"
+    # Shared content (Claude Code + Codex) — only assets both CLIs support.
+    # AGENTS.md is the canonical shared core; Claude Code reads it through the
+    # @import in claude/CLAUDE.md, Codex reads ~/.codex/AGENTS.md directly.
+    # ~/.agents/skills is the agentskills.io standard location Codex scans;
+    # Claude Code only reads ~/.claude/skills.
+    link "$DOTFILES_ROOT/.ai/common/AGENTS.md"       "$HOME/.codex/AGENTS.md"
     link "$DOTFILES_ROOT/.ai/common/skills"          "$HOME/.claude/skills"
-    link "$DOTFILES_ROOT/.ai/common/skills"          "$HOME/.codex/skills"
+    link "$DOTFILES_ROOT/.ai/common/skills"          "$HOME/.agents/skills"
     link "$DOTFILES_ROOT/.ai/common/hooks"           "$HOME/.claude/hooks"
     link "$DOTFILES_ROOT/.ai/common/hooks"           "$HOME/.codex/hooks"
     link "$DOTFILES_ROOT/.ai/common/scripts"         "$HOME/.claude/scripts"
 
-    # Claude Code only
+    # Claude Code only. ~/.claude/AGENTS.md exists so the wrapper's @import
+    # can use a repo-location-independent path (mirrors ~/.codex/AGENTS.md).
+    link "$DOTFILES_ROOT/.ai/common/AGENTS.md"       "$HOME/.claude/AGENTS.md"
+    link "$DOTFILES_ROOT/.ai/claude/CLAUDE.md"       "$HOME/.claude/CLAUDE.md"
+    link "$DOTFILES_ROOT/.ai/claude/rules"           "$HOME/.claude/rules"
     link "$DOTFILES_ROOT/.ai/claude/settings.json"   "$HOME/.claude/settings.json"
     link "$DOTFILES_ROOT/.ai/claude/config"          "$HOME/.claude/config"
 
-    # Codex CLI only
-    link "$DOTFILES_ROOT/.ai/codex/hooks.json"       "$HOME/.codex/hooks.json"
+    # Codex CLI only. config.toml is COPIED, not symlinked: Codex writes hook
+    # trust ([hooks.state]) and TUI allow-list amendments into the user config
+    # at runtime, and write-through-symlink behavior is untested — a copy keeps
+    # machine-local state out of the repo. Copy only when absent; push repo
+    # changes by deleting the local file and re-running this step.
+    # rules/: only the curated file is linked — Codex auto-appends its own
+    # allow-list decisions to ~/.codex/rules/default.rules, which stays local.
+    link "$DOTFILES_ROOT/.ai/codex/hooks.json"           "$HOME/.codex/hooks.json"
+    link "$DOTFILES_ROOT/.ai/codex/rules/git-safety.rules" "$HOME/.codex/rules/git-safety.rules"
+    if [[ ! -e "$HOME/.codex/config.toml" ]]; then
+        cp "$DOTFILES_ROOT/.ai/codex/config.toml" "$HOME/.codex/config.toml"
+        log "Copied: $HOME/.codex/config.toml (machine-local; holds Codex-written state)"
+    elif ! cmp -s "$DOTFILES_ROOT/.ai/codex/config.toml" "$HOME/.codex/config.toml"; then
+        # Expected on Codex machines once [hooks.state] lands — but it also
+        # means repo-side config changes are NOT applied; merge them manually.
+        warning "Kept existing ~/.codex/config.toml (differs from repo) — diff and merge repo changes by hand"
+    fi
 
     # mcporter — global config so Exa search (agent-reach) works from any dir
     link "$DOTFILES_ROOT/config/mcporter.json"       "$HOME/.mcporter/mcporter.json"

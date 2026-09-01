@@ -592,3 +592,12 @@ checkout it genuinely installs apt deps, Oh My Zsh, the full brewfile and Node
 via NVM. Combined with ensure_ai_repo's real clone on tars, the only path never
 executed anywhere is install_homebrew's Linux bootstrap: both runners and tars
 ship Homebrew preinstalled. TODO.md narrowed to exactly that.
+
+## [2026-08-31] review | pre-work-machine verification of the two-repo split
+
+Both repos clean and synced. Verified end to end on macOS: all four
+ensure_ai_repo states, a real clone into a scratch root (29 files, correct
+HEAD), ai_symlinks from that fresh clone twice with no warnings, update_ai_repo,
+the safety hook denying and failing closed under /bin/sh, and the node shim
+resolving v22.19.0. shellcheck clean, CI green on 6ee25d8. One stale artifact
+on this Mac only: ~/.local/bin/node was missing until step 4 recreated it.
