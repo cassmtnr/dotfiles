@@ -609,3 +609,107 @@ The pull script takes its name — pulls dotfiles, then .ai on main
 (--ff-only, dirty trees skipped). update_ai_repo() removed from lib/ai.sh
 (only caller was the old script). README, CHANGELOG, lib comments updated;
 index.html has no script docs, so the GitHub page needed nothing.
+
+## [2026-09-09] fix | brew-upgrade extra stops touching casks
+
+install.sh hung ~20 minutes on "Extra: brew-upgrade", looping on "Sorry, try
+again". The extra ran `brew bundle install --upgrade` over the whole Brewfile.
+google-chrome was genuinely a version behind (152.0.7977.83 on disk, cask at
+153.0.8010.37), so brew tried to upgrade it: quit Chrome, replace the bundle in
+/Applications. That directory is root:admin and this account is not in the
+admin group, so it asked to elevate — and the prompt goes to /dev/tty
+underneath run_step's spinner, where it is invisible. That is also why Chrome
+kept closing mid-run.
+
+extra_brew_upgrade now filters casks on both platforms, matching what the Linux
+branch already did. Verified: `brew bundle check` over the full file wants
+google-chrome and spotify; over the filtered stream it wants only openssh, a
+formula in the user-writable ~/.homebrew prefix. Step 1 was already safe — it
+passes --no-upgrade, so it installs missing casks but never replaces present
+ones.
+
+Two adjacent fixes in the same pass. extra_icons and .functions both hardcoded
+/Applications/VSCodium.app, which stopped existing when HOMEBREW_CASK_OPTS
+moved casks to ~/Applications — the `[[ -d ]]` guard made the step report a
+green check for work it skipped. Both now resolve ~/Applications first, with
+/Applications as fallback; VSCodium is at ~/Applications here and is writable,
+so the icon step does real work again. And install.sh's `ensure_sudo "Updating
+casks already installed in /Applications"` is gone: with --no-upgrade in Step
+1, it asked for a password no step in it spends.
+
+## [2026-09-09] fix | TODO.md cleared down to one item
+
+Four entries closed.
+
+A failed user-level `defaults write` no longer fails the step
+(`lib/configure.sh:247`). `.defaults` still exits 1 and the reason still
+reaches the user, but through `ui_warn`, which survives the discarded capture
+file — the step stays green so the failure menu's "abort" can no longer end the
+run before steps 3 and 4. With `--sudo` a failure still returns 1, because
+there the caller explicitly asked for the system-level writes.
+
+`chsh` lost its `$IS_LINUX` guard on the `/etc/shells` check
+(`lib/configure.sh:274`). That check is just as necessary on macOS, where
+brew's zsh is never listed; without it the step went red with "non-standard
+shell" instead of skipping for want of admin rights.
+
+`.ai.bak` moved out of the repo. The gitignore line was the wrong lever — a
+backup parked in the repo is untracked, so plain `git clean -fd` takes it
+whether or not it is ignored. `README.md:203` and `lib/ai.sh:52` now say
+`mv .ai ~/.ai.bak`, the `/.ai.bak/` ignore line is gone, and the existing 932K
+backup on this machine was moved to `~/.ai.bak`.
+
+Both behaviour changes were checked against a reverted copy of the tree first:
+old code recorded the defaults step as `failed` and called `chsh` anyway
+(returning 1); new code records `ok` with a replayed warning, and skips with
+the admin-rights reason. The chsh half only reaches that code under a pty, so
+it runs through `script -q /dev/null`.
+
+The fourth entry, Linux Homebrew bootstrap, is narrowed rather than closed: CI
+gained an `install-without-homebrew` job on a bare `ubuntu:24.04` container,
+which is the first place that path can execute. Nothing local can run a GitHub
+Actions container, so the job is unverified until the next push.
+
+Not run: shellcheck, which is not installed here and not in `.brewfile`. CI's
+lint job covers every file touched.
+
+## [2026-09-09] lint | doc-lint pass — 2 drift findings in phase-03
+
+TODO.md holds one item, rewritten today, so nothing is stale. No ROADMAP.md and
+no memory entries for this project. No log gap: the last commits are 2026-09-01
+and both that date and today are logged. Markdown cross-references resolve —
+`#ai-setup` matches the "AI setup" heading and `codex/config.toml` exists inside
+`.ai/`.
+
+Two findings, both in `docs/superpowers/plans/phase-03-ai-config-repo.md`. Its
+header says shipped and all six tasks are done, but 36 checkboxes are unticked
+and none are ticked. And it still documents `update_ai_repo`, along with
+sourcing `lib/ai.sh` in `update.sh` — that function was removed on 2026-09-01
+when update.sh became the pull script. Reported, not acted on.
+
+## [2026-09-09] fix | phase-03 plan matches reality again
+
+Both lint findings closed. All 36 checkboxes ticked, so the plan no longer
+reads as unstarted work under a header that calls it shipped. Task 4 gained a
+superseded banner: it shipped as written, then was undone on 2026-09-01 when
+`update.sh` became the pull script and `update_ai_repo()` went with it. The two
+references outside that block — the verification notes and the architecture
+summary — now point at the banner instead of describing a function that no
+longer exists.
+
+## [2026-09-09] decision | .ai.bak deleted, feedback-review kept
+
+Inventoried before deleting rather than after. Of the 932K, almost all was
+redundant: 11 skills were symlinks into `~/Work/web-banking-tooling/codex-setup`
+with their targets intact, and `.system/` was byte-identical to
+`~/.codex/skills/.system`. Two directories held real content with no other copy
+anywhere on disk — `hatch-pet` (352K) and `feedback-review` (40K). Cassiano
+chose to drop hatch-pet and keep feedback-review.
+
+`feedback-review` now lives at `.ai/common/skills/feedback-review`, verified
+identical to the backup copy before the delete. That needed a second change:
+`.ai/.gitignore:6` ignores `common/skills/*` behind an allowlist, so the copy
+would have sat there untracked, never synced, and died to the next
+`git clean -xfd` — the same trap that put `.ai.bak` on the TODO in the first
+place. Added `!common/skills/feedback-review` to the allowlist; the three files
+are untracked and stageable in the `.ai` repo now, for Cassiano to commit there.

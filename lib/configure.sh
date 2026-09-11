@@ -244,7 +244,18 @@ apply_macos_defaults() {
         return 0
     fi
 
-    RUN_SUDO="$with_sudo" bash "$DOTFILES_ROOT/.defaults" || return 1
+    # User-level defaults are best-effort: one domain macOS has sandboxed away
+    # must not turn the step red, because the failure menu's "abort" ends the
+    # run and steps 3 and 4 (extras, AI config) never happen. ui_warn rather
+    # than warning: a step's captured output is discarded when it succeeds, and
+    # this has to outlive that. With sudo the caller explicitly asked for the
+    # system-level writes, so a failure there is still worth stopping on.
+    if ! RUN_SUDO="$with_sudo" bash "$DOTFILES_ROOT/.defaults"; then
+        if $with_sudo; then
+            return 1
+        fi
+        ui_warn "Some macOS defaults did not apply — re-run with --verbose to see which"
+    fi
 }
 
 # Set zsh as default shell
@@ -270,8 +281,11 @@ set_default_shell() {
         return 0
     fi
 
-    # On Linux, ensure zsh is listed in /etc/shells (required by chsh)
-    if $IS_LINUX && ! grep -qx "$zsh_path" /etc/shells 2>/dev/null; then
+    # chsh only accepts a shell listed in /etc/shells, on macOS as much as on
+    # Linux — and brew's zsh is never listed on either. Adding it needs admin,
+    # so without that this is a skip; letting chsh run anyway fails the step
+    # with "non-standard shell".
+    if ! grep -qx "$zsh_path" /etc/shells 2>/dev/null; then
         if ! ${RUN_SUDO:-false}; then
             ui_skip "adding $zsh_path to /etc/shells needs admin rights"
             return 0

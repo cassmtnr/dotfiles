@@ -130,6 +130,64 @@ install_oh_my_zsh() {
     success "Oh My Zsh installed"
 }
 
+# Formula names from the Brewfile, in file order. Cask lines are ignored:
+# casks are prebuilt app bundles, so they pour into any prefix.
+brewfile_formulas() {
+    local file="$1"
+    if $IS_LINUX; then
+        # `brew "x" if OS.mac?` entries never install here — don't name them
+        grep -v 'if OS.mac?' "$file"
+    else
+        cat "$file"
+    fi | sed -n 's/^brew "\([^"]*\)".*/\1/p'
+}
+
+# Of the given formulas, the ones NOT yet installed that will be COMPILED
+# rather than poured. One `brew info` pass does both checks, which also makes
+# brew resolve aliases for us — the Brewfile says `openssl`, the keg is
+# `openssl@3`, and comparing raw names against `brew list` reports it as
+# missing forever.
+#
+# Homebrew stamps each bottle with the prefix it was built for — /opt/homebrew
+# on Apple Silicon, /usr/local on Intel. Only bottles tagged :any or
+# :any_skip_relocation relocate anywhere; the rest pour solely into that
+# default prefix. This setup is pinned to ~/.homebrew (no-admin install,
+# required by policy), so those formulas — gnupg, openssh, openssl, python,
+# git, zsh, coreutils among them — are always built locally. That is
+# unavoidable, and not an error. But gnupg alone configures with
+# --enable-all-tests and then runs `make check` — minutes of near-silent output
+# that reads as a hang. So name the cost before paying it.
+#
+# Advisory only. Any missing piece (python3, network, an unknown formula)
+# yields no output rather than an error — this must never fail a step.
+brew_source_builds() {
+    local tag
+    # Guard before touching "$@": bash 3.2 + `set -u` errors on an empty list
+    [[ $# -gt 0 ]] || return 0
+    command -v python3 &> /dev/null || return 0
+    tag="$(brew ruby -e 'puts Utils::Bottles.tag' 2> /dev/null)" || return 0
+    [[ -n "$tag" ]] || return 0
+
+    brew info --json=v2 "$@" 2> /dev/null | python3 -c '
+import json, sys
+
+tag, cellar = sys.argv[1], sys.argv[2]
+relocatable = {":any", ":any_skip_relocation"}
+try:
+    formulae = json.load(sys.stdin).get("formulae", [])
+except ValueError:
+    sys.exit(0)
+for f in formulae:
+    if f.get("installed"):
+        continue
+    files = f.get("bottle", {}).get("stable", {}).get("files", {})
+    bottle = files.get(tag) or files.get("all")
+    if bottle is None or (bottle.get("cellar") not in relocatable
+                          and bottle.get("cellar") != cellar):
+        print(f["name"])
+' "$tag" "${HOMEBREW_PREFIX}/Cellar" 2> /dev/null
+}
+
 # Install brew packages from .brewfile
 install_packages() {
     if ! ensure_brew_path; then
@@ -143,15 +201,54 @@ install_packages() {
         return 0
     fi
 
+    # The spinner shows the capture file's LAST line, and brew's env hint
+    # repeats it for the whole run — ten minutes of "Hide these hints with
+    # HOMEBREW_NO_ENV_HINTS=1" instead of what is actually being built.
+    export HOMEBREW_NO_ENV_HINTS=1
+
+    # --no-upgrade: this step means "everything in the Brewfile is present",
+    # not "everything is current". Without it `brew bundle` upgrades outdated
+    # formulas too, which in a non-default prefix turns a re-run that had
+    # nothing to do into an hours-long recompile of whatever moved upstream.
+    # Upgrading is a deliberate act — pick "brew-upgrade" in Step 3 extras.
+    #
     # brew bundle failure is retry-able: flaky downloads are the common case
     if $IS_LINUX; then
         # Filter out cask entries (macOS-only GUI apps) for Linux
-        grep -v '^cask[[:space:]]' "$file" | brew bundle --file=- || return 1
+        grep -v '^cask[[:space:]]' "$file" | brew bundle install --no-upgrade --file=- || return 1
     else
-        brew bundle --file="$file" || return 1
+        brew bundle install --no-upgrade --file="$file" || return 1
     fi
 
     hash -r  # Refresh PATH so newly installed binaries are found
+}
+
+# Announce which formulas will compile, BEFORE the step that builds them.
+# Called from install.sh outside run_step on purpose: inside one, output goes
+# to the capture file and only its last line shows under the spinner, so the
+# heads-up would scroll past exactly when it is needed. Silent when there is
+# nothing slow to report, and never fails the caller.
+warn_about_source_builds() {
+    local file="$DOTFILES_ROOT/.brewfile" formulas=() slow=() name
+
+    ensure_brew_path || return 0
+    [[ -f "$file" ]] || return 0
+
+    while IFS= read -r name; do
+        [[ -n "$name" ]] && formulas+=("$name")
+    done < <(brewfile_formulas "$file")
+    [[ ${#formulas[@]} -gt 0 ]] || return 0
+
+    while IFS= read -r name; do
+        [[ -n "$name" ]] && slow+=("$name")
+    done < <(brew_source_builds "${formulas[@]}")
+    [[ ${#slow[@]} -gt 0 ]] || return 0
+
+    warning "No bottle fits this prefix ($HOMEBREW_PREFIX) — compiling from source:"
+    log "  ${slow[*]}"
+    log "  These and their dependencies compile locally — minutes each, and gnupg"
+    log "  also runs its full test suite. A fresh machine can spend an hour here."
+    log "  Long silences are the build working, not the step hanging."
 }
 
 # Setup Node.js environment

@@ -1,18 +1,21 @@
 # TODO
 
-## `install_homebrew` has never bootstrapped Homebrew on Linux
+## The bare-container CI job has never run
 
-The last gap in phase-03's verification, narrowed from "needs a from-scratch
-Linux run" on 2026-08-30.
+Narrowed 2026-09-09 from "install_homebrew has never bootstrapped Homebrew on
+Linux", which had been open since 2026-08-30.
 
-CI runs `./install.sh` twice on ubuntu-latest and macos-latest, and on a clean
-checkout it really does install apt dependencies, Oh My Zsh, the full brewfile
-and Node via NVM, then passes again on the second run. `ensure_ai_repo` cloned
-the private repo for real on tars. So every path is covered except one: both
-runners ship Homebrew preinstalled, so `install_homebrew` reports "already
-installed" and its Linux bootstrap has never executed. tars had it too.
+Both hosted runners ship Homebrew preinstalled, so `install_homebrew` always
+reported "already installed" and its Linux bootstrap — the sudo, the download,
+and the PATH it leaves for `.zshenv` and `ensure_brew_path` — never executed.
+The `install-without-homebrew` job in `.github/workflows/ci.yml` closes that:
+`ubuntu:24.04` with no Homebrew, an unprivileged user, an assertion that brew
+really is absent before `./install.sh` runs, and `ensure_brew_path` checked
+afterwards.
 
-That bootstrap is the riskiest step to leave untested — it needs sudo, a large
-download, and it sets up the PATH that `.zshenv` and `ensure_brew_path` depend
-on. Testing it needs a machine or container without Homebrew; tars has no
-container runtime installed, and adding one is its own decision.
+What is left is the run itself. The job was written and its YAML validated
+locally, but nothing here can execute a GitHub Actions container, so it has
+never gone green. Watch the first push for the usual container-job failures:
+`actions/checkout` needing more than `git`, `install_deps` assuming a package
+the minimal image lacks, and the 45-minute timeout against a from-source build.
+Delete this entry once it passes once.

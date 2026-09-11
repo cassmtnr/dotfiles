@@ -111,3 +111,57 @@ jobs:
             esac'
       - name: install again (idempotence)
         run: ./install.sh
+
+  # The one path the matrix above can never reach: both hosted runners ship
+  # Homebrew preinstalled, so install_homebrew always reports "already
+  # installed" and its Linux bootstrap has never executed. A bare container has
+  # no Homebrew, so the bootstrap runs for real — the sudo it needs, the
+  # download, and the PATH it leaves for .zshenv and ensure_brew_path.
+  install-without-homebrew:
+    runs-on: ubuntu-latest
+    container: ubuntu:24.04
+    timeout-minutes: 45
+    steps:
+      # Deliberately minimal: only what the container needs to check out and
+      # start the script. install_deps is responsible for the rest, and
+      # pre-installing its packages here would mask a regression in it.
+      - name: bootstrap the image
+        run: |
+          apt-get update
+          apt-get install -y --no-install-recommends sudo git curl ca-certificates
+
+      # Homebrew refuses to install as root and the container runs as root, so
+      # the script needs a normal user. NOPASSWD stands in for the prompt a
+      # non-interactive run can never answer.
+      - name: unprivileged user
+        run: |
+          useradd -m -s /bin/bash builder
+          echo 'builder ALL=(ALL) NOPASSWD:ALL' > /etc/sudoers.d/builder
+
+      - uses: actions/checkout@v4
+
+      - name: hand the checkout to that user
+        run: chown -R builder:builder "$GITHUB_WORKSPACE"
+
+      # Guard the premise: if the image ever ships brew, this job silently goes
+      # back to testing nothing, which is the exact failure it exists to end.
+      - name: assert no Homebrew present
+        run: |
+          if command -v brew > /dev/null; then
+            echo "image already has Homebrew — this job would prove nothing" >&2
+            exit 1
+          fi
+
+      # </dev/null: no TTY, so ui_confirm takes the platform default, which is
+      # RUN_SUDO=true on Linux — the privileged bootstrap branch.
+      - name: install (bootstraps Homebrew for real)
+        run: sudo -u builder -H bash -c 'cd "'"$GITHUB_WORKSPACE"'" && ./install.sh' < /dev/null
+
+      - name: brew works and ensure_brew_path finds it
+        run: |
+          sudo -u builder -H bash -c '
+            set -euo pipefail
+            cd "'"$GITHUB_WORKSPACE"'"
+            source lib/common.sh
+            ensure_brew_path || { echo "ensure_brew_path could not locate brew" >&2; exit 1; }
+            brew --version'

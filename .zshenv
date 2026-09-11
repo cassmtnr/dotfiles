@@ -33,6 +33,16 @@ elif [[ -f "$HOME/.homebrew/bin/brew" ]]; then
 fi
 
 # Path construction
+
+# Keep Homebrew cask installs user-owned on macOS. Cask's appdir default is a
+# flat /Applications regardless of HOMEBREW_PREFIX — a user-level prefix does
+# NOT imply user-level apps — so without this, casks land in /Applications and
+# ask for admin. Mirrored in ensure_brew_path (lib/common.sh) for install.sh,
+# which runs under bash and never sources this file.
+if [[ "$OSTYPE" == "darwin"* ]]; then
+    export HOMEBREW_CASK_OPTS="${HOMEBREW_CASK_OPTS:---appdir=$HOME/Applications --fontdir=$HOME/Library/Fonts}"
+fi
+
 # :-/opt/homebrew fallback: with HOMEBREW_PREFIX unset, $HOMEBREW_PREFIX/bin
 # would expand to literal /bin and front-load it ahead of ~/.local/bin
 # brew before /usr/local/bin: stale Intel binaries must not shadow ARM brew

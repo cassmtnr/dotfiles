@@ -49,6 +49,24 @@ success() { echo -e "${GREEN}[SUCCESS]${NC} $1"; }
 warning() { echo -e "${YELLOW}[WARNING]${NC} $1"; }
 error() { echo -e "${RED}[ERROR]${NC} $1" >&2; }
 
+# Re-prime the sudo timestamp before a step that may need it.
+#
+# The prompt MUST happen here, outside run_step: a captured step sends output
+# to a file with a spinner painted over the terminal, and sudo writes its
+# prompt to /dev/tty underneath that — invisible, so it reads as a hang and
+# then fails with "Sorry, try again." The startup confirm_sudo is not enough
+# on its own either: its timestamp expires during Step 1, where a single
+# source build off the default Homebrew prefix runs for minutes.
+#
+# $1: what needs the rights, shown to explain the prompt.
+# Returns 1 when privileged work must be skipped rather than attempted.
+ensure_sudo() {
+    ${RUN_SUDO:-false} || return 1
+    sudo -n true 2> /dev/null && return 0
+    log "$1 needs admin rights."
+    sudo -v
+}
+
 # Source NVM into the current shell (idempotent)
 # --no-use skips nvm's auto-activation: a cwd .nvmrc for an uninstalled Node
 # version makes it return nonzero, aborting the install under set -e.
@@ -73,6 +91,13 @@ source_nvm() {
 # Probe list kept in sync with .zshenv's HOMEBREW_PREFIX detection.
 ensure_brew_path() {
     local shellenv_out
+    # Cask's appdir default is /Applications no matter where HOMEBREW_PREFIX
+    # points — a user-level prefix does NOT imply user-level apps. Set it here
+    # so install.sh matches .zshenv: bash never sources .zshenv, so without
+    # this the installer puts casks in /Applications and prompts for admin.
+    if $IS_MACOS; then
+        export HOMEBREW_CASK_OPTS="${HOMEBREW_CASK_OPTS:---appdir=$HOME/Applications --fontdir=$HOME/Library/Fonts}"
+    fi
     if command -v brew &> /dev/null; then
         # Already loaded (interactive shells export HOMEBREW_PREFIX in .zshenv)
         [[ -n "${HOMEBREW_PREFIX:-}" ]] && return 0
