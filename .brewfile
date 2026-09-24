@@ -57,5 +57,4 @@ cask "ghostty"
 cask "google-chrome"
 cask "vscodium"
 cask "spotify"
-cask "vlc"
 cask "mos"                   # smooth scrolling + independent mouse scroll direction

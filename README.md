@@ -54,7 +54,8 @@ platform.
 
 | Extra | Privileges |
 |---|---|
-| `icons` (macOS) | writes to /Applications — admin on managed Macs |
+| `brew-upgrade` | none — upgrades the `.brewfile` formulas (casks self-update) |
+| `icons` (macOS) | writes to the app bundle — admin if it sits in /Applications |
 | `macos-admin` (macOS) | **needs admin** — system-level `defaults write` |
 | `motd` (Linux) | **needs sudo** — installs to /etc/update-motd.d |
 
@@ -66,9 +67,18 @@ available) and no on macOS (managed work laptops just work).
 **Homebrew adapts to that answer.** With admin it uses the official installer
 (`/opt/homebrew` or `/home/linuxbrew/.linuxbrew`, precompiled "bottles", fast).
 Without admin it untars Homebrew into **`~/.homebrew`** — no sudo needed — but
-that prefix has no bottles, so packages **build from source** (slower, needs
-Xcode Command Line Tools on macOS). Either way `brew` runs user-level after.
-If Homebrew already exists, neither path runs.
+Homebrew stamps most bottles with the default prefix, so anything not tagged
+`:any`/`:any_skip_relocation` **builds from source** there (`gnupg`, `openssh`,
+`openssl`, `python`, `git`, `zsh`, `coreutils` …). Needs Xcode Command Line
+Tools on macOS. Either way `brew` runs user-level after. If Homebrew already
+exists, neither path runs.
+
+Because that build cost is real, **Step 1 only installs — it never upgrades**
+(`brew bundle --no-upgrade`). Otherwise every re-run would recompile whatever
+moved upstream that week, turning a no-op into an hour. Upgrading is a
+deliberate choice: pick `brew-upgrade` from the Step 3 menu. Before the step
+runs, the script names any formula that is about to be compiled, so a long
+silent build is expected rather than mistaken for a hang.
 
 Sudo-needing *extras* are different: they never run unless you select them
 in the menu, and selecting one is the authorization — they prompt for sudo
@@ -190,9 +200,10 @@ Agent Reach channels and the plugin list.
 **Migrating a machine that predates the split.** Pulling the split deletes the
 tracked files under `.ai/` but leaves everything that was gitignored, so `.ai/`
 stays behind holding no repo and step 4 tells you to move it aside. Run
-`mv .ai .ai.bak`, then `./install.sh`. Afterwards copy back what only lived
+`mv .ai ~/.ai.bak`, then `./install.sh`. Afterwards copy back what only lived
 there: `codex/config.toml`, and any skills the machine installed into
-`common/skills/` as symlinks.
+`common/skills/` as symlinks. The backup goes outside the repo because a
+backup left in this directory is untracked, and `git clean -fd` deletes it.
 
 **Two ways this repo can empty the clone.** Git does not know `.ai/` holds
 another repo, so ordinary operations here reach inside it.

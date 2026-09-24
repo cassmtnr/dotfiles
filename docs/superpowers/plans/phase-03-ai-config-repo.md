@@ -139,7 +139,8 @@ empty-selection guard returns first. Called directly, `ensure_ai_repo` also
 doesn't hang on a prompt: `ui_confirm` takes its `y` default without a TTY and
 reaches a real clone attempt instead of declining. `update_ai_repo`
 fast-forwards when the clone is there and `ui_skip`s with status 0 when it is
-not.
+not — that function was removed on 2026-09-01 along with the old `update.sh`
+(see the note on Task 4).
 
 What this does not cover: a from-scratch `./install.sh` on a machine with
 nothing preinstalled, and `ensure_ai_repo` actually performing a clone. Both
@@ -188,8 +189,8 @@ every symlink target unchanged.
 
 **Architecture:** A nested, gitignored clone. `install.sh` step 4 gains a
 prerequisite check that offers the clone; `update.sh` gains a fast-forward
-step; `lib/ai.sh` gains one corrected `git -C` path. Nothing else in the
-installer moves.
+step (since removed — see Task 4); `lib/ai.sh` gains one corrected `git -C`
+path. Nothing else in the installer moves.
 
 **Tech Stack:** bash, git, `gh`, the `lib/ui.sh` step runner.
 
@@ -237,7 +238,7 @@ Handoff task. Produce the two files, verify the staging count, then stop.
 - Produces: the repo `git@github.com:cassmtnr/ai-config.git`, whose root
   contains `common/`, `claude/`, `codex/`. Tasks 3 and 4 clone from this URL.
 
-- [ ] **Step 1: Write `.ai/.gitignore` before anything else**
+- [x] **Step 1: Write `.ai/.gitignore` before anything else**
 
 The whitelist below is the only thing keeping 193 MB of installed skills out
 of the initial commit. Write it first.
@@ -259,7 +260,7 @@ common/skills/*
 common/hooks/block-dangerous-commands
 ```
 
-- [ ] **Step 2: Prove the ignore file works before committing anything**
+- [x] **Step 2: Prove the ignore file works before committing anything**
 
 Run: `cd .ai && git init -b main && git ls-files --others --exclude-standard | wc -l`
 Expected: a number near 28 (26 tracked files plus the new `.gitignore` and
@@ -269,13 +270,13 @@ Four figures means the whitelist is wrong — fix it before
 going further, because a 193 MB blob cannot be removed from a pushed repo
 without a history rewrite.
 
-- [ ] **Step 3: Fix the self-reference in `instructions.md`**
+- [x] **Step 3: Fix the self-reference in `instructions.md`**
 
 Line 3 cites the hook by its dotfiles path, which is wrong from this repo's
 root. Change `.ai/common/hooks/block-dangerous-commands.js` to
 `common/hooks/block-dangerous-commands.js`.
 
-- [ ] **Step 4: Write `.ai/README.md`**
+- [x] **Step 4: Write `.ai/README.md`**
 
 It takes over the detail that Task 5 removes from the dotfiles README. Move,
 do not rewrite, these four passages from `README.md`:
@@ -291,7 +292,7 @@ Add one paragraph at the top: this repo is cloned to `dotfiles/.ai` by
 `./install.sh` step 4, and it is consumed only through the symlinks in
 `dotfiles/lib/ai.sh`.
 
-- [ ] **Step 5: Hand off to Cassiano**
+- [x] **Step 5: Hand off to Cassiano**
 
 Print these and stop. Do not run them.
 
@@ -302,7 +303,7 @@ git commit -m "init: AI CLI configuration"
 gh repo create cassmtnr/ai-config --private --source=. --push
 ```
 
-- [ ] **Step 6: Confirm the push landed**
+- [x] **Step 6: Confirm the push landed**
 
 Run: `gh repo view cassmtnr/ai-config --json isPrivate,name`
 Expected: `{"isPrivate":true,"name":"ai-config"}`. Task 2 must not start
@@ -322,7 +323,7 @@ Handoff task. Prepare the `.gitignore` edit, then stop.
 - Produces: a dotfiles working tree where `.ai/` exists on disk, is ignored,
   and is tracked by nobody.
 
-- [ ] **Step 1: Replace the AI block in `.gitignore`**
+- [x] **Step 1: Replace the AI block in `.gitignore`**
 
 Delete the whole "AI files" section, from the `# AI files #` banner through
 `.ai/common/hooks/block-dangerous-commands`, and put this in its place:
@@ -335,7 +336,7 @@ Delete the whole "AI files" section, from the `# AI files #` banner through
 /.ai/
 ```
 
-- [ ] **Step 2: Hand off to Cassiano**
+- [x] **Step 2: Hand off to Cassiano**
 
 Print these and stop. `--cached` is what keeps the files on disk.
 
@@ -345,7 +346,7 @@ git add .gitignore
 git commit -m "chore: move AI config to private repo"
 ```
 
-- [ ] **Step 3: Verify the split took**
+- [x] **Step 3: Verify the split took**
 
 Run: `git ls-files .ai | wc -l && git status --short && ls .ai/claude/settings.json`
 Expected: `0`, a clean status, and the settings file still on disk. A
@@ -363,12 +364,12 @@ non-empty status here means `.gitignore` did not match; stop and fix it.
 - Produces: `ensure_ai_repo` — no arguments, returns 0 when `$DOTFILES_ROOT/.ai`
   exists or was cloned, 1 otherwise. Task 4 reuses `$AI_CONFIG_REPO`.
 
-- [ ] **Step 1: Write the failing check**
+- [x] **Step 1: Write the failing check**
 
 Run: `bash -c 'source lib/common.sh; source lib/ai.sh; declare -F ensure_ai_repo'`
 Expected: FAIL, no output, exit 1.
 
-- [ ] **Step 2: Add `ensure_ai_repo` directly above `ai_symlinks`**
+- [x] **Step 2: Add `ensure_ai_repo` directly above `ai_symlinks`**
 
 ```bash
 # The AI configuration is a separate private repo cloned in place at .ai/,
@@ -390,12 +391,12 @@ ensure_ai_repo() {
 }
 ```
 
-- [ ] **Step 3: Verify it is defined and a no-op when `.ai/` exists**
+- [x] **Step 3: Verify it is defined and a no-op when `.ai/` exists**
 
 Run: `bash -c 'source lib/common.sh; source lib/ui.sh; source lib/ai.sh; ensure_ai_repo && echo OK'`
 Expected: `OK`, with no prompt and no clone, because `.ai/` is there.
 
-- [ ] **Step 4: Call it in `install_ai_tools`**
+- [x] **Step 4: Call it in `install_ai_tools`**
 
 It goes after the empty-selection guard and before the symlink step, outside
 `run_step` — `ui_confirm` needs the terminal, which `run_step` captures.
@@ -412,7 +413,7 @@ and the `run_step` under it with:
     run_step "AI config symlinks (~/.claude, ~/.codex)" ai_symlinks
 ```
 
-- [ ] **Step 5: Fix the agent-reach restore for the inner repo**
+- [x] **Step 5: Fix the agent-reach restore for the inner repo**
 
 At lines 156-157 the restore still runs `git -C "$DOTFILES_ROOT"` against a
 pathspec that dotfiles no longer tracks, so it silently stops restoring.
@@ -423,18 +424,18 @@ Change both calls:
         if git -C "$DOTFILES_ROOT/.ai" checkout -- common/skills/agent-reach/; then
 ```
 
-- [ ] **Step 6: Prove the restore path resolves**
+- [x] **Step 6: Prove the restore path resolves**
 
 Run: `git -C .ai diff --quiet -- common/skills/agent-reach/ && echo CLEAN`
 Expected: `CLEAN`. An error naming the pathspec means the prefix is still
 wrong.
 
-- [ ] **Step 7: shellcheck**
+- [x] **Step 7: shellcheck**
 
 Run: `"$SC" install.sh update.sh lib/*.sh`
 Expected: no output.
 
-- [ ] **Step 8: Commit**
+- [x] **Step 8: Commit**
 
 ```bash
 git add lib/ai.sh
@@ -445,6 +446,13 @@ git commit -m "feat: clone AI config repo in install step 4"
 
 ### Task 4: Fast-forward the clone from `update.sh`
 
+> **Superseded 2026-09-01.** This task shipped as described, then was undone
+> when `update.sh` became the pull script: its refresh work duplicated
+> install.sh steps 1-2, so the old script was deleted and `update_ai_repo()`
+> went with it — the pull script was its only caller. `lib/ai.sh` keeps
+> `ensure_ai_repo`; there is no `update_ai_repo` in the codebase. The steps
+> below are kept as the record of what was built, not as current behaviour.
+
 **Files:**
 - Modify: `lib/ai.sh` (add `update_ai_repo`)
 - Modify: `update.sh:12-15` (source `lib/ai.sh`), `update.sh:main` (one step)
@@ -454,12 +462,12 @@ git commit -m "feat: clone AI config repo in install step 4"
 - Produces: `update_ai_repo` — no arguments, `ui_skip` + 0 when `.ai/.git` is
   absent, otherwise the exit status of `git pull --ff-only`.
 
-- [ ] **Step 1: Write the failing check**
+- [x] **Step 1: Write the failing check**
 
 Run: `bash -c 'source lib/common.sh; source lib/ai.sh; declare -F update_ai_repo'`
 Expected: FAIL, exit 1.
 
-- [ ] **Step 2: Add `update_ai_repo` below `ensure_ai_repo` in `lib/ai.sh`**
+- [x] **Step 2: Add `update_ai_repo` below `ensure_ai_repo` in `lib/ai.sh`**
 
 `--ff-only` on purpose: a diverged `.ai/` is a merge decision, and the step
 runner's job is to surface that as a failed step, not to resolve it.
@@ -476,7 +484,7 @@ update_ai_repo() {
 }
 ```
 
-- [ ] **Step 3: Source `lib/ai.sh` in `update.sh`**
+- [x] **Step 3: Source `lib/ai.sh` in `update.sh`**
 
 Add after the `lib/configure.sh` line. Sourcing it is inert: the file only
 defines functions and sets `CLAUDE_PLUGINS_PENDING`.
@@ -485,7 +493,7 @@ defines functions and sets `CLAUDE_PLUGINS_PENDING`.
 source "$DOTFILES_ROOT/lib/ai.sh"
 ```
 
-- [ ] **Step 4: Add the step to `update.sh` main, after the symlink step**
+- [x] **Step 4: Add the step to `update.sh` main, after the symlink step**
 
 ```bash
     run_step "Symlink dotfiles into \$HOME"  create_symlinks
@@ -493,7 +501,7 @@ source "$DOTFILES_ROOT/lib/ai.sh"
     run_step "VSCodium extension sync"       sync_vscodium_extensions
 ```
 
-- [ ] **Step 5: Run it**
+- [x] **Step 5: Run it**
 
 Run: `./update.sh`
 Expected: a ✓ on "AI config repo (.ai)" (or "Already up to date" under
@@ -503,12 +511,12 @@ Run: `mv .ai ../ai-tmp && ./update.sh; mv ../ai-tmp .ai`
 Expected: a dim − line reading "AI config repo not cloned", the run still
 finishes green, and `.ai/` is back afterwards.
 
-- [ ] **Step 6: shellcheck**
+- [x] **Step 6: shellcheck**
 
 Run: `"$SC" install.sh update.sh lib/*.sh`
 Expected: no output.
 
-- [ ] **Step 7: Commit**
+- [x] **Step 7: Commit**
 
 ```bash
 git add lib/ai.sh update.sh
@@ -527,7 +535,7 @@ git commit -m "feat: pull AI config repo in update.sh"
 - Consumes: `.ai/README.md` from Task 1, which must already hold the moved
   prose. Do not delete anything here that has not landed there.
 
-- [ ] **Step 1: Collapse the `.ai/` subtree in Project Structure**
+- [x] **Step 1: Collapse the `.ai/` subtree in Project Structure**
 
 Replace the twelve lines from `├── .ai/` through `│       └── hooks.json`
 with two:
@@ -537,7 +545,7 @@ with two:
 │                              # cloned here by install.sh step 4
 ```
 
-- [ ] **Step 2: Cut the `## AI setup` section down to the pointer**
+- [x] **Step 2: Cut the `## AI setup` section down to the pointer**
 
 Keep the existing opening paragraph and its three bullets unchanged. Keep the
 **Safety hooks** block: the three levels describe behaviour a reader of the
@@ -555,14 +563,14 @@ One caveat: `git clean -xfd` in this repo deletes the `.ai/` clone, because
 ignored files are what `-x` removes.
 ```
 
-- [ ] **Step 3: Check no dead references survive**
+- [x] **Step 3: Check no dead references survive**
 
 Run: `grep -n '\.ai/' README.md`
 Expected: only the Project Structure lines from Step 1 and the pointer
 paragraph. Any surviving `.ai/common/...` path describes a file the public
 repo no longer ships.
 
-- [ ] **Step 4: Commit**
+- [x] **Step 4: Commit**
 
 ```bash
 git add README.md
@@ -582,7 +590,7 @@ machine with nothing preinstalled, which moves to the new server.
 - Modify: `README.md:116` (one style fix, below)
 - Otherwise test only.
 
-- [ ] **Step 1: Make the throwaway HOME**
+- [x] **Step 1: Make the throwaway HOME**
 
 ```bash
 FAKE=$SCRATCH/fake-home && rm -rf "$FAKE" && mkdir -p "$FAKE"
@@ -598,7 +606,7 @@ HOME="$FAKE" bash -c 'echo "$HOME"'
 
 Expected: the fake path, not `/Users/cassiano`.
 
-- [ ] **Step 2: Case A, `.ai/` present, run twice**
+- [x] **Step 2: Case A, `.ai/` present, run twice**
 
 ```bash
 HOME="$FAKE" bash -c 'source lib/common.sh; source lib/ui.sh; source lib/ai.sh; ai_symlinks; ai_symlinks'
@@ -610,7 +618,7 @@ target ends `dotfiles/.ai/common/instructions.md` and exists. The second pass is
 the idempotence check: `link()` replaces its own symlinks and must not start
 warning "Target exists and is not a symlink".
 
-- [ ] **Step 3: Case B, `.ai/` absent**
+- [x] **Step 3: Case B, `.ai/` absent**
 
 **Do not run this step on a machine that can reach GitHub over SSH.** With
 `.ai` moved aside and no TTY, `ui_confirm` takes its `y` default and
@@ -635,7 +643,7 @@ only guarantees nothing hangs waiting for input. The guard against an unattended
 `install_ai_tools`: `ui_choose_many` selects nothing without a TTY, so that
 caller never reaches `ensure_ai_repo` at all. Confirm `.ai` is back afterwards.
 
-- [ ] **Step 4: Case C, `update_ai_repo` both ways**
+- [x] **Step 4: Case C, `update_ai_repo` both ways**
 
 ```bash
 HOME="$FAKE" bash -c 'source lib/common.sh; source lib/ui.sh; source lib/ai.sh; update_ai_repo; echo "exit=$?"'
@@ -645,7 +653,7 @@ mv .ai ../ai-aside && HOME="$FAKE" bash -c 'source lib/common.sh; source lib/ui.
 Expected: with `.ai` present, up to date and `exit=0`; with it absent, the
 `ui_skip` line and still `exit=0`, per the `run_step` contract.
 
-- [ ] **Step 5: Fix the tree comment's em dash**
+- [x] **Step 5: Fix the tree comment's em dash**
 
 `README.md:116` reads `# AI CLI config — separate private repo,`. Every
 neighbouring tree comment uses a parenthetical instead, so match them:
@@ -657,20 +665,20 @@ neighbouring tree comment uses a parenthetical instead, so match them:
 
 Keep the `#` comment column where it is.
 
-- [ ] **Step 6: Remove the throwaway HOME**
+- [x] **Step 6: Remove the throwaway HOME**
 
 ```bash
 rm -rf "$FAKE"
 ```
 
-- [ ] **Step 7: Record what local testing did not cover**
+- [x] **Step 7: Record what local testing did not cover**
 
 Append to `TODO.md`: phase-03 was verified against a fake `HOME` on macOS only.
 A from-scratch `./install.sh` on a clean Linux machine, run twice for
 idempotence, still needs doing on the server replacing tars, and that run is
 also the first test of `ensure_ai_repo` offering its clone for real.
 
-- [ ] **Step 8: Log it**
+- [x] **Step 8: Log it**
 
 Append to `log.md`, with the date from `date -u`:
 

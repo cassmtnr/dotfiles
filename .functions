@@ -44,8 +44,10 @@ brew() {
         # Re-apply custom icon only when VSCodium itself is affected
         if [[ -z "$2" || "$2" == *vscodium* ]]; then
             if command -v fileicon &> /dev/null && [[ -f "$dotfiles/.vscodium/icon.icns" ]]; then
-                if [[ -d "/Applications/VSCodium.app" ]]; then
-                    if fileicon set /Applications/VSCodium.app "$dotfiles/.vscodium/icon.icns"; then
+                local app="$HOME/Applications/VSCodium.app"
+                [[ -d "$app" ]] || app="/Applications/VSCodium.app"
+                if [[ -d "$app" ]]; then
+                    if fileicon set "$app" "$dotfiles/.vscodium/icon.icns"; then
                         echo "Re-applied custom VSCodium icon."
                     else
                         echo "Warning: failed to re-apply custom VSCodium icon." >&2

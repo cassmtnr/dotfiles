@@ -49,7 +49,9 @@ ensure_ai_repo() {
     # inside. `git clone` refuses that target, and its failure message below
     # would blame SSH access instead of the real problem.
     if [[ -d "$DOTFILES_ROOT/.ai" && -n "$(ls -A "$DOTFILES_ROOT/.ai" 2> /dev/null)" ]]; then
-        warning ".ai/ exists but isn't a git repo — move it aside (mv .ai .ai.bak) and re-run"
+        # Outside the repo on purpose: a backup parked here is untracked, so
+        # any `git clean -fd` in this directory would take it.
+        warning ".ai/ exists but isn't a git repo — move it aside (mv .ai ~/.ai.bak) and re-run"
         return 1
     fi
 
@@ -87,11 +89,20 @@ ai_symlinks() {
     # Shared content (Claude Code + Codex) — only assets both CLIs support.
     # AGENTS.md is the canonical shared core; Claude Code reads it through the
     # @import in claude/CLAUDE.md, Codex reads ~/.codex/AGENTS.md directly.
-    # ~/.agents/skills is the agentskills.io standard location Codex scans;
-    # Claude Code only reads ~/.claude/skills.
+    # ~/.agents/skills is the agentskills.io standard location Codex scans.
+    # Keep it as a directory of per-skill links so other installers can add
+    # their own skills without displacing this repo's skills.
     link "$DOTFILES_ROOT/.ai/common/AGENTS.md"       "$HOME/.codex/AGENTS.md"
     link "$DOTFILES_ROOT/.ai/common/skills"          "$HOME/.claude/skills"
-    link "$DOTFILES_ROOT/.ai/common/skills"          "$HOME/.agents/skills"
+    local shared_skill codex_skills_root="$HOME/.agents/skills"
+    if [[ -L "$codex_skills_root" && "$(readlink "$codex_skills_root")" == "$DOTFILES_ROOT/.ai/common/skills" ]]; then
+        rm "$codex_skills_root"
+    fi
+    mkdir -p "$codex_skills_root"
+    for shared_skill in "$DOTFILES_ROOT/.ai/common/skills"/*; do
+        [[ -f "$shared_skill/SKILL.md" ]] || continue
+        link "$shared_skill" "$codex_skills_root/${shared_skill##*/}"
+    done
     link "$DOTFILES_ROOT/.ai/common/hooks"           "$HOME/.claude/hooks"
     link "$DOTFILES_ROOT/.ai/common/hooks"           "$HOME/.codex/hooks"
     link "$DOTFILES_ROOT/.ai/common/scripts"         "$HOME/.claude/scripts"

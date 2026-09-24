@@ -159,6 +159,12 @@ main() {
     run_step "System dependencies (zsh, git, curl, build tools)" install_deps
     run_step "Homebrew (package manager)"                        install_homebrew
     run_step "Oh My Zsh (shell framework)"                       install_oh_my_zsh
+    # Outside run_step: once the step starts its output is captured behind a
+    # spinner, and a heads-up printed there would scroll past unseen.
+    # No sudo priming needed — install_packages passes --no-upgrade, so Step 1
+    # only ever installs, and new casks go to ~/Applications
+    # (HOMEBREW_CASK_OPTS, set in ensure_brew_path).
+    warn_about_source_builds
     run_step "Apps and CLI tools from .brewfile"                 install_packages
     run_step "Node.js via NVM"                                   setup_nodejs
 

@@ -10,6 +10,7 @@
 # To add an extra: add a line here, a case in run_extra, and an extra_<name>
 # function below.
 extras_available() {
+    echo "brew-upgrade:Upgrade Homebrew formulas — install.sh only installs; slow off the default prefix"
     if $IS_MACOS; then
         echo "icons:Custom app icons — nicer VSCodium icon in the Dock (admin on managed Macs)"
         echo "macos-admin:System-wide macOS tweaks — settings that need admin/sudo"
@@ -21,6 +22,7 @@ extras_available() {
 
 run_extra() {
     case "$1" in
+        brew-upgrade)   extra_brew_upgrade ;;
         icons)          extra_icons ;;
         macos-admin)    extra_macos_admin ;;
         motd)           extra_motd ;;
@@ -40,12 +42,7 @@ extra_needs_sudo() {
 # Prime sudo for one extra. The startup prompt in confirm_sudo can have expired
 # by the time extras run — Step 1 alone takes minutes on a fresh machine — so
 # re-prime rather than assume the timestamp is still warm.
-ensure_extra_sudo() {
-    ${RUN_SUDO:-false} || return 1
-    sudo -n true 2> /dev/null && return 0
-    log "$1 needs admin rights."
-    sudo -v
-}
+ensure_extra_sudo() { ensure_sudo "$1"; }
 
 # Step driver. Authentication happens HERE, never inside an extra: run_step
 # sends the step's output to a file and paints a spinner over the terminal, so
@@ -89,9 +86,14 @@ extra_icons() {
         return 0
     fi
 
+    # New casks land in ~/Applications (HOMEBREW_CASK_OPTS); apps installed by
+    # IT or before that setting existed still sit in /Applications.
+    local vscodium="$HOME/Applications/VSCodium.app"
+    [[ -d "$vscodium" ]] || vscodium="/Applications/VSCodium.app"
+
     # Map: app path -> icon file in dotfiles
     local icon_pairs=(
-        "/Applications/VSCodium.app:$DOTFILES_ROOT/.vscodium/icon.icns"
+        "$vscodium:$DOTFILES_ROOT/.vscodium/icon.icns"
     )
 
     # Flag rather than an early return: one unwritable bundle on a managed Mac
@@ -154,4 +156,33 @@ extra_motd() {
     done
 
     success "Custom MOTD scripts installed"
+}
+
+# Upgrade what the Brewfile pins. Split out of Step 1 deliberately: with
+# Homebrew outside its default prefix, an upgrade of gnupg/python/openssl is a
+# source build, so it must be something you choose — not a toll every re-run
+# of install.sh pays on whatever moved upstream that week.
+extra_brew_upgrade() {
+    if ! ensure_brew_path; then
+        ui_skip "Homebrew not installed — nothing to upgrade"
+        return 0
+    fi
+
+    local file="$DOTFILES_ROOT/.brewfile"
+    if [[ ! -f "$file" ]]; then
+        ui_skip "Brewfile not found: $file"
+        return 0
+    fi
+
+    export HOMEBREW_NO_ENV_HINTS=1   # keep the spinner showing real progress
+    log "Upgrading Brewfile formulas (this compiles anything without a bottle for $HOMEBREW_PREFIX)..."
+    # Formulas only, both platforms. Casks with receipts under /Applications
+    # need admin to replace, and this runs inside run_step where sudo's prompt
+    # is invisible under the spinner — it reads as a hang, then loops on
+    # "Sorry, try again". Nothing upgrades casks now (Step 1 is --no-upgrade):
+    # the GUI apps here self-update, and `brew upgrade --cask <name>` outside
+    # the spinner is the escape hatch for any that don't.
+    grep -v '^cask[[:space:]]' "$file" | brew bundle install --upgrade --file=- || return 1
+
+    hash -r
 }
