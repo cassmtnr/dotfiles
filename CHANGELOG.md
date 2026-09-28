@@ -7,6 +7,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### MOTD scripts tolerate missing tools — 2026-09-28
+
+#### Fixed
+
+- **`.motd/10-hostname-color`** prints a plain bold hostname when figlet or
+  lolcat is missing. On a fresh tars it errored on every login.
+- **`.motd/50-fail2ban`** and **`.motd/60-docker`** exit silently when
+  fail2ban has no log or docker isn't installed, so they no longer print
+  errors or empty section headers.
+
 ### update.sh only pulls; refreshing is install.sh's job — 2026-09-01
 
 #### Changed

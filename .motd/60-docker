@@ -1,5 +1,7 @@
 #!/bin/bash
 
+command -v docker >/dev/null || exit 0
+
 # set column width
 COLUMNS=2
 # colors

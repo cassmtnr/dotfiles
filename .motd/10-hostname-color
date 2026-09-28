@@ -1,6 +1,10 @@
 #!/bin/bash
 
-/usr/bin/figlet "$(hostname)" | /usr/games/lolcat -f
+if [ -x /usr/bin/figlet ] && [ -x /usr/games/lolcat ]; then
+    /usr/bin/figlet "$(hostname)" | /usr/games/lolcat -f
+else
+    echo -e "\n  \e[1m$(hostname)\e[0m\n"
+fi
 
 # random motivational quote
 QUOTE_JSON=$(curl -sf --max-time 3 https://dummyjson.com/quotes/random)
